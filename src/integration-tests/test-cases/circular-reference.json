@@ -1,0 +1,7 @@
+{
+  "title": "moebiusSchema",
+  "type": "object",
+  "properties": {
+    "MoebiusProperty": { "$ref": "#" }
+  }
+}

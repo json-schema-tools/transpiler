@@ -1,0 +1,12 @@
+{
+  "title": "PlowAnimals",
+  "description": "an array of animals that are good at pulling things",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      { "title": "Ox" },
+      { "title": "Horse" },
+      { "title": "Donkey" }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+[
+  {
+    "title": "foo",
+    "type": "string"
+  },
+  {
+    "title": "foo",
+    "type": "string"
+  },
+  {
+    "properties": {
+      "NotFoo": {
+        "title": "baz",
+        "type": "boolean"
+      }
+    },
+    "type": "object"
+  },
+  {
+    "title": "OneOfStuff",
+    "oneOf": [
+      {
+        "description": "array of strings is all...",
+        "items": {
+          "title": "foo",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      {
+        "title": "SetOfNumbers",
+        "items": [
+          {
+            "title": "bar",
+            "format": "int64",
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      }
+    ]
+  },
+  {
+    "title": "bar",
+    "format": "int64",
+    "type": "integer"
+  }
+]

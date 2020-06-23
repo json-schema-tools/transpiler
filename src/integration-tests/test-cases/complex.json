@@ -1,0 +1,73 @@
+{
+  "title": "kitchenSink",
+  "type": "object",
+  "properties": {
+    "bool": { "type": "boolean", "title": "isMetal" },
+    "int": {  "examples": [ 123, 456, 789 ], "description": "Fill amounts", "type": "integer", "title": "fillAmount", "default": 123 },
+    "number": { "type": "number", "title": "numDrains" },
+    "string": { "type": "string", "title": "feelToTouch" },
+    "stringEnum": { "type": "string", "title": "orientation", "enum": [ "north", "south", "west", "east" ] },
+    "numbericalEnum": { "type": "number", "title": "userAvailability", "enum": [ 1, 2 ] },
+    "integerEnum": { "type": "integer", "title": "lightsNearby", "enum": [ 1, 2, 3 ] },
+    "untypedArray": { "type": "array", "title": "dishes" },
+    "orderedArray": {
+      "type": "array",
+      "title": "accessories",
+      "items": [ { "type": "number", "title": "warranty" }, { "type": "bool", "title": "professionallyInstalled" } ]
+    },
+    "unorderedArray": {
+      "type": "array",
+      "title": "yearsInService",
+      "items": { "type": "number", "title": "serviceYear" }
+    },
+    "object": {
+      "required": ["water"],
+      "type": "object",
+      "title": "washEquipment",
+      "additionalProperties": false,
+      "properties": {
+        "water": { "type": "number", "title": "waterLiters" },
+        "soap": { "type": "string", "title": "soapBrand" }
+      }
+    },
+    "allOf": {
+      "title": "sinkResource",
+      "allOf": [
+        {
+          "type": "object",
+          "title": "sinkUser",
+          "additionalProperties": false,
+          "properties": {
+            "hands": { "type": "number", "title": "sinkUserNumHands" },
+            "name": { "type": "string", "title": "sinkUserName" }
+          }
+        },
+        {
+          "type": "object",
+          "title": "sinkLocation",
+          "additionalProperties": false,
+          "properties": {
+            "residenceStreet": { "type": "object", "title": "streetName" },
+            "residenceNumber": { "type": "number", "title": "streetNumber" }
+          }
+        }
+      ]
+    },
+    "anyOf": {
+      "title": "sinkComplaints",
+      "anyOf": [
+        { "type": "boolean", "title": "whining" },
+        { "type": "integer", "title": "burns" },
+        { "type": "null", "title": "feelingOfEmptiness" }
+      ]
+    },
+    "oneOf": {
+      "title": "measurementStandard",
+      "anyOf": [
+        { "type": "boolean", "title": "European" },
+        { "type": "integer", "title": "drainPipeInches" }
+      ]
+    }
+
+  }
+}

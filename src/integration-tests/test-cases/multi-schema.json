@@ -1,0 +1,18 @@
+[
+  {
+    "title":  "RGBOrHex",
+    "description": "A way to describe color",
+    "type": "array",
+    "items": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "string" }
+      ]
+    }
+  },
+  {
+    "description": "Human word for color",
+    "type": "string"
+  },
+  { "title": "ColorAsAnything" }
+]
