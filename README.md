@@ -2,9 +2,15 @@
 
 Turn your JSON Schemas into types to be used in various languages.
 
+- Generate types for:
+  - Golang
+  - Typescript
+  - Rust
+  - Python
 - handles cycle detection
 - automatically determines references
 - includes documentation annotations for easy documentation generation with native language tools.
+- minimal dependencies (wip)
 
 ## Getting Started
 
