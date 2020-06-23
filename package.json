@@ -21,7 +21,7 @@
     "@types/lodash.deburr": "^4.1.6",
     "@types/lodash.merge": "^4.6.6",
     "@types/lodash.trim": "^4.5.6",
-    "@types/node": "^12.12.17",
+    "@types/node": "^14.0.13",
     "@types/node-fetch": "^2.5.7",
     "fetch": "^1.1.0",
     "inquirer": "^7.2.0",
