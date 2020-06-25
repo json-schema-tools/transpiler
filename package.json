@@ -1,5 +1,5 @@
 {
-  "name": "@etclabscore/pristine-typescript",
+  "name": "@json-schema-tools/transpiler",
   "version": "0.0.0-development",
   "description": "",
   "main": "build/index.js",
