@@ -1,6 +1,6 @@
 import deburr from "lodash.deburr";
 import trim from "lodash.trim";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
 import { ensureSubschemaTitles } from "./ensure-subschema-titles";
 import { createHash } from "crypto";
 import traverse from "./traverse";
@@ -33,9 +33,11 @@ export const languageSafeName = (title: string) => {
       .replace(regexes[5], ""));
 };
 
-export const schemaToRef = (s: JSONSchema) => ({ $ref: `#/definitions/${s.title}` });
-export const joinSchemaTitles = (s: JSONSchema[]): string => s.map(({ title }: JSONSchema) => title).join("_");
-export const sortEntriesByKey = ([key1]: [string, JSONSchema], [key2]: [string, JSONSchema]) => key1 > key2 ? -1 : 1;
+export const schemaToRef = (s: JSONMetaSchema) => ({ $ref: `#/definitions/${s.title}` });
+export const joinSchemaTitles = (s: JSONMetaSchema[]): string => s.map(({ title }: JSONMetaSchema) => title).join("_");
+
+type SchemEntry = [string, JSONMetaSchema];
+export const sortEntriesByKey = ([key1]: SchemEntry, [key2]: SchemEntry) => key1 > key2 ? -1 : 1;
 
 const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
 
@@ -55,7 +57,7 @@ const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
  * @category SchemaImprover
  *
  */
-export function getDefaultTitleForSchema(schema: JSONSchema): JSONSchema {
+export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema {
   if (schema.title) { return schema; }
 
   const subSchemaTitleErrors = ensureSubschemaTitles(schema);
@@ -68,13 +70,13 @@ export function getDefaultTitleForSchema(schema: JSONSchema): JSONSchema {
 
   ["anyOf", "oneOf", "allOf"].forEach((k) => {
     if (schema[k]) {
-      deterministicSchema[k] = schema[k].map((s: JSONSchema) => s.title).sort();
+      deterministicSchema[k] = schema[k].map((s: JSONMetaSchema) => s.title).sort();
       prefix = `${k}_${deterministicSchema[k].join("_")}_`;
     }
   });
 
   if (schema.type === "object" && schema.properties) {
-    const sProps: { [k: string]: JSONSchema } = schema.properties;
+    const sProps: { [k: string]: JSONMetaSchema } = schema.properties;
     deterministicSchema.properties = Object.entries(sProps).sort(sortEntriesByKey);
     const joinedTitles = joinSchemaTitles(deterministicSchema.properties.map((val: any) => val[1]));
     prefix = `objectOf_${joinedTitles}_`;
@@ -82,11 +84,11 @@ export function getDefaultTitleForSchema(schema: JSONSchema): JSONSchema {
 
   if (schema.type === "array") {
     if (schema.items instanceof Array === false) {
-      const sItems = schema.items as JSONSchema;
+      const sItems = schema.items as JSONMetaSchema;
       deterministicSchema.items = Object.entries(sItems).sort(sortEntriesByKey);
       prefix = `unorderedSetOf_${sItems.title}`;
     } else {
-      prefix = `unorderedSetOf_${joinSchemaTitles(schema.items as JSONSchema[])}`;
+      prefix = `unorderedSetOf_${joinSchemaTitles(schema.items as JSONMetaSchema[])}`;
     }
   }
 
@@ -134,7 +136,7 @@ export function getDefaultTitleForSchema(schema: JSONSchema): JSONSchema {
  * @category SchemaImprover
  *
  */
-export const ensureSchemaTitles = (s: JSONSchema): JSONSchema => traverse(s, getDefaultTitleForSchema);
+export const ensureSchemaTitles = (s: JSONMetaSchema): JSONMetaSchema => traverse(s, getDefaultTitleForSchema);
 
 /**
  * Returns the schema where all subschemas have been replaced with $refs and added to definitions
@@ -147,10 +149,10 @@ export const ensureSchemaTitles = (s: JSONSchema): JSONSchema => traverse(s, get
  * @category SchemaImprover
  *
  */
-export function collectAndRefSchemas(s: JSONSchema): JSONSchema {
+export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
   const definitions: any = {};
   return {
-    ...traverse(s, (subSchema: JSONSchema) => {
+    ...traverse(s, (subSchema: JSONMetaSchema) => {
       definitions[subSchema.title as string] = subSchema;
       return { $ref: `#/definitions/${subSchema.title}` };
     }),
@@ -158,7 +160,7 @@ export function collectAndRefSchemas(s: JSONSchema): JSONSchema {
   };
 }
 
-export function combineSchemas(s: JSONSchema[]): JSONSchema {
+export function combineSchemas(s: JSONMetaSchema[]): JSONMetaSchema {
   const combinedDefinitions = s.reduce((comb, schema) => ({
     ...comb,
     ...schema.definitions,
@@ -170,8 +172,8 @@ export function combineSchemas(s: JSONSchema[]): JSONSchema {
     return copy;
   });
 
-  const uniquedSchemas = withoutDefinitions.reduce((uniqued: JSONSchema[], schema: JSONSchema) => {
-    if (uniqued.find(({ title }: JSONSchema) => title === schema.title) === undefined) {
+  const uniquedSchemas = withoutDefinitions.reduce((uniqued: JSONMetaSchema[], schema: JSONMetaSchema) => {
+    if (uniqued.find(({ title }: JSONMetaSchema) => title === schema.title) === undefined) {
       return [
         ...uniqued,
         schema,
@@ -194,10 +196,10 @@ export function combineSchemas(s: JSONSchema[]): JSONSchema {
   };
 }
 
-export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
+export function mergeObjectProperties(schemas: JSONMetaSchema[]): JSONMetaSchema {
   const merged = schemas
-    .filter(({ properties }: JSONSchema) => properties)
-    .map(({ properties }: JSONSchema): { [k: string]: JSONSchema } => properties as { [k: string]: JSONSchema })
-    .reduce((all: JSONSchema, schema: JSONSchema) => ({ ...all, ...schema }), {});
+    .filter(({ properties }: JSONMetaSchema) => properties)
+    .map(({ properties }: JSONMetaSchema): Properties => properties as Properties)
+    .reduce((all: JSONMetaSchema, schema: JSONMetaSchema) => ({ ...all, ...schema }), {});
   return merged;
 }

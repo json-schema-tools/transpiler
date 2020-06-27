@@ -1,9 +1,9 @@
-import { CoreSchemaMetaSchema as JSONSchema, UnorderedSetOfAnyL9Fw4VUOyeAFYsFq } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Enum } from "@json-schema-tools/meta-schema";
 
 import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
 
 export default class Typescript extends CodeGen {
-  protected generate(s: JSONSchema, ir: TypeIntermediateRepresentation) {
+  protected generate(s: JSONMetaSchema, ir: TypeIntermediateRepresentation) {
     return [
       ir.documentationComment,
       `export ${ir.prefix} ${this.getSafeTitle(s.title as string)}`,
@@ -13,23 +13,23 @@ export default class Typescript extends CodeGen {
     ].join("");
   }
 
-  protected handleBoolean(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleBoolean(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "boolean" };
   }
 
-  protected handleNull(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNull(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { prefix: "type", typing: "null", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNumber(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNumber(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "number" };
   }
 
-  protected handleInteger(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleInteger(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return this.handleNumber(s);
   }
 
-  protected handleNumericalEnum(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNumericalEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -37,11 +37,11 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleString(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleString(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "string" };
   }
 
-  protected handleStringEnum(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleStringEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -49,23 +49,23 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleOrderedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleOrderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
-      typing: `[${this.getJoinedSafeTitles(s.items as JSONSchema[])}]`,
+      typing: `[${this.getJoinedSafeTitles(s.items as JSONMetaSchema[])}]`,
     };
   }
 
-  protected handleUnorderedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUnorderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
-      typing: `${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}[]`,
+      typing: `${this.getSafeTitle(this.refToTitle(s.items as JSONMetaSchema))}[]`,
     };
   }
 
-  protected handleUntypedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntypedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -73,8 +73,8 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleObject(s: JSONSchema): TypeIntermediateRepresentation {
-    const sProps = s.properties as { [k: string]: JSONSchema };
+  protected handleObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sProps = s.properties as { [k: string]: JSONMetaSchema };
     const propertyTypings = Object.keys(sProps).reduce((typings: string[], key: string) => {
       const propSchema = sProps[key];
       let isRequired = false;
@@ -96,7 +96,7 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleUntypedObject(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntypedObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       prefix: "interface",
       typing: "{ [key: string]: any; }",
@@ -104,8 +104,8 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleAnyOf(s: JSONSchema): TypeIntermediateRepresentation {
-    const sAny = s.anyOf as JSONSchema[];
+  protected handleAnyOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sAny = s.anyOf as JSONMetaSchema[];
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -113,8 +113,8 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleAllOf(s: JSONSchema): TypeIntermediateRepresentation {
-    const sAll = s.allOf as JSONSchema[];
+  protected handleAllOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sAll = s.allOf as JSONMetaSchema[];
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -122,8 +122,8 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleOneOf(s: JSONSchema): TypeIntermediateRepresentation {
-    const sOne = s.oneOf as JSONSchema[];
+  protected handleOneOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sOne = s.oneOf as JSONMetaSchema[];
     return {
       documentationComment: this.buildDocs(s),
       prefix: "type",
@@ -131,20 +131,20 @@ export default class Typescript extends CodeGen {
     };
   }
 
-  protected handleUntyped(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
   }
 
-  private buildEnum(schema: JSONSchema): string {
+  private buildEnum(schema: JSONMetaSchema): string {
     const typeOf = schema.type === "string" ? "string" : "number";
-    const sEnum = schema.enum as UnorderedSetOfAnyL9Fw4VUOyeAFYsFq;
+    const sEnum = schema.enum as Enum;
     return sEnum
       .filter((s: any) => typeof s === typeOf)
       .map((s: string) => typeOf === "string" ? `"${s}"` : s)
       .join(" | ");
   }
 
-  private buildDocs(s: JSONSchema): string | undefined {
+  private buildDocs(s: JSONMetaSchema): string | undefined {
     const docStringLines = [];
 
     if (s.description) {

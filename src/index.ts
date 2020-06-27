@@ -1,4 +1,4 @@
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 import { capitalize, ensureSchemaTitles, collectAndRefSchemas, combineSchemas } from "./utils";
 import { CodeGen } from "./codegens/codegen";
 import TypescriptGenerator from "./codegens/typescript";
@@ -12,11 +12,11 @@ export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "g
  */
 export class JsonSchemaToTypes {
   [toLang: string]: any;
-  public megaSchema: JSONSchema;
+  public megaSchema: JSONMetaSchema;
 
-  constructor(s: JSONSchema | JSONSchema[]) {
+  constructor(s: JSONMetaSchema | JSONMetaSchema[]) {
     const useMerge = s instanceof Array;
-    const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
+    const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
     const schemaWithTitles = inputSchema.map((ss) => ensureSchemaTitles(ss));
     const reffed = schemaWithTitles.map((ss) => collectAndRefSchemas(ss));
     if (useMerge) {

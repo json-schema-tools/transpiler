@@ -14,7 +14,7 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@json-schema-tools/meta-schema": "^1.0.9",
+    "@json-schema-tools/meta-schema": "^1.0.10",
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^24.0.13",
     "@types/json-schema": "^7.0.5",
@@ -32,7 +32,7 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
-    "@json-schema-tools/traverse": "^1.0.1",
+    "@json-schema-tools/traverse": "^1.1.2",
     "json-schema-ref-parser": "^9.0.1",
     "lodash.deburr": "^4.1.0",
     "lodash.merge": "^4.6.2",

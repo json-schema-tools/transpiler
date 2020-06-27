@@ -1,6 +1,6 @@
 import JsonSchemaToTypes from "./index";
 import { getDefaultTitleForSchema } from "./utils";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("JsonSchemaToTypes", () => {
 
@@ -22,7 +22,7 @@ describe("JsonSchemaToTypes", () => {
           bar: { type: "string" },
         },
       });
-      const megaDefs = t.megaSchema.definitions as JSONSchema;
+      const megaDefs = t.megaSchema.definitions as JSONMetaSchema;
       expect(megaDefs.string_doaGddGA).toBeDefined();
     });
 

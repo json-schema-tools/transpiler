@@ -1,5 +1,5 @@
 import traverse from "./traverse";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -214,7 +214,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
       let i = 0;
-      const result = traverse(schema, (s: JSONSchema) => {
+      const result = traverse(schema, (s: JSONMetaSchema) => {
         s.i = i;
         i += 1;
         return s;

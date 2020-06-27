@@ -1,4 +1,4 @@
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 import { languageSafeName } from "../utils";
 
 export interface TypeIntermediateRepresentation {
@@ -12,7 +12,7 @@ export interface TypeIntermediateRepresentation {
  * Base class for all code generators.
  */
 export abstract class CodeGen {
-  constructor(protected schema: JSONSchema) { }
+  constructor(protected schema: JSONMetaSchema) { }
 
   /**
    * Given a schema, it will generate code for both the schema and the schemas in its definitions section
@@ -43,43 +43,43 @@ export abstract class CodeGen {
 
   public getCodePrefix(): string { return ""; }
 
-  protected abstract generate(s: JSONSchema, ir: TypeIntermediateRepresentation): string;
+  protected abstract generate(s: JSONMetaSchema, ir: TypeIntermediateRepresentation): string;
 
-  protected abstract handleBoolean(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleNull(schema: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleBoolean(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleNull(schema: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleNumber(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleInteger(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleNumericalEnum(s: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleNumber(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleInteger(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleNumericalEnum(s: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleString(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleStringEnum(s: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleString(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleStringEnum(s: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleOrderedArray(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleUnorderedArray(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleUntypedArray(schema: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleOrderedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleUnorderedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleUntypedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleObject(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleUntypedObject(schema: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleObject(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleUntypedObject(schema: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleAnyOf(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleAllOf(schema: JSONSchema): TypeIntermediateRepresentation;
-  protected abstract handleOneOf(schema: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleAnyOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleAllOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleOneOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected abstract handleUntyped(s: JSONSchema): TypeIntermediateRepresentation;
+  protected abstract handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation;
 
-  protected refToTitle(schema: JSONSchema) {
+  protected refToTitle(schema: JSONMetaSchema) {
     if (schema.$ref === undefined) {
       throw new Error("the Subschemas of the schema must use $ref. Inline subschemas are not allowed.");
     }
     return schema.$ref.replace("#/definitions/", "");
   }
 
-  protected getJoinedSafeTitles(schemas: JSONSchema[], seperator = ", ") {
+  protected getJoinedSafeTitles(schemas: JSONMetaSchema[], seperator = ", ") {
     return schemas.map(this.refToTitle).map(this.getSafeTitle.bind(this)).join(seperator);
   }
 
-  private toIR(s: JSONSchema): TypeIntermediateRepresentation {
+  private toIR(s: JSONMetaSchema): TypeIntermediateRepresentation {
     switch (s.type instanceof Array ? s.type[0] : s.type) {
       case "boolean": return this.handleBoolean(s);
 

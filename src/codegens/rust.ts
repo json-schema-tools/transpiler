@@ -1,4 +1,4 @@
-import { CoreSchemaMetaSchema as JSONSchema, UnorderedSetOfAnyL9Fw4VUOyeAFYsFq } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Enum } from "@json-schema-tools/meta-schema";
 import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
 
 export default class Rust extends CodeGen {
@@ -10,7 +10,7 @@ export default class Rust extends CodeGen {
     ].join("\n");
   }
 
-  protected generate(s: JSONSchema, ir: TypeIntermediateRepresentation) {
+  protected generate(s: JSONMetaSchema, ir: TypeIntermediateRepresentation) {
     return [
       ir.documentationComment,
       ir.macros,
@@ -22,38 +22,38 @@ export default class Rust extends CodeGen {
     ].join("");
   }
 
-  protected handleBoolean(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleBoolean(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { prefix: "type", typing: "bool", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNull(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNull(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { prefix: "type", typing: "serde_json::Value", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNumber(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNumber(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { prefix: "type", typing: "f64", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleInteger(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleInteger(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { prefix: "type", typing: "i64", documentationComment: this.buildDocs(s) };
   }
 
   /**
    * Currently I dont know of a good way to handle this with rust.
    */
-  protected handleNumericalEnum(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleNumericalEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
     if (s.type === "integer") {
       return this.handleInteger(s);
     }
     return this.handleNumber(s);
   }
 
-  protected handleString(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleString(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "String" };
   }
 
-  protected handleStringEnum(s: JSONSchema): TypeIntermediateRepresentation {
-    const sEnum = s.enum as UnorderedSetOfAnyL9Fw4VUOyeAFYsFq;
+  protected handleStringEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sEnum = s.enum as Enum;
     const enumFields = sEnum
       .filter((enumField: any) => typeof enumField === "string")
       .map((enumField: string) => [
@@ -69,23 +69,23 @@ export default class Rust extends CodeGen {
     };
   }
 
-  protected handleOrderedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleOrderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       prefix: "type",
-      typing: `(${this.getJoinedSafeTitles(s.items as JSONSchema[])})`,
+      typing: `(${this.getJoinedSafeTitles(s.items as JSONMetaSchema[])})`,
       documentationComment: this.buildDocs(s),
     };
   }
 
-  protected handleUnorderedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUnorderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       prefix: "type",
-      typing: `Vec<${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}>`,
+      typing: `Vec<${this.getSafeTitle(this.refToTitle(s.items as JSONMetaSchema))}>`,
       documentationComment: this.buildDocs(s),
     };
   }
 
-  protected handleUntypedArray(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntypedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       prefix: "type",
       typing: `Vec<serde_json::Value>`,
@@ -93,8 +93,8 @@ export default class Rust extends CodeGen {
     };
   }
 
-  protected handleObject(s: JSONSchema): TypeIntermediateRepresentation {
-    const sProps = s.properties as { [k: string]: JSONSchema };
+  protected handleObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const sProps = s.properties as { [k: string]: JSONMetaSchema };
     const propertyTypings = Object.keys(sProps).reduce((typings: string[], key: string) => {
       const propSchema = sProps[key];
       let isRequired = false;
@@ -121,7 +121,7 @@ export default class Rust extends CodeGen {
     };
   }
 
-  protected handleUntypedObject(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntypedObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
       prefix: "type",
       typing: "HashMap<String, Option<serde_json::Value>>",
@@ -129,26 +129,26 @@ export default class Rust extends CodeGen {
     };
   }
 
-  protected handleAnyOf(s: JSONSchema): TypeIntermediateRepresentation {
-    return this.buildEnum(s.anyOf as JSONSchema[]);
+  protected handleAnyOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return this.buildEnum(s.anyOf as JSONMetaSchema[]);
   }
 
   /**
    * I dont have a great way of doing this one either. The best I can do is call it an untyped object
    */
-  protected handleAllOf(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleAllOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return this.handleUntypedObject(s);
   }
 
-  protected handleOneOf(s: JSONSchema): TypeIntermediateRepresentation {
-    return this.buildEnum(s.oneOf as JSONSchema[]);
+  protected handleOneOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return this.buildEnum(s.oneOf as JSONMetaSchema[]);
   }
 
-  protected handleUntyped(s: JSONSchema): TypeIntermediateRepresentation {
+  protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "serde_json::Value" };
   }
 
-  private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
+  private buildEnum(s: JSONMetaSchema[]): TypeIntermediateRepresentation {
     return {
       macros: "#[derive(Serialize, Deserialize)]",
       prefix: "enum",
@@ -160,7 +160,7 @@ export default class Rust extends CodeGen {
     };
   }
 
-  private buildDocs(s: JSONSchema): string | undefined {
+  private buildDocs(s: JSONMetaSchema): string | undefined {
     const docStringLines: string[] = [];
 
     if (s.description) {

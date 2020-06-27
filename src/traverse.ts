@@ -1,10 +1,10 @@
 import merge from "lodash.merge";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 /**
  * Signature of the mutation method passed to traverse.
  */
-export type MutationFunction = (schema: JSONSchema) => JSONSchema;
+export type MutationFunction = (schema: JSONMetaSchema) => JSONMetaSchema;
 
 /**
  * The options you can use when traversing.
@@ -20,7 +20,7 @@ export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
 };
 
-const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]) => {
+const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]) => {
   const foundInRecursiveStack = recursiveStack.find((recSchema) => recSchema === s);
   if (foundInRecursiveStack) {
     return foundInRecursiveStack;
@@ -40,24 +40,24 @@ const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]) => {
  *
  */
 export default function traverse(
-  schema: JSONSchema,
+  schema: JSONMetaSchema,
   mutation: MutationFunction,
   traverseOptions = defaultOptions,
   depth = 0,
-  recursiveStack: JSONSchema[] = [],
-  prePostMap: Array<[JSONSchema, JSONSchema]> = [],
+  recursiveStack: JSONMetaSchema[] = [],
+  prePostMap: Array<[JSONMetaSchema, JSONMetaSchema]> = [],
 ) {
-  const mutableSchema: JSONSchema = { ...schema };
+  const mutableSchema: JSONMetaSchema = { ...schema };
   recursiveStack.push(schema);
 
   prePostMap.push([schema, mutableSchema]);
 
-  const rec = (s: JSONSchema) => {
+  const rec = (s: JSONMetaSchema) => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       const [, cycledMutableSchema] = prePostMap.find(
         ([orig]) => foundCycle === orig,
-      ) as [JSONSchema, JSONSchema];
+      ) as [JSONMetaSchema, JSONMetaSchema];
       return cycledMutableSchema;
     }
 
@@ -87,7 +87,7 @@ export default function traverse(
       if (foundCycle) {
         const [, cycledMutableSchema] = prePostMap.find(
           ([orig]) => foundCycle === orig,
-        ) as [JSONSchema, JSONSchema];
+        ) as [JSONMetaSchema, JSONMetaSchema];
         mutableSchema.items = cycledMutableSchema;
       } else {
         mutableSchema.items = traverse(
@@ -101,10 +101,10 @@ export default function traverse(
       }
     }
   } else if (schema.properties) {
-    const sProps: { [key: string]: JSONSchema } = schema.properties;
+    const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
     mutableSchema.properties = Object.keys(sProps)
       .reduce(
-        (r: JSONSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
+        (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
         {},
       );
   }

@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 import JsonSchemaToTypes from "../index";
 import { capitalize } from "../utils";
 import { default as refParser } from "json-schema-ref-parser";
@@ -11,7 +11,7 @@ interface TestCase {
   name: string;
   language: string;
   expectedTypings: Promise<string>;
-  schema: Promise<JSONSchema>;
+  schema: Promise<JSONMetaSchema>;
 }
 
 const [readDir, readFile] = [promisify(fs.readdir), promisify(fs.readFile)];
@@ -40,7 +40,7 @@ const getTestCases = async (names: string[], languages: string[]): Promise<TestC
         expectedTypings: readFile(`${expectedsDir}/${language}/${name}.${language}`, "utf8").then((s) => s.trim()),
         schema: refParser.dereference(
           JSON.parse(await readFile(`${testCaseDir}/${name}.json`, "utf8")),
-        ) as Promise<JSONSchema>,
+        ) as Promise<JSONMetaSchema>,
       })));
     }),
   );
