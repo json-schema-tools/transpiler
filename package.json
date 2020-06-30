@@ -28,7 +28,7 @@
     "jest": "^24.8.0",
     "ts-jest": "^24.1.0",
     "tslint": "^6.1.2",
-    "typedoc": "^0.15.5",
+    "typedoc": "^0.17.8",
     "typescript": "^3.7.3"
   },
   "dependencies": {
