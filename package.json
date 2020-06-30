@@ -32,8 +32,8 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
+    "@json-schema-tools/dereferencer": "^1.0.5",
     "@json-schema-tools/traverse": "^1.1.2",
-    "json-schema-ref-parser": "^9.0.1",
     "lodash.deburr": "^4.1.0",
     "lodash.merge": "^4.6.2",
     "lodash.trim": "^4.5.1",

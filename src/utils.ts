@@ -59,6 +59,7 @@ const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
  */
 export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema {
   if (schema.title) { return schema; }
+  if (schema.$ref) { return schema; }
 
   const subSchemaTitleErrors = ensureSubschemaTitles(schema);
   if (subSchemaTitleErrors.length > 0) {
