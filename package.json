@@ -16,7 +16,7 @@
   "devDependencies": {
     "@json-schema-tools/meta-schema": "^1.0.10",
     "@types/inquirer": "^6.5.0",
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^26.0.3",
     "@types/json-schema": "^7.0.5",
     "@types/lodash.deburr": "^4.1.6",
     "@types/lodash.merge": "^4.6.6",
