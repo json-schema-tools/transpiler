@@ -18,7 +18,12 @@ export class JsonSchemaToTypes {
     const useMerge = s instanceof Array;
     const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
     const schemaWithTitles = inputSchema.map((ss) => ensureSchemaTitles(ss));
+    console.log("schema with titles:", schemaWithTitles); //tslint:disable-line
     const reffed = schemaWithTitles.map((ss) => collectAndRefSchemas(ss));
+    console.log("reffed schema:", reffed[0]); //tslint:disable-line
+    const are = reffed[0] as JSONMetaSchema;
+    const bc = are.definitions;
+    console.log("reffed insides:", bc); //tslint:disable-line
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
