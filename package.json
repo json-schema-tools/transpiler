@@ -29,14 +29,14 @@
     "ts-jest": "^24.1.0",
     "tslint": "^6.1.2",
     "typedoc": "^0.17.8",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.3",
+    "node-fetch": "^2.6.0"
   },
   "dependencies": {
     "@json-schema-tools/dereferencer": "^1.0.5",
     "@json-schema-tools/traverse": "^1.1.2",
     "lodash.deburr": "^4.1.0",
     "lodash.merge": "^4.6.2",
-    "lodash.trim": "^4.5.1",
-    "node-fetch": "^2.6.0"
+    "lodash.trim": "^4.5.1"
   }
 }
