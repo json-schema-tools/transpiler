@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/json-schema-tools/transpiler/compare/1.0.0...1.0.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* fix deps ([7d44dd3](https://github.com/json-schema-tools/transpiler/commit/7d44dd30c58ac18d57b255b05032300cee61437f))
+* update packages and typings ([c243795](https://github.com/json-schema-tools/transpiler/commit/c2437959a953f51acd4629022802e0f52d18a9ad))
+* use our own dereffer ([2552a11](https://github.com/json-schema-tools/transpiler/commit/2552a11dd919c80dd20f581f8969af2f5e236008))
+
 # 1.0.0 (2020-06-25)
 
 
