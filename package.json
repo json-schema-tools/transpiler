@@ -33,7 +33,7 @@
     "node-fetch": "^2.6.0"
   },
   "dependencies": {
-    "@json-schema-tools/dereferencer": "^1.0.5",
+    "@json-schema-tools/dereferencer": "^1.0.7",
     "@json-schema-tools/traverse": "^1.2.2",
     "lodash.deburr": "^4.1.0",
     "lodash.trim": "^4.5.1"
