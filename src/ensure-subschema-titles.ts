@@ -45,7 +45,7 @@ export const ensureSubschemaTitles = (s: JSONMetaSchema): NoTitleError[] => {
   }
 
   if (s.properties) {
-    const propVals = Object.entries(s.properties) as Array<[string, JSONMetaSchema]>;
+    const propVals = Object.entries(s.properties) as [string, JSONMetaSchema][];
     propVals.forEach(([key, ss]: [string, JSONMetaSchema]) => {
       if (ss.title === undefined) { errors.push(new NoTitleError(s, `properties.${key}`, ss)); }
     });

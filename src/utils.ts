@@ -1,9 +1,9 @@
 import deburr from "lodash.deburr";
 import trim from "lodash.trim";
-import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Properties, Title } from "@json-schema-tools/meta-schema";
 import { ensureSubschemaTitles } from "./ensure-subschema-titles";
 import { createHash } from "crypto";
-import traverse from "./traverse";
+import traverse from "@json-schema-tools/traverse";
 
 /**
  * Capitalize the first letter of the string.
@@ -120,7 +120,9 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
 
   const hash = createHash("sha1").update(asString).digest("base64");
   const friendlyHash = hash.replace(hashRegex, "").slice(0, 8);
-  return { ...schema, title: `${prefix}${friendlyHash}` };
+
+  schema.title = `${prefix}${friendlyHash}`;
+  return schema;
 }
 
 /**
@@ -137,7 +139,11 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
  * @category SchemaImprover
  *
  */
-export const ensureSchemaTitles = (s: JSONMetaSchema): JSONMetaSchema => traverse(s, getDefaultTitleForSchema);
+export const ensureSchemaTitles = (s: JSONMetaSchema): JSONMetaSchema => traverse(
+  s,
+  getDefaultTitleForSchema,
+  { mutable: true },
+);
 
 /**
  * Returns the schema where all subschemas have been replaced with $refs and added to definitions
@@ -152,13 +158,21 @@ export const ensureSchemaTitles = (s: JSONMetaSchema): JSONMetaSchema => travers
  */
 export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
   const definitions: any = {};
-  return {
-    ...traverse(s, (subSchema: JSONMetaSchema) => {
+
+  traverse(
+    s,
+    (subSchema: JSONMetaSchema) => {
       definitions[subSchema.title as string] = subSchema;
       return { $ref: `#/definitions/${subSchema.title}` };
-    }),
-    definitions,
-  };
+    },
+    { mutable: true, skipFirstMutation: true },
+  );
+
+  if (typeof s === "object") {
+    s.definitions = definitions;
+  }
+
+  return s;
 }
 
 export function combineSchemas(s: JSONMetaSchema[]): JSONMetaSchema {

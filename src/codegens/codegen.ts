@@ -18,7 +18,10 @@ export abstract class CodeGen {
    * Given a schema, it will generate code for both the schema and the schemas in its definitions section
    */
   public transpile() {
-    const rootSchemaTypes = this.generate(this.schema, this.toIR(this.schema));
+    let rootSchemaTypes = "";
+    if (this.schema.$ref === undefined) {
+      rootSchemaTypes = this.generate(this.schema, this.toIR(this.schema));
+    }
     const defsSchemaTypes: string[] = [];
     if (this.schema.definitions) {
       Object
