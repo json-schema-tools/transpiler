@@ -1,6 +1,6 @@
 import deburr from "lodash.deburr";
 import trim from "lodash.trim";
-import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Properties, Title } from "@json-schema-tools/meta-schema";
 import { ensureSubschemaTitles } from "./ensure-subschema-titles";
 import { createHash } from "crypto";
 import traverse from "@json-schema-tools/traverse";
@@ -158,13 +158,21 @@ export const ensureSchemaTitles = (s: JSONMetaSchema): JSONMetaSchema => travers
  */
 export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
   const definitions: any = {};
-  return {
-    ...traverse(s, (subSchema: JSONMetaSchema) => {
+
+  traverse(
+    s,
+    (subSchema: JSONMetaSchema) => {
       definitions[subSchema.title as string] = subSchema;
       return { $ref: `#/definitions/${subSchema.title}` };
-    }),
-    definitions,
-  };
+    },
+    { mutable: true, skipFirstMutation: true },
+  );
+
+  if (typeof s === "object") {
+    s.definitions = definitions;
+  }
+
+  return s;
 }
 
 export function combineSchemas(s: JSONMetaSchema[]): JSONMetaSchema {
