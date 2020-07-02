@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/json-schema-tools/transpiler/compare/1.0.1...1.1.0) (2020-07-02)
+
+
+### Bug Fixes
+
+* all green baby! ([75ee5f4](https://github.com/json-schema-tools/transpiler/commit/75ee5f4109813a8a654be9f14492107a5612aa37))
+* update dereferencer ([af4db1b](https://github.com/json-schema-tools/transpiler/commit/af4db1b06c44d0a76322f353afe07071fdc5ee35))
+
+
+### Features
+
+* integrate new traverse ([8227adb](https://github.com/json-schema-tools/transpiler/commit/8227adb50977eb1276a5c501c06ce3c098df25ed))
+
 ## [1.0.1](https://github.com/json-schema-tools/transpiler/compare/1.0.0...1.0.1) (2020-06-30)
 
 
