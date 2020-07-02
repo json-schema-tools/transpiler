@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@json-schema-tools/transpiler</title>
+	<meta name="description" content="Documentation for @json-schema-tools/transpiler">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@json-schema-tools/transpiler</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@json-schema-tools/transpiler</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#json-schema-transpiler" id="json-schema-transpiler" style="color: inherit; text-decoration: none;">
+					<h1>JSON Schema Transpiler</h1>
+				</a>
+				<p>Turn your JSON Schemas into types to be used in various languages.</p>
+				<ul>
+					<li>Generate types for:<ul>
+							<li>Golang</li>
+							<li>Typescript</li>
+							<li>Rust</li>
+							<li>Python</li>
+						</ul>
+					</li>
+					<li>handles cycle detection</li>
+					<li>automatically determines references</li>
+					<li>includes documentation annotations for easy documentation generation with native language tools.</li>
+					<li>minimal dependencies (wip)</li>
+				</ul>
+				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
+					<h2>Getting Started</h2>
+				</a>
+				<p><code>npm install @json-schema-tools/transpiler</code></p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> JsonSchemaTranspiler = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;@json-schema-tools/transpiler&quot;</span>).default;
+
+<span class="hljs-keyword">const</span> mySchema = {
+  <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;PlowAnimals&quot;</span>,
+  <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;an array of animals that are good at pulling things&quot;</span>,
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>,
+  <span class="hljs-string">&quot;items&quot;</span>: {
+    <span class="hljs-string">&quot;oneOf&quot;</span>: [
+      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Horse&quot;</span> },
+      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Donkey&quot;</span> },
+      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;YaMadda&quot;</span> },
+    ]
+  }
+};
+
+<span class="hljs-keyword">const</span> transpiler = <span class="hljs-keyword">new</span> JsonSchemaTranspiler(mySchema);
+
+<span class="hljs-built_in">console</span>.log(transpiler.toTypescript());
+<span class="hljs-built_in">console</span>.log(transpiler.toRust());
+<span class="hljs-built_in">console</span>.log(transpiler.to(<span class="hljs-string">&quot;go&quot;</span>)); <span class="hljs-comment">// same thing, different form/interface</span>
+<span class="hljs-built_in">console</span>.log(transpiler.to(<span class="hljs-string">&quot;python&quot;</span>)); <span class="hljs-comment">// works with shorthand of the language aswell (py or python)</span></code></pre>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h3>Contributing</h3>
+				</a>
+				<p>How to contribute, build and release are outlined in <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>, <a href="BUILDING.md">BUILDING.md</a> and <a href="RELEASING.md">RELEASING.md</a> respectively. Commits in this repository follow the <a href="CONVENTIONAL_COMMITS.md">CONVENTIONAL_COMMITS.md</a> specification.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
