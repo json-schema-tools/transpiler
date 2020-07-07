@@ -1,3 +1,7 @@
 {
-  "$ref": "https://raw.githubusercontent.com/json-schema-tools/meta-schema/master/meta-schema.json"
+  "title": "lesSchema",
+  "type": "array",
+  "items": {
+    "$ref": "https://raw.githubusercontent.com/json-schema-tools/meta-schema/master/meta-schema.json"
+  }
 }

@@ -58,9 +58,9 @@ const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
  *
  */
 export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema {
-  if (schema.title) { return schema; }
-  if (schema.$ref) { return schema; }
   if ((schema as any) === true || (schema as any) === false) { return schema; }
+  if (schema.title) { return schema; }
+  if (schema.$ref) { throw new Error("There must not be any refs at this point. Ensure the passed in schema is completely dereferenced."); }
 
   const subSchemaTitleErrors = ensureSubschemaTitles(schema);
   if (subSchemaTitleErrors.length > 0) {
@@ -164,6 +164,10 @@ export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
     s,
     (subSchema: JSONMetaSchema) => {
       let t = "";
+      if (subSchema === s) {
+        definitions[s.title as Title] = { $ref: `#` };
+        return subSchema;
+      }
 
       if (subSchema.title) {
         t = subSchema.title;
@@ -190,7 +194,7 @@ export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
       definitions[t as string] = subSchema;
       return { $ref: `#/definitions/${t}` };
     },
-    { mutable: true, skipFirstMutation: true },
+    { mutable: true },
   );
 
   if (typeof s === "object") {

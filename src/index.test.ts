@@ -168,4 +168,23 @@ describe("Transpiler", () => {
       });
     });
   });
+
+  it("creates a fully (maximally) reffed megaschema", () => {
+    const testSchema = {
+      title: "foo bar",
+      type: "object",
+      properties: {
+        foo: {
+          type: "string",
+        },
+        bar: {},
+      },
+    };
+
+    testSchema.properties.bar = testSchema;
+
+    const transpiler = new Transpiler(testSchema);
+    expect(transpiler.megaSchema).toBe("");
+  });
+
 });

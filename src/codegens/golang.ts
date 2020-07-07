@@ -77,10 +77,6 @@ export default class Golang extends CodeGen {
   }
 
   protected handleUnorderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    if (s.items.$ref === undefined) {
-      console.log(s); // tslint:disable-line
-    }
-
     return {
       typing: `[]${this.getSafeTitle(this.refToTitle(s.items as JSONMetaSchema))}`,
       documentationComment: this.buildDocs(s),
@@ -211,14 +207,7 @@ ${components}
 
   protected handleAnyOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
     const sAny = s.anyOf as JSONMetaSchema[];
-    const titles = sAny.map((ss: JSONMetaSchema) => {
-      if (ss.$ref === undefined) {
-        console.log("geting title from ref", s, sAny, ss); // tslint:disable-line
-        return this.getSafeTitle(ss.title as string);
-      }
-      return this.getSafeTitle(this.refToTitle(ss));
-    });
-    // const titles = sAny.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
+    const titles = sAny.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
     const anyOfType = titles.reduce((typings: string[], anyOfTitle: string) => {
       return [...typings, `\t${anyOfTitle.padEnd(titleMaxLength)} *${anyOfTitle}`]; // Here, the pointer is added.
@@ -243,14 +232,7 @@ ${components}
 
   protected handleOneOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
     const sOne = s.oneOf as JSONMetaSchema[];
-    const titles = sOne.map((ss: JSONMetaSchema) => {
-      if (ss.$ref === undefined) {
-        console.log("geting title from ref", s, sOne, ss); // tslint:disable-line
-        return this.getSafeTitle(ss.title as string);
-      }
-      return this.getSafeTitle(this.refToTitle(ss));
-    });
-    // const titles = sOne.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
+    const titles = sOne.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
     const oneOfType = sOne.reduce((typings: string[], oneOfSchema: JSONMetaSchema, i: number) => {
       const oneOfTitle = titles[i];
