@@ -131,6 +131,16 @@ export default class Typescript extends CodeGen {
     };
   }
 
+  protected handleCompositeType(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
+  }
+
+  protected handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return {
+      typing: `type Always${(s as any) === true ? "True" : "False"} = any;`,
+    };
+  }
+
   protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
   }

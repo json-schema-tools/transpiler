@@ -191,6 +191,20 @@ export default class Python extends CodeGen {
     };
   }
 
+  protected handleCompositeType(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
+  }
+
+  protected handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    const t = `Always${(s as any) === true ? "True" : "False"}`;
+    return {
+      typing: [
+        "from typing import Any, NewType",
+        `${t} = NewType("${t}", Any)`,
+      ].join("\n"),
+    };
+  }
+
   protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
     const title = this.getSafeTitle(s.title as string);
     return {

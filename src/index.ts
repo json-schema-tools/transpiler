@@ -10,7 +10,7 @@ export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "g
 /**
  * Provides a high-level interface for getting typings given a schema.
  */
-export class JsonSchemaToTypes {
+export class Transpiler {
   [toLang: string]: any;
   public megaSchema: JSONMetaSchema;
 
@@ -47,7 +47,7 @@ export class JsonSchemaToTypes {
   }
 
   /**
-   * Alias to [[JsonSchemaToTypes.toTypescript]]
+   * Alias to [[Transpiler.toTypescript]]
    *
    * @category Typescript
    * @category TargetCodeGenerator
@@ -147,4 +147,4 @@ export class JsonSchemaToTypes {
   }
 }
 
-export default JsonSchemaToTypes;
+export default Transpiler;

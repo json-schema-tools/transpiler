@@ -20,14 +20,30 @@ export abstract class CodeGen {
   public transpile() {
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
-      rootSchemaTypes = this.generate(this.schema, this.toIR(this.schema));
+      const ir = this.toIR(this.schema);
+
+      if ((this.schema as any) === true || (this.schema as any) === false) {
+        rootSchemaTypes = ir.typing;
+      }
+
+      rootSchemaTypes = this.generate(this.schema, ir);
     }
+
     const defsSchemaTypes: string[] = [];
     if (this.schema.definitions) {
       Object
         .entries(this.schema.definitions)
         .filter(([n]: [string, any]) => n !== this.schema.title)
-        .forEach(([n, schema]: [string, any]) => defsSchemaTypes.push(this.generate(schema, this.toIR(schema))));
+        .forEach(([n, schema]: [string, any]) => {
+          const ir = this.toIR(schema);
+
+          if ((schema as any) === true || (schema as any) === false) {
+            defsSchemaTypes.push(ir.typing);
+            return;
+          }
+
+          defsSchemaTypes.push(this.generate(schema, ir));
+        });
     }
 
     return [
@@ -69,11 +85,24 @@ export abstract class CodeGen {
   protected abstract handleAllOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
   protected abstract handleOneOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
 
+  protected abstract handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation;
   protected abstract handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation;
 
   protected refToTitle(schema: JSONMetaSchema) {
     if (schema.$ref === undefined) {
-      throw new Error("the Subschemas of the schema must use $ref. Inline subschemas are not allowed.");
+      let stringed = "";
+      try {
+        stringed = JSON.stringify(schema);
+      } catch (e) {
+        stringed = `title: ${schema.title} - type: ${schema.type}`;
+      }
+      throw new Error(
+        [
+          "the Subschemas of the schema must use $ref. Inline subschemas are not allowed.",
+          "the schema in question: ",
+          stringed,
+        ].join("\n"),
+      );
     }
     return schema.$ref.replace("#/definitions/", "");
   }
@@ -83,6 +112,10 @@ export abstract class CodeGen {
   }
 
   private toIR(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    if ((s as any) === true || (s as any) === false) {
+      return this.handleConstantBool(s);
+    }
+
     switch (s.type instanceof Array ? s.type[0] : s.type) {
       case "boolean": return this.handleBoolean(s);
 

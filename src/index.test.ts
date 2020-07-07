@@ -1,11 +1,11 @@
-import JsonSchemaToTypes from "./index";
+import Transpiler from "./index";
 import { getDefaultTitleForSchema } from "./utils";
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { Definitions } from "@json-schema-tools/meta-schema";
 
-describe("JsonSchemaToTypes", () => {
+describe("Transpiler", () => {
 
   describe("getDefaultTitleForSchema", () => {
-    const transpiler = new JsonSchemaToTypes({});
+    const transpiler = new Transpiler({});
 
     it("does not change anything if theres already a title", () => {
       const testSchema = { title: "foo" };
@@ -14,7 +14,7 @@ describe("JsonSchemaToTypes", () => {
     });
 
     it("can be instantiated with a schema with subschemas", () => {
-      const t = new JsonSchemaToTypes({
+      const t = new Transpiler({
         title: "test",
         type: "object",
         properties: {
@@ -22,12 +22,32 @@ describe("JsonSchemaToTypes", () => {
           bar: { type: "string" },
         },
       });
-      const megaDefs = t.megaSchema.definitions as JSONMetaSchema;
+      const megaDefs = t.megaSchema.definitions as Definitions;
       expect(megaDefs.string_doaGddGA).toBeDefined();
     });
 
     it("can output to typescript", () => {
       expect(transpiler.toTypescript()).toEqual("export type AnyL9Fw4VUO = any;");
+    });
+
+    it("can deal with boolean schema at the root", () => {
+      const t = new Transpiler((true as any));
+      expect(t).toBeDefined();
+    });
+
+    it("can deal with nested boolean schema", () => {
+      const t = new Transpiler({
+        type: "object",
+        properties: {
+          boolSchemaT: true,
+          boolSchemaF: false,
+        },
+      });
+      expect(t).toBeDefined();
+
+      const megaDefs = t.megaSchema.definitions as Definitions;
+      expect(megaDefs.AlwaysTrue).toBe(true);
+      expect(megaDefs.AlwaysFalse).toBe(false);
     });
 
     describe("subschemas must have titles themselves", () => {

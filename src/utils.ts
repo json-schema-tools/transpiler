@@ -60,6 +60,7 @@ const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
 export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema {
   if (schema.title) { return schema; }
   if (schema.$ref) { return schema; }
+  if ((schema as any) === true || (schema as any) === false) { return schema; }
 
   const subSchemaTitleErrors = ensureSubschemaTitles(schema);
   if (subSchemaTitleErrors.length > 0) {
@@ -162,8 +163,32 @@ export function collectAndRefSchemas(s: JSONMetaSchema): JSONMetaSchema {
   traverse(
     s,
     (subSchema: JSONMetaSchema) => {
-      definitions[subSchema.title as string] = subSchema;
-      return { $ref: `#/definitions/${subSchema.title}` };
+      let t = "";
+
+      if (subSchema.title) {
+        t = subSchema.title;
+      } else if ((subSchema as any) === true) {
+        t = "AlwaysTrue";
+      } else if ((subSchema as any) === false) {
+        t = "AlwaysFalse";
+      } else {
+        let stringed = "";
+        try {
+          stringed = JSON.stringify(subSchema);
+        } catch (e) {
+          stringed = `title: ${subSchema.title} - type: ${subSchema.type}`;
+        }
+        throw new Error(
+          [
+            "Cannot combine schemas unless they all have titles. Ensure that all schemas have titles and try again",
+            "schema in question:",
+            stringed,
+          ].join("\n"),
+        );
+      }
+
+      definitions[t as string] = subSchema;
+      return { $ref: `#/definitions/${t}` };
     },
     { mutable: true, skipFirstMutation: true },
   );

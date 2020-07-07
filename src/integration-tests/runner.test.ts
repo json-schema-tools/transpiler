@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
-import JsonSchemaToTypes from "../index";
+import Transpiler from "../index";
 import { capitalize } from "../utils";
 import Dereferencer from "@json-schema-tools/dereferencer";
 import { promisify } from "util";
@@ -37,6 +37,7 @@ const getTestCases = async (names: string[], languages: string[]): Promise<TestC
       return Promise.all(names.map(async (name) => {
         const dereffer = new Dereferencer(JSON.parse(await readFile(`${testCaseDir}/${name}.json`, "utf8")));
         const schema = await dereffer.resolve();
+
         const expectationFile = `${expectedsDir}/${language}/${name}.${language}`;
         return {
           name,
@@ -68,7 +69,6 @@ describe("Integration tests", () => {
       testCaseNames = await getTestCasesNames();
     } catch (e) {
       console.error("Error in integration test setup: getTestCasesNames");
-      console.error(e);
       throw e;
       // process.exit(1);
     }
@@ -76,7 +76,6 @@ describe("Integration tests", () => {
       testCases = await getTestCases(testCaseNames, languages);
     } catch (e) {
       console.error("Error in integration test setup: getTestCases");
-      console.error(e);
       throw e;
       // process.exit(1);
     }
@@ -87,19 +86,25 @@ describe("Integration tests", () => {
   });
 
   it("checks out", async () => {
-    expect.assertions(1); // testCases.length);
+    expect.assertions(testCases.length);
 
     const proms = testCases.map(async (testCase: TestCase) => {
-      if (testCase.name !== "circular-reference") {
-        return Promise.resolve();
+      let transpiler;
+      try {
+        transpiler = new Transpiler(await testCase.schema);
+      } catch (e) {
+        console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}`); //tslint:disable-line
+        throw e;
       }
 
-      if (testCase.language !== "ts") {
-        return Promise.resolve();
+      let typings;
+      try {
+        typings = transpiler[`to${capitalize(testCase.language)}`]();
+      } catch (e) {
+        console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}`); //tslint:disable-line
+        console.error("MegaSchema:", transpiler.megaSchema); //tslint:disable-line
+        throw e;
       }
-
-      const transpiler = new JsonSchemaToTypes(await testCase.schema);
-      const typings = transpiler[`to${capitalize(testCase.language)}`]();
       return expect(typings).toBe(await testCase.expectedTypings);
     });
 
