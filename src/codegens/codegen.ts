@@ -20,6 +20,10 @@ export abstract class CodeGen {
   public transpile() {
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
+      if ((this.schema as any) !== true && (this.schema as any) !== false) { // hack
+        this.schema.$ref = `#/definitions/${this.schema.title}`; // hack
+      } // hack
+
       const ir = this.toIR(this.schema);
 
       if ((this.schema as any) === true || (this.schema as any) === false) {
@@ -27,6 +31,10 @@ export abstract class CodeGen {
       }
 
       rootSchemaTypes = this.generate(this.schema, ir);
+
+      if (this.schema.$ref) { // hack
+        delete this.schema.$ref; // hack
+      } // hack
     }
 
     const defsSchemaTypes: string[] = [];

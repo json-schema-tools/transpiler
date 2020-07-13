@@ -1,5 +1,7 @@
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
-import { capitalize, ensureSchemaTitles, collectAndRefSchemas, combineSchemas } from "./utils";
+import { capitalize, combineSchemas } from "./utils";
+import titleizer from "./titleizer";
+import referencer from "./referencer";
 import { CodeGen } from "./codegens/codegen";
 import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
@@ -17,13 +19,17 @@ export class Transpiler {
   constructor(s: JSONMetaSchema | JSONMetaSchema[]) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
-    const schemaWithTitles = inputSchema.map((ss) => ensureSchemaTitles(ss));
-    const reffed = schemaWithTitles.map((ss) => collectAndRefSchemas(ss));
+    const schemaWithTitles = inputSchema.map(titleizer);
+    // console.log(schemaWithTitles); // tslint:disable-line
+    const reffed = schemaWithTitles.map(referencer);
+    // console.log(reffed); // tslint:disable-line
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
       [this.megaSchema] = reffed;
     }
+
+    // console.log(this.megaSchema); // tslint:disable-line
   }
 
   /**
