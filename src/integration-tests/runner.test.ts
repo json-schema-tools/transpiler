@@ -126,7 +126,6 @@ describe("Integration tests", () => {
     expect.assertions(testCases.length);
 
     const proms = testCases.map(async (testCase: TestCase) => {
-      console.log(`Integration Test: ${testCase.name}.${testCase.language}`); // tslint:disable-line
       let transpiler;
       try {
         transpiler = new Transpiler(testCase.schema);

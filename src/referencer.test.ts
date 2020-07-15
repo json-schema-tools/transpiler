@@ -1,7 +1,7 @@
 import referencer from "./referencer";
 import { NoTitleError } from "./ensure-subschema-titles";
 import { Properties, Definitions } from "@json-schema-tools/meta-schema";
-import { JSONSchema } from "./integration-tests/expecteds/ts/json-schema-meta-schema";
+import { JSONMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("referencer", () => {
   it("does not change anything if are no sub schemas", () => {
