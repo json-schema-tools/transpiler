@@ -97,6 +97,14 @@ export abstract class CodeGen {
   protected abstract handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation;
 
   protected refToTitle(schema: JSONMetaSchema) {
+    if (schema as any === true) {
+      return "AlwaysTrue";
+    }
+
+    if (schema as any === false) {
+      return "AlwaysFalse";
+    }
+
     if (schema.$ref === undefined) {
       let stringed = "";
       try {

@@ -72,45 +72,38 @@ type SinkComplaints struct {
 }
 func (a *SinkComplaints) UnmarshalJSON(bytes []byte) error {
 	var ok bool
-
 	var myWhining Whining
 	if err := json.Unmarshal(bytes, &myWhining); err == nil {
 		ok = true
 		a.Whining = &myWhining
 	}
-
 	var myBurns Burns
 	if err := json.Unmarshal(bytes, &myBurns); err == nil {
 		ok = true
 		a.Burns = &myBurns
 	}
-
 	var myFeelingOfEmptiness FeelingOfEmptiness
 	if err := json.Unmarshal(bytes, &myFeelingOfEmptiness); err == nil {
 		ok = true
 		a.FeelingOfEmptiness = &myFeelingOfEmptiness
 	}
-
-	// Did unmarshal at least one of the simple objects.
 	if ok {
 		return nil
 	}
 	return errors.New("failed to unmarshal any of the object properties")
 }
-func(o SinkComplaints) MarshalJSON() ([]byte, error) {
-  out := []interface{}
-  
-  if o.Whining != nil {
-    out = append(out, o.Whining)
-  }
-  if o.Burns != nil {
-    out = append(out, o.Burns)
-  }
-  if o.FeelingOfEmptiness != nil {
-    out = append(out, o.FeelingOfEmptiness)
-  }
-
-  return json.Marshal(out)
+func (o SinkComplaints) MarshalJSON() ([]byte, error) {
+	out := []interface{}
+	if o.Whining != nil {
+		out = append(out, o.Whining)
+	}
+	if o.Burns != nil {
+		out = append(out, o.Burns)
+	}
+	if o.FeelingOfEmptiness != nil {
+		out = append(out, o.FeelingOfEmptiness)
+	}
+	return json.Marshal(out)
 }
 type European bool
 type DrainPipeInches int64
@@ -120,36 +113,30 @@ type MeasurementStandard struct {
 }
 func (a *MeasurementStandard) UnmarshalJSON(bytes []byte) error {
 	var ok bool
-
 	var myEuropean European
 	if err := json.Unmarshal(bytes, &myEuropean); err == nil {
 		ok = true
 		a.European = &myEuropean
 	}
-
 	var myDrainPipeInches DrainPipeInches
 	if err := json.Unmarshal(bytes, &myDrainPipeInches); err == nil {
 		ok = true
 		a.DrainPipeInches = &myDrainPipeInches
 	}
-
-	// Did unmarshal at least one of the simple objects.
 	if ok {
 		return nil
 	}
 	return errors.New("failed to unmarshal any of the object properties")
 }
-func(o MeasurementStandard) MarshalJSON() ([]byte, error) {
-  out := []interface{}
-  
-  if o.European != nil {
-    out = append(out, o.European)
-  }
-  if o.DrainPipeInches != nil {
-    out = append(out, o.DrainPipeInches)
-  }
-
-  return json.Marshal(out)
+func (o MeasurementStandard) MarshalJSON() ([]byte, error) {
+	out := []interface{}
+	if o.European != nil {
+		out = append(out, o.European)
+	}
+	if o.DrainPipeInches != nil {
+		out = append(out, o.DrainPipeInches)
+	}
+	return json.Marshal(out)
 }
 type KitchenSink struct {
 	Bool           *IsMetal             `json:"bool,omitempty"`

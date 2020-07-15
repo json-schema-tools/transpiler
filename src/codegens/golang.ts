@@ -18,8 +18,7 @@ export default class Golang extends CodeGen {
         `${this.getSafeTitle(s.title as string)} `,
         ir.prefix ? `${ir.prefix} ` : "",
       ].join(""),
-      ir.typing,
-      ir.macros,
+      ir.macros ? [ir.typing, ir.macros].join("\n") : ir.typing,
     ].join("");
   }
 
@@ -109,7 +108,7 @@ export default class Golang extends CodeGen {
       safeTitleForPropSchema = safeTitleForPropSchema.padEnd(propTitleMaxLength);
       return [
         ...typings,
-        `\t${safeTitle} *${safeTitleForPropSchema} \`json:"${key}${isRequired ? "" : ",omitempty"}"\``,
+        "\t" + `${safeTitle} *${safeTitleForPropSchema} \`json:"${key}${isRequired ? "" : ",omitempty"}"\``,
       ];
     }, []);
 
@@ -128,81 +127,86 @@ export default class Golang extends CodeGen {
 
   protected unmarshalAnyOfMacro(typeTitle: string, items: string[]): any {
     const components = items.map((itemTitle) => {
-      return `
-	var my${itemTitle} ${itemTitle}
-	if err := json.Unmarshal(bytes, &my${itemTitle}); err == nil {
-		ok = true
-		a.${itemTitle} = &my${itemTitle}
-	}`;
+      return [
+        `var my${itemTitle} ${itemTitle}`,
+        `if err := json.Unmarshal(bytes, &my${itemTitle}); err == nil {`,
+        "\t" + "ok = true",
+        "\t" + `a.${itemTitle} = &my${itemTitle}`,
+        "}",
+      ];
+    });
 
-    }).join("\n");
-
-    return `
-func (a *${typeTitle}) UnmarshalJSON(bytes []byte) error {
-	var ok bool
-${components}
-
-	// Did unmarshal at least one of the simple objects.
-	if ok {
-		return nil
-	}
-	return errors.New("failed to unmarshal any of the object properties")
-}`;
+    return [
+      `func (a *${typeTitle}) UnmarshalJSON(bytes []byte) error {`,
+      "\t" + "var ok bool",
+      components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
+      "\t" + "if ok {",
+      "\t\t" + "return nil",
+      "\t" + "}",
+      "\t" + `return errors.New("failed to unmarshal any of the object properties")`,
+      "}",
+    ].join("\n");
   }
 
   protected marshalAnyOfMacro(typeTitle: string, items: string[]): any {
     const components = items.map((itemTitle: string) => {
-      return `
-  if o.${itemTitle} != nil {
-    out = append(out, o.${itemTitle})
-  }`;
-    }).join("");
+      return [
+        `if o.${itemTitle} != nil {`,
+        "\t" + `out = append(out, o.${itemTitle})`,
+        `}`,
+      ];
+    });
 
-    return `
-func(o ${typeTitle}) MarshalJSON() ([]byte, error) {
-  out := []interface{}
-  ${components}
-
-  return json.Marshal(out)
-}`;
+    return [
+      `func (o ${typeTitle}) MarshalJSON() ([]byte, error) {`,
+      "\t" + `out := []interface{}`,
+      components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
+      "\t" + "return json.Marshal(out)",
+      "}",
+    ].join("\n");
   }
 
   protected unmarshalOneOfMacro(typeTitle: string, items: string[]): any {
     const components = items.map((itemTitle) => {
-      return `
-	var my${itemTitle} ${itemTitle}
-	if err := json.Unmarshal(bytes, &my${itemTitle}); err == nil {
-		o.${itemTitle} = &my${itemTitle}
-		return nil
-	}`;
-    }).join("\n");
+      return [
+        `var my${itemTitle} ${itemTitle}`,
+        `if err := json.Unmarshal(bytes, &my${itemTitle}); err == nil {`,
+        "\t" + `o.${itemTitle} = &my${itemTitle}`,
+        "\t" + "return nil",
+        "}",
+      ];
+    });
 
-    return `
-// UnmarshalJSON implements the json Unmarshaler interface.
-// This implementation DOES NOT assert that ONE AND ONLY ONE
-// of the simple properties is satisfied; it lazily uses the first one that is satisfied.
-// Ergo, it will not return an error if more than one property is valid.
-func (o *${typeTitle}) UnmarshalJSON(bytes []byte) error {
-${components}
-
-	return errors.New("failed to unmarshal one of the object properties")
-}`;
+    const comment = [
+      "// UnmarshalJSON implements the json Unmarshaler interface.",
+      "// This implementation DOES NOT assert that ONE AND ONLY ONE",
+      "// of the simple properties is satisfied; it lazily uses the first one that is satisfied.",
+      "// Ergo, it will not return an error if more than one property is valid.",
+    ].join("\n");
+    return [
+      comment,
+      `func (o *${typeTitle}) UnmarshalJSON(bytes []byte) error {`,
+      components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
+      "\t" + `return errors.New("failed to unmarshal one of the object properties")`,
+      "}",
+    ].join("\n");
   }
 
   protected marshalOneOfMacro(typeTitle: string, items: string[]): any {
     const components = items.map((itemTitle: string) => {
-      return `
-	if o.${itemTitle} != nil {
-		return json.Marshal(o.${itemTitle})
-	}`;
-    }).join("");
+      return [
+        `if o.${itemTitle} != nil {`,
+        "\t" + `return json.Marshal(o.${itemTitle})`,
+        `}`,
+      ];
+    });
 
-    return `
-func (o ${typeTitle}) MarshalJSON() ([]byte, error) {
-${components}
-
-	return nil, errors.New("failed to marshal any one of the object properties")
-}`;
+    return [
+      `func (o ${typeTitle}) MarshalJSON() ([]byte, error) {`,
+      components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
+      "\t" + `return nil, errors.New("failed to marshal any one of the object properties")`,
+      "}",
+    ].join("\n");
   }
 
   protected handleAnyOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
@@ -215,7 +219,10 @@ ${components}
 
     const title = this.getSafeTitle(s.title as string);
     return {
-      macros: [this.unmarshalAnyOfMacro(title, titles), this.marshalAnyOfMacro(title, titles)].join(""),
+      macros: [
+        this.unmarshalAnyOfMacro(title, titles),
+        this.marshalAnyOfMacro(title, titles),
+      ].join("\n"),
       prefix: "struct",
       typing: ["{", ...anyOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
@@ -247,7 +254,10 @@ ${components}
 
     const title = this.getSafeTitle(s.title as string);
     return {
-      macros: [this.unmarshalOneOfMacro(title, titles), this.marshalOneOfMacro(title, titles)].join(""),
+      macros: [
+        this.unmarshalOneOfMacro(title, titles),
+        this.marshalOneOfMacro(title, titles),
+      ].join("\n"),
       prefix: "struct",
       typing: [`{`, ...oneOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
@@ -260,7 +270,7 @@ ${components}
 
   protected handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return {
-      typing: `type Always${(s as any) === true ? "True" : "False"} interface{};`,
+      typing: `type Always${(s as any) === true ? "True" : "False"} interface{}`,
     };
   }
 

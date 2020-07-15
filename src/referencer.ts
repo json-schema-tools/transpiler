@@ -34,7 +34,6 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
     (subSchema: JSONMetaSchema, isRootCycle: boolean) => {
       let t = "";
       if (isRootCycle) {
-        console.log("INSIDE ROOT CYCLE DETECT", s.title); //tslint:disable-line
         if (subSchema.$ref) {
           const title = subSchema.$ref.replace("#/definitions/", "");
           const hasDefForRef = definitions[title];

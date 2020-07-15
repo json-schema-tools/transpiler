@@ -1,13 +1,9 @@
 from typing import NewType
 
-Foo = NewType("Foo", str)
+Baz = NewType("Baz", bool)
 from typing import NewType
 
-Baz = NewType("Baz", bool)
-from typing import TypedDict, Optional
-
-class ObjectOfBazLEtnUJ56(TypedDict):
-    NotFoo: Optional[Baz]
+Foo = NewType("Foo", str)
 from typing import List, NewType
 """array of strings is all...
 """
@@ -18,6 +14,10 @@ Bar = NewType("Bar", int)
 from typing import NewType, Tuple
 
 SetOfNumbers = NewType("SetOfNumbers", Tuple[Bar])
+from typing import TypedDict, Optional
+
+class ObjectOfBazLEtnUJ56(TypedDict):
+    NotFoo: Optional[Baz]
 from typing import NewType, Union
 
 OneOfStuff = NewType("OneOfStuff", Union[UnorderedSetOfFooz1UBFn8B, SetOfNumbers])

@@ -1,9 +1,5 @@
-export type Foo = string;
 export type Baz = boolean;
-export interface ObjectOfBazLEtnUJ56 {
-  NotFoo?: Baz;
-  [k: string]: any;
-}
+export type Foo = string;
 /**
  *
  * array of strings is all...
@@ -12,6 +8,10 @@ export interface ObjectOfBazLEtnUJ56 {
 export type UnorderedSetOfFooz1UBFn8B = Foo[];
 export type Bar = number;
 export type SetOfNumbers = [Bar];
+export interface ObjectOfBazLEtnUJ56 {
+  NotFoo?: Baz;
+  [k: string]: any;
+}
 export type OneOfStuff = UnorderedSetOfFooz1UBFn8B | SetOfNumbers;
 /**
  *

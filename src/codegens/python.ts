@@ -200,6 +200,7 @@ export default class Python extends CodeGen {
     return {
       typing: [
         "from typing import Any, NewType",
+        "",
         `${t} = NewType("${t}", Any)`,
       ].join("\n"),
     };
