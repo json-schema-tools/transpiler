@@ -2,6 +2,11 @@ import traverse from "@json-schema-tools/traverse";
 import { JSONMetaSchema, Title } from "@json-schema-tools/meta-schema";
 import ensureSubschemaTitles from "./ensure-subschema-titles";
 
+const deleteAllProps = (o: { [k: string]: any }) => {
+  Object.keys(o)
+    .forEach((k) => { delete o[k]; });
+};
+
 /**
  * Returns the schema where all subschemas have been replaced with $refs and added to definitions
  *
@@ -20,35 +25,54 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
   const subSchemaTitleErrors = ensureSubschemaTitles(s, { allowLocalRefs: true });
 
   if (subSchemaTitleErrors.length > 0) {
+    console.error("Hit error while referencing");
     throw subSchemaTitleErrors[0];
   }
 
   traverse(
     s,
-    (subSchema: JSONMetaSchema) => {
+    (subSchema: JSONMetaSchema, isRootCycle: boolean) => {
       let t = "";
+      if (isRootCycle) {
+        console.log("INSIDE ROOT CYCLE DETECT", s.title); //tslint:disable-line
+        if (subSchema.$ref) {
+          const title = subSchema.$ref.replace("#/definitions/", "");
+          const hasDefForRef = definitions[title];
 
-      if (subSchema === s) {
-        definitions[s.title as Title] = { $ref: `#` };
-        subSchema.$ref = `#/definitions/${s.title}`;
-        // preserves ability to get titles from reffed subschemas
-        // the seemingly more obvious way to do this would be to just return { $ref: "#" } but this causes
-        // a lot of problems down the road, since you may very well lose which schema # refers to.. ($id shananiganry)
-        return { $ref: `#/definitions/${s.title}` };
+          if (hasDefForRef === undefined) {
+            throw new Error(`Encountered unknown $ref: ${subSchema.$ref}`);
+          }
+
+          return subSchema;
+        }
+
+        if (subSchema === s) {
+          definitions[s.title as string] = { $ref: `#` };
+          return { $ref: `#/definitions/${s.title}` };
+        }
+
+        definitions[subSchema.title as string] = { ...subSchema };
+        deleteAllProps(subSchema);
+        subSchema.$ref = `#/definitions/${subSchema.title}`;
+        return subSchema;
       }
 
       if ((subSchema as any) === true) {
         t = "AlwaysTrue";
+        definitions[t as string] = true;
       } else if ((subSchema as any) === false) {
         t = "AlwaysFalse";
+        definitions[t as string] = false;
       } else if (subSchema.$ref !== undefined && subSchema.$ref.indexOf("#") !== -1) {
         return subSchema;
       } else {
         t = subSchema.title as string;
+        definitions[t as string] = { ...subSchema };
+        deleteAllProps(subSchema);
+        subSchema.$ref = `#/definitions/${t}`;
       }
 
-      definitions[t as string] = subSchema;
-      return { $ref: `#/definitions/${t}` };
+      return subSchema;
     },
     { mutable: true, skipFirstMutation: true },
   );

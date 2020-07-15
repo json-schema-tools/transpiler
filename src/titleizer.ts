@@ -95,6 +95,8 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema, isRootCycle = f
   try {
     asString = JSON.stringify(asEntries);
   } catch (e) {
+    // as of recent updates, this should no longer ever be hit.
+    // cycles have their titles resolved above.
     console.log("HANDLING CIRCULAR INSIDE TITLEIZER::GETDEFAULT"); //tslint:disable-line
     asString = JSON.stringify(asEntries, (key, value) => {
       if (value instanceof Array) {
