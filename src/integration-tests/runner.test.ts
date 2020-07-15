@@ -6,6 +6,7 @@
 // import { promisify } from "util";
 
 // import { getAvailableLanguages, getTestCasesNames } from "./helpers";
+// import { stringifyCircular } from "../ensure-subschema-titles";
 
 // interface TestCase {
 //   name: string;
@@ -31,24 +32,61 @@
 //   return false;
 // };
 
-// const getTestCases = async (names: string[], languages: string[]): Promise<TestCase[]> => {
-//   const unflattedTestCases = await Promise.all(
-//     languages.map((language) => {
-//       return Promise.all(names.map(async (name) => {
-//         const dereffer = new Dereferencer(JSON.parse(await readFile(`${testCaseDir}/${name}.json`, "utf8")));
-//         const schema = await dereffer.resolve();
+// const getTestCaseBase = async (names: string[], languages: string[]): Promise<TestCase[]> => {
+//   const promises: any[] = [];
+//   const testCases: TestCase[] = [];
 
-//         const expectationFile = `${expectedsDir}/${language}/${name}.${language}`;
-//         return {
-//           name,
-//           language,
-//           expectedTypings: await readFile(expectationFile, "utf8").then((s) => s.trim()),
-//           schema,
-//         };
-//       }));
-//     }),
-//   );
-//   return unflattedTestCases.reduce((m, tcs) => [...m, ...tcs], []);
+//   languages.forEach((language) => {
+//     if (language !== "ts") { return; }
+
+//     names.forEach((name) => {
+//       if (name !== "json-schema-meta-schema") { return; }
+
+//       promises.push(readFile(`${testCaseDir}/${name}.json`, "utf8")
+//         .then((fileContents) => {
+//           const schema = JSON.parse(fileContents);
+//           testCases.push({ name, language, schema, expectedTypings: "" });
+//           return schema;
+//         }));
+//     });
+//   });
+
+//   await Promise.all(promises);
+//   return testCases;
+// };
+
+// const addExpectedTypings = async (tcs: TestCase[]): Promise<TestCase[]> => {
+//   const expectedTypingsPromises: any[] = [];
+
+//   tcs.forEach((tc) => {
+//     const expectationFile = `${expectedsDir}/${tc.language}/${tc.name}.${tc.language}`;
+//     expectedTypingsPromises.push(readFile(expectationFile, "utf8").then((s) => tc.expectedTypings = s.trim()));
+//   });
+
+//   await Promise.all(expectedTypingsPromises);
+
+//   return tcs;
+// };
+
+// const derefTestCases = async (tcs: TestCase[]): Promise<TestCase[]> => {
+//   const derefPromises: any[] = [];
+
+//   tcs.forEach((tc) => {
+//     const dereffer = new Dereferencer(tc.schema);
+//     derefPromises.push(dereffer.resolve().then((s) => tc.schema = s));
+//   });
+
+//   await Promise.all(derefPromises);
+
+//   return tcs;
+// };
+
+// const getTestCases = async (names: string[], languages: string[]): Promise<TestCase[]> => {
+//   const testCases: TestCase[] = await getTestCaseBase(names, languages);
+
+//   const testCasesWithExpectedTypings = await addExpectedTypings(testCases);
+
+//   return derefTestCases(testCasesWithExpectedTypings);
 // };
 
 // describe("Integration tests", () => {
@@ -62,22 +100,21 @@
 //     } catch (e) {
 //       console.error("Error in integration test setup: getAvailableLanguages");
 //       console.error(e);
-//       throw e;
-//       // process.exit(1);
+//       process.exit(1);
 //     }
 //     try {
 //       testCaseNames = await getTestCasesNames();
 //     } catch (e) {
 //       console.error("Error in integration test setup: getTestCasesNames");
-//       throw e;
-//       // process.exit(1);
+//       console.error(e);
+//       process.exit(1);
 //     }
 //     try {
 //       testCases = await getTestCases(testCaseNames, languages);
 //     } catch (e) {
 //       console.error("Error in integration test setup: getTestCases");
-//       throw e;
-//       // process.exit(1);
+//       console.error(e);
+//       process.exit(1);
 //     }
 //   });
 
@@ -89,11 +126,13 @@
 //     expect.assertions(testCases.length);
 
 //     const proms = testCases.map(async (testCase: TestCase) => {
+//       console.log(`Integration Test: ${testCase.name}.${testCase.language}`); // tslint:disable-line
 //       let transpiler;
 //       try {
-//         transpiler = new Transpiler(await testCase.schema);
+//         transpiler = new Transpiler(testCase.schema);
 //       } catch (e) {
 //         console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}`); //tslint:disable-line
+//         console.error(stringifyCircular(testCase.schema)); //tslint:disable-line
 //         throw e;
 //       }
 
@@ -102,10 +141,9 @@
 //         typings = transpiler[`to${capitalize(testCase.language)}`]();
 //       } catch (e) {
 //         console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}`); //tslint:disable-line
-//         console.error("MegaSchema:", (transpiler as any).megaSchema); //tslint:disable-line
 //         throw e;
 //       }
-//       return expect(typings).toBe(await testCase.expectedTypings);
+//       return expect(typings).toBe(testCase.expectedTypings);
 //     });
 
 //     return Promise.all(proms);

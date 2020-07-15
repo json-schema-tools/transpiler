@@ -22,14 +22,16 @@ const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
  * @category SchemaImprover
  *
  */
-export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema {
+export function getDefaultTitleForSchema(schema: JSONMetaSchema, isRootCycle = false): JSONMetaSchema {
   if ((schema as any) === true || (schema as any) === false) { return schema; }
   if (schema.title) { return schema; }
   if (schema.$ref) { throw new Error("There must not be any refs at this point. Ensure the passed in schema is completely dereferenced."); }
 
-  const subSchemaTitleErrors = ensureSubschemaTitles(schema);
-  if (subSchemaTitleErrors.length > 0) {
-    throw subSchemaTitleErrors[0];
+  if (isRootCycle === false) {
+    const subSchemaTitleErrors = ensureSubschemaTitles(schema, { allowCyclesWithoutTitle: true });
+    if (subSchemaTitleErrors.length > 0) {
+      throw subSchemaTitleErrors[0];
+    }
   }
 
   const deterministicSchema = { ...schema };
@@ -37,7 +39,12 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
 
   ["anyOf", "oneOf", "allOf"].forEach((k) => {
     if (schema[k]) {
-      deterministicSchema[k] = schema[k].map((s: JSONMetaSchema) => s.title).sort();
+      deterministicSchema[k] = schema[k].map((s: JSONMetaSchema) => {
+        if (isRootCycle && s === schema) {
+          return "self";
+        }
+        return s.title;
+      }).sort();
       prefix = `${k}_${deterministicSchema[k].join("_")}_`;
     }
   });
@@ -45,7 +52,12 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
   if (schema.type === "object" && schema.properties) {
     const sProps: { [k: string]: JSONMetaSchema } = schema.properties;
     deterministicSchema.properties = Object.entries(sProps).sort(sortEntriesByKey);
-    const joinedTitles = joinSchemaTitles(deterministicSchema.properties.map((val: any) => val[1]));
+    const joinedTitles = deterministicSchema.properties.map((val: any) => {
+      if (isRootCycle && val[1] === schema) { return "self"; }
+
+      return val[1].title;
+    }).join("_");
+
     prefix = `objectOf_${joinedTitles}_`;
   }
 
@@ -53,9 +65,17 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
     if (schema.items instanceof Array === false) {
       const sItems = schema.items as JSONMetaSchema;
       deterministicSchema.items = Object.entries(sItems).sort(sortEntriesByKey);
-      prefix = `unorderedSetOf_${sItems.title}`;
+      let t = sItems.title;
+      if (isRootCycle && sItems === schema) { t = "self"; }
+      prefix = `unorderedSetOf_${t}`;
     } else {
-      prefix = `unorderedSetOf_${joinSchemaTitles(schema.items as JSONMetaSchema[])}`;
+      const joinedTitles = schema.items.map((val: any) => {
+        if (isRootCycle && val[1] === schema) { return "self"; }
+
+        return val[1].title;
+      }).join("_");
+
+      prefix = `unorderedSetOf_${joinedTitles}`;
     }
   }
 
@@ -72,6 +92,7 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
   try {
     asString = JSON.stringify(asEntries);
   } catch (e) {
+    console.log("HANDLING CIRCULAR INSIDE TITLEIZER::GETDEFAULT"); //tslint:disable-line
     asString = JSON.stringify(asEntries, (key, value) => {
       if (value instanceof Array) {
         return `${key}[]`;
@@ -105,8 +126,24 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema): JSONMetaSchema
  * @category SchemaImprover
  *
  */
-export default (s: JSONMetaSchema): JSONMetaSchema => traverse(
-  s,
-  getDefaultTitleForSchema,
-  { mutable: true },
-);
+export default (s: JSONMetaSchema): JSONMetaSchema => {
+  traverse(
+    s,
+    (schema) => {
+      console.log("Current Traverse Schema: "); // tslint:disable-line
+      console.log(schema); // tslint:disable-line
+      if (schema === s) {
+        console.log("Cycled!!"); // tslint:disable-line
+        if (s.title === undefined) {
+          return getDefaultTitleForSchema(schema, true);
+          // throw new Error("Schemas that are the root of a cycle must already have a title");
+        }
+        return s;
+      }
+      return getDefaultTitleForSchema(schema);
+    },
+    { mutable: true },
+  );
+
+  return s;
+}

@@ -17,19 +17,18 @@ export class Transpiler {
   public megaSchema: JSONMetaSchema;
 
   constructor(s: JSONMetaSchema | JSONMetaSchema[]) {
+    console.error("INSIDE TRANSPILER CONSTRUCTOR"); // tslint:disable-line
     const useMerge = s instanceof Array;
     const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
+    console.error("STARTING TITLEIZER"); // tslint:disable-line
     const schemaWithTitles = inputSchema.map(titleizer);
-    // console.log(schemaWithTitles); // tslint:disable-line
+    console.error("FINISHED TITLEIZER"); // tslint:disable-line
     const reffed = schemaWithTitles.map(referencer);
-    // console.log(reffed); // tslint:disable-line
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
       [this.megaSchema] = reffed;
     }
-
-    // console.log(this.megaSchema); // tslint:disable-line
   }
 
   /**

@@ -1,12 +1,130 @@
 import titleizer, { getDefaultTitleForSchema } from "./titleizer";
 import { NoTitleError } from "./ensure-subschema-titles";
+import { Properties, JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("titleizer", () => {
 
   it("does not change anything if theres already a title", () => {
     const testSchema = { title: "foo" };
     const result = titleizer(testSchema);
-    expect(result).toBe(testSchema);
+    expect(result.title).toBe("foo");
+  });
+
+  it("sets titles on everything missing one", () => {
+    const testSchema = {
+      type: "object",
+      properties: {
+        foo: { type: "string" },
+        bar: {
+          anyOf: [
+            { type: "string" },
+            { type: "number" },
+          ],
+        },
+      },
+    };
+
+    const titledSchema = titleizer(testSchema);
+    expect(titledSchema).toHaveProperty("title");
+
+    const props = (titledSchema.properties as Properties);
+
+    expect(props.foo).toHaveProperty("title");
+    expect(props.bar).toHaveProperty("title");
+
+    expect(props.bar.anyOf).toHaveLength(2);
+    expect(props.bar.anyOf[0]).toHaveProperty("title");
+    expect(props.bar.anyOf[1]).toHaveProperty("title");
+  });
+
+  it("handles cross-referenced dupes", () => {
+    const testSchema = {
+      type: "object",
+      properties: {
+        foo: { type: "string" },
+        bar: {
+          anyOf: [
+            { type: "number" },
+          ],
+        },
+      },
+    };
+
+    testSchema.properties.bar.anyOf.push(testSchema.properties.foo);
+
+    const titledSchema = titleizer(testSchema);
+    const props = (titledSchema.properties as Properties);
+
+    expect(props.foo.title).toBe("string_doaGddGA");
+    expect(props.bar.anyOf[1]).toBe(props.foo);
+  });
+
+  it.only("handles cycles in the middle", () => {
+    const testSchema = {
+      type: "object",
+      properties: {
+        foo: { type: "string" },
+        bar: {
+          oneOf: [
+            { type: "string" },
+            { type: "number" },
+          ] as JSONMetaSchema[],
+        },
+      },
+    };
+
+    testSchema.properties.bar.oneOf.push(testSchema.properties.bar);
+
+    const titledSchema = titleizer(testSchema);
+    const props = (titledSchema.properties as Properties);
+
+    expect(titledSchema).toHaveProperty("title");
+    expect(props.bar.oneOf[2]).toHaveProperty("title");
+    expect(props.bar.oneOf[2]).toBe(props.bar);
+    expect(props.bar.oneOf[2].title).toBe("oneOf_number_Ho1clIqD_string_doaGddGA_self_WVMRiv1S");
+  });
+
+  it("handles cycles to the root", () => {
+    const testSchema = {
+      anyOf: [
+        { type: "number" },
+      ] as any,
+    };
+
+    testSchema.anyOf.push(testSchema);
+
+    const titledSchema = titleizer(testSchema);
+
+    expect(titledSchema).toHaveProperty("title");
+    expect(titledSchema.title).toBe("anyOf_number_Ho1clIqD_self_vpYSV1F8");
+    expect(titledSchema.anyOf[1]).toHaveProperty("title");
+    expect(titledSchema.anyOf[1]).toBe(titledSchema);
+  });
+
+  it.only("handles deep cycles to the root", () => {
+    const testSchema = {
+      type: "object",
+
+      title: "root",
+      properties: {
+        foo: {
+          anyOf: [
+            { type: "number" },
+          ] as any,
+        },
+      },
+    };
+
+    testSchema.properties.foo.anyOf.push(testSchema);
+
+    const titledSchema = titleizer(testSchema);
+
+    expect(titledSchema).toHaveProperty("title");
+
+    const props = (titledSchema.properties as Properties);
+
+    expect(props.foo.anyOf[1]).toHaveProperty("title");
+    expect(props.foo.anyOf[1]).toBe(titledSchema);
   });
 
   describe("getDefaultTitleForSchema", () => {
