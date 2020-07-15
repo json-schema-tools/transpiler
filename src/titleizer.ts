@@ -129,19 +129,7 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema, isRootCycle = f
 export default (s: JSONMetaSchema): JSONMetaSchema => {
   traverse(
     s,
-    (schema) => {
-      console.log("Current Traverse Schema: "); // tslint:disable-line
-      console.log(schema); // tslint:disable-line
-      if (schema === s) {
-        console.log("Cycled!!"); // tslint:disable-line
-        if (s.title === undefined) {
-          return getDefaultTitleForSchema(schema, true);
-          // throw new Error("Schemas that are the root of a cycle must already have a title");
-        }
-        return s;
-      }
-      return getDefaultTitleForSchema(schema);
-    },
+    getDefaultTitleForSchema,
     { mutable: true },
   );
 

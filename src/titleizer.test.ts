@@ -81,7 +81,7 @@ describe("titleizer", () => {
     expect(titledSchema).toHaveProperty("title");
     expect(props.bar.oneOf[2]).toHaveProperty("title");
     expect(props.bar.oneOf[2]).toBe(props.bar);
-    expect(props.bar.oneOf[2].title).toBe("oneOf_number_Ho1clIqD_string_doaGddGA_self_WVMRiv1S");
+    expect(props.bar.oneOf[2].title).toBe("oneOf_number_Ho1clIqD_self_string_doaGddGA_wGyf9nC9");
   });
 
   it("handles cycles to the root", () => {
