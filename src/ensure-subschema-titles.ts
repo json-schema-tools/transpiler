@@ -61,7 +61,12 @@ export interface EnsureSubschemasTitleOptions {
 export default (s: JSONMetaSchema, options?: EnsureSubschemasTitleOptions): NoTitleError[] => {
   const errors = [] as NoTitleError[];
 
-  traverse(s, (ss) => {
+  let insideCycle = false;
+  traverse(s, (ss, isRootCycle) => {
+    if (!insideCycle && isRootCycle) {
+      insideCycle = isRootCycle;
+    }
+
     if ((ss as any) === true || (ss as any) === false || ss.title !== undefined) {
       return ss;
     }
@@ -72,8 +77,8 @@ export default (s: JSONMetaSchema, options?: EnsureSubschemasTitleOptions): NoTi
       }
     }
 
-    if (options && options.allowCyclesWithoutTitle === true) {
-      if (ss === s) { return ss; }
+    if (options && options.allowCyclesWithoutTitle === true && insideCycle) {
+      return ss;
     }
 
     errors.push(new NoTitleError(ss, s));

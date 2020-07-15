@@ -1,250 +1,277 @@
-import titleizer, { getDefaultTitleForSchema } from "./titleizer";
-import { NoTitleError } from "./ensure-subschema-titles";
-import { Properties, JSONMetaSchema } from "@json-schema-tools/meta-schema";
+// import titleizer, { getDefaultTitleForSchema } from "./titleizer";
+// import { NoTitleError } from "./ensure-subschema-titles";
+// import { Properties, JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
-describe("titleizer", () => {
+// describe("titleizer", () => {
 
-  it("does not change anything if theres already a title", () => {
-    const testSchema = { title: "foo" };
-    const result = titleizer(testSchema);
-    expect(result.title).toBe("foo");
-  });
+//   it("does not change anything if theres already a title", () => {
+//     const testSchema = { title: "foo" };
+//     const result = titleizer(testSchema);
+//     expect(result.title).toBe("foo");
+//   });
 
-  it("sets titles on everything missing one", () => {
-    const testSchema = {
-      type: "object",
-      properties: {
-        foo: { type: "string" },
-        bar: {
-          anyOf: [
-            { type: "string" },
-            { type: "number" },
-          ],
-        },
-      },
-    };
+//   it("sets titles on everything missing one", () => {
+//     const testSchema = {
+//       type: "object",
+//       properties: {
+//         foo: { type: "string" },
+//         bar: {
+//           anyOf: [
+//             { type: "string" },
+//             { type: "number" },
+//           ],
+//         },
+//       },
+//     };
 
-    const titledSchema = titleizer(testSchema);
-    expect(titledSchema).toHaveProperty("title");
+//     const titledSchema = titleizer(testSchema);
+//     expect(titledSchema).toHaveProperty("title");
 
-    const props = (titledSchema.properties as Properties);
+//     const props = (titledSchema.properties as Properties);
 
-    expect(props.foo).toHaveProperty("title");
-    expect(props.bar).toHaveProperty("title");
+//     expect(props.foo).toHaveProperty("title");
+//     expect(props.bar).toHaveProperty("title");
 
-    expect(props.bar.anyOf).toHaveLength(2);
-    expect(props.bar.anyOf[0]).toHaveProperty("title");
-    expect(props.bar.anyOf[1]).toHaveProperty("title");
-  });
+//     expect(props.bar.anyOf).toHaveLength(2);
+//     expect(props.bar.anyOf[0]).toHaveProperty("title");
+//     expect(props.bar.anyOf[1]).toHaveProperty("title");
+//   });
 
-  it("handles cross-referenced dupes", () => {
-    const testSchema = {
-      type: "object",
-      properties: {
-        foo: { type: "string" },
-        bar: {
-          anyOf: [
-            { type: "number" },
-          ],
-        },
-      },
-    };
+//   it("handles cross-referenced dupes", () => {
+//     const testSchema = {
+//       type: "object",
+//       properties: {
+//         foo: { type: "string" },
+//         bar: {
+//           anyOf: [
+//             { type: "number" },
+//           ],
+//         },
+//       },
+//     };
 
-    testSchema.properties.bar.anyOf.push(testSchema.properties.foo);
+//     testSchema.properties.bar.anyOf.push(testSchema.properties.foo);
 
-    const titledSchema = titleizer(testSchema);
-    const props = (titledSchema.properties as Properties);
+//     const titledSchema = titleizer(testSchema);
+//     const props = (titledSchema.properties as Properties);
 
-    expect(props.foo.title).toBe("string_doaGddGA");
-    expect(props.bar.anyOf[1]).toBe(props.foo);
-  });
+//     expect(props.foo.title).toBe("string_doaGddGA");
+//     expect(props.bar.anyOf[1]).toBe(props.foo);
+//   });
 
-  it.only("handles cycles in the middle", () => {
-    const testSchema = {
-      type: "object",
-      properties: {
-        foo: { type: "string" },
-        bar: {
-          oneOf: [
-            { type: "string" },
-            { type: "number" },
-          ] as JSONMetaSchema[],
-        },
-      },
-    };
+//   it("handles cycles in the middle: oneOf", () => {
+//     const testSchema = {
+//       type: "object",
+//       properties: {
+//         foo: { type: "string" },
+//         bar: {
+//           oneOf: [
+//             { type: "string" },
+//             { type: "number" },
+//           ] as JSONMetaSchema[],
+//         },
+//       },
+//     };
 
-    testSchema.properties.bar.oneOf.push(testSchema.properties.bar);
+//     testSchema.properties.bar.oneOf.push(testSchema.properties.bar);
 
-    const titledSchema = titleizer(testSchema);
-    const props = (titledSchema.properties as Properties);
+//     const titledSchema = titleizer(testSchema);
+//     const props = (titledSchema.properties as Properties);
 
-    expect(titledSchema).toHaveProperty("title");
-    expect(props.bar.oneOf[2]).toHaveProperty("title");
-    expect(props.bar.oneOf[2]).toBe(props.bar);
-    expect(props.bar.oneOf[2].title).toBe("oneOf_number_Ho1clIqD_self_string_doaGddGA_wGyf9nC9");
-  });
+//     expect(titledSchema).toHaveProperty("title");
+//     expect(props.bar.oneOf[2]).toHaveProperty("title");
+//     expect(props.bar.oneOf[2]).toBe(props.bar);
+//     expect(props.bar.oneOf[2].title).toBe("oneOf_number_Ho1clIqD_self_string_doaGddGA_wGyf9nC9");
+//   });
 
-  it("handles cycles to the root", () => {
-    const testSchema = {
-      anyOf: [
-        { type: "number" },
-      ] as any,
-    };
+//   it("handles cycles in the middle: anyOf", () => {
+//     const testSchema = {
+//       type: "object",
+//       properties: {
+//         foo: { type: "string" },
+//         bar: {
+//           anyOf: [
+//             { type: "string", enum: ["a", "b", "c"] },
+//             { type: "array", items: {} },
+//           ] as JSONMetaSchema[],
+//         },
+//       },
+//     };
 
-    testSchema.anyOf.push(testSchema);
+//     testSchema.properties.bar.anyOf[1].items = testSchema.properties.bar.anyOf[0];
 
-    const titledSchema = titleizer(testSchema);
+//     const titledSchema = titleizer(testSchema);
+//     const props = (titledSchema.properties as Properties);
 
-    expect(titledSchema).toHaveProperty("title");
-    expect(titledSchema.title).toBe("anyOf_number_Ho1clIqD_self_vpYSV1F8");
-    expect(titledSchema.anyOf[1]).toHaveProperty("title");
-    expect(titledSchema.anyOf[1]).toBe(titledSchema);
-  });
+//     expect(titledSchema).toHaveProperty("title");
+//     expect(props.bar).toHaveProperty("title");
+//     expect(props.bar.anyOf[0]).toHaveProperty("title");
+//     expect(props.bar.anyOf[1]).toHaveProperty("title");
+//     expect(props.bar.anyOf[1].items).toHaveProperty("title");
+//     expect(props.bar.anyOf[1].items).toBe(props.bar.anyOf[0]);
+//   });
 
-  it.only("handles deep cycles to the root", () => {
-    const testSchema = {
-      type: "object",
+//   it("handles cycles to the root", () => {
+//     const testSchema = {
+//       anyOf: [
+//         { type: "number" },
+//       ] as any,
+//     };
 
-      title: "root",
-      properties: {
-        foo: {
-          anyOf: [
-            { type: "number" },
-          ] as any,
-        },
-      },
-    };
+//     testSchema.anyOf.push(testSchema);
 
-    testSchema.properties.foo.anyOf.push(testSchema);
+//     const titledSchema = titleizer(testSchema);
 
-    const titledSchema = titleizer(testSchema);
+//     expect(titledSchema).toHaveProperty("title");
+//     expect(titledSchema.title).toBe("anyOf_number_Ho1clIqD_self_vpYSV1F8");
+//     expect(titledSchema.anyOf[1]).toHaveProperty("title");
+//     expect(titledSchema.anyOf[1]).toBe(titledSchema);
+//   });
 
-    expect(titledSchema).toHaveProperty("title");
+//   it("handles deep cycles to the root", () => {
+//     const testSchema = {
+//       type: "object",
 
-    const props = (titledSchema.properties as Properties);
+//       title: "root",
+//       properties: {
+//         foo: {
+//           anyOf: [
+//             { type: "number" },
+//           ] as any,
+//         },
+//       },
+//     };
 
-    expect(props.foo.anyOf[1]).toHaveProperty("title");
-    expect(props.foo.anyOf[1]).toBe(titledSchema);
-  });
+//     testSchema.properties.foo.anyOf.push(testSchema);
 
-  describe("getDefaultTitleForSchema", () => {
+//     const titledSchema = titleizer(testSchema);
 
-    describe("subschemas must have titles", () => {
-      it("anyOf", () => {
-        expect(() => getDefaultTitleForSchema({
-          anyOf: [{ title: "abc" }, {}],
-        })).toThrow(NoTitleError);
-      });
+//     expect(titledSchema).toHaveProperty("title");
 
-      it("allOf", () => {
-        expect(() => getDefaultTitleForSchema({
-          allOf: [{ title: "abc" }, {}],
-        })).toThrow(NoTitleError);
-      });
+//     const props = (titledSchema.properties as Properties);
 
-      it("oneOf", () => {
-        expect(() => getDefaultTitleForSchema({
-          oneOf: [{ title: "abc" }, {}],
-        })).toThrow(NoTitleError);
-      });
+//     expect(props.foo.anyOf[1]).toHaveProperty("title");
+//     expect(props.foo.anyOf[1]).toBe(titledSchema);
+//   });
 
-      it("items", () => {
-        expect(() => getDefaultTitleForSchema({
-          items: [{ title: "abc" }, {}],
-        })).toThrow(NoTitleError);
-      });
+//   describe.only("getDefaultTitleForSchema", () => {
 
-      it("properties", () => {
-        expect(() => getDefaultTitleForSchema({
-          properties: { a: { title: "abc" }, b: {} },
-        })).toThrow(NoTitleError);
-      });
-    });
+//     describe("subschemas must have titles", () => {
+//       it("anyOf", () => {
+//         expect(() => getDefaultTitleForSchema({
+//           anyOf: [{ title: "abc" }, {}],
+//         })).toThrow(NoTitleError);
+//       });
 
-    describe("different schema yields different name", () => {
+//       it("allOf", () => {
+//         expect(() => getDefaultTitleForSchema({
+//           allOf: [{ title: "abc" }, {}],
+//         })).toThrow(NoTitleError);
+//       });
 
-      it("type", () => {
-        expect(getDefaultTitleForSchema({ type: "string" }))
-          .not
-          .toEqual(getDefaultTitleForSchema({ type: "number" }));
-      });
+//       it("oneOf", () => {
+//         expect(() => getDefaultTitleForSchema({
+//           oneOf: [{ title: "abc" }, {}],
+//         })).toThrow(NoTitleError);
+//       });
 
-      it("additional properties such as minimum", () => {
-        expect(getDefaultTitleForSchema({ type: "number" }))
-          .not
-          .toEqual(getDefaultTitleForSchema({ type: "number", minimum: 3 }));
-      });
+//       it("items", () => {
+//         expect(() => getDefaultTitleForSchema({
+//           items: [{ title: "abc" }, {}],
+//         })).toThrow(NoTitleError);
+//       });
 
-      it("different titles same everything else", () => {
-        expect(getDefaultTitleForSchema({ type: "number", title: "b" }))
-          .not
-          .toEqual(getDefaultTitleForSchema({ type: "number", title: "a" }));
-      });
+//       it("properties", () => {
+//         expect(() => getDefaultTitleForSchema({
+//           properties: { a: { title: "abc" }, b: {} },
+//         })).toThrow(NoTitleError);
+//       });
+//     });
 
-      it("when items is an array, order matters", () => {
-        const a = { title: "a" };
-        const b = { title: "b" };
+//     describe("different schema yields different name", () => {
 
-        const t1 = { type: "array", items: [a, b] };
-        const t2 = { type: "array", items: [b, a] };
+//       it("type", () => {
+//         expect(getDefaultTitleForSchema({ type: "string" }))
+//           .not
+//           .toEqual(getDefaultTitleForSchema({ type: "number" }));
+//       });
 
-        expect(getDefaultTitleForSchema(t1))
-          .not
-          .toEqual(getDefaultTitleForSchema(t2));
-      });
-    });
+//       it("additional properties such as minimum", () => {
+//         expect(getDefaultTitleForSchema({ type: "number" }))
+//           .not
+//           .toEqual(getDefaultTitleForSchema({ type: "number", minimum: 3 }));
+//       });
 
-    describe("same schema yields same name", () => {
+//       it("different titles same everything else", () => {
+//         expect(getDefaultTitleForSchema({ type: "number", title: "b" }))
+//           .not
+//           .toEqual(getDefaultTitleForSchema({ type: "number", title: "a" }));
+//       });
 
-      it("anyOf, oneOf and allOf order does not matter", () => {
-        const a = { title: "foo" };
-        const b = { title: "bar" };
+//       it("when items is an array, order matters", () => {
+//         const a = { title: "a" };
+//         const b = { title: "b" };
 
-        ["anyOf", "oneOf", "allOf"].forEach((k) => {
-          const t1 = { [k]: [a, b] };
-          const t2 = { [k]: [b, a] };
-          expect(getDefaultTitleForSchema(t1).title)
-            .toEqual(getDefaultTitleForSchema(t2).title);
-        });
-      });
+//         const t1 = { type: "array", items: [{ ...a }, { ...b }] };
+//         const t2 = { type: "array", items: [{ ...b }, { ...a }] };
 
-      it("object properties ordering does not matter", () => {
-        const a = { title: "foo" };
-        const b = { title: "bar" };
+//         expect(getDefaultTitleForSchema(t1))
+//           .not
+//           .toEqual(getDefaultTitleForSchema(t2));
+//       });
+//     });
 
-        const t1 = { type: "object", properties: { a, b } };
-        const t2 = { type: "object", properties: { b, a } };
+//     describe("same schema yields same name", () => {
 
-        expect(getDefaultTitleForSchema(t1).title)
-          .toEqual(getDefaultTitleForSchema(t2).title);
-      });
+//       it("anyOf, oneOf and allOf order does not matter", () => {
+//         const a = { title: "foo" };
+//         const b = { title: "bar" };
 
-      it("when array items is an object (single schema), property ordering does not matter", () => {
-        const a = { type: "integer", title: "foo" };
-        const b = { title: "foo", type: "integer" };
+//         ["anyOf", "oneOf", "allOf"].forEach((k) => {
+//           const t1 = { [k]: [a, b] };
+//           const t2 = { [k]: [b, a] };
+//           expect(getDefaultTitleForSchema(t1).title)
+//             .toEqual(getDefaultTitleForSchema(t2).title);
+//         });
+//       });
 
-        const t1 = { type: "array", items: a };
-        const t2 = { type: "array", items: b };
+//       it("object properties ordering does not matter", () => {
+//         const a = { title: "foo" };
+//         const b = { title: "bar" };
 
-        expect(getDefaultTitleForSchema(t1))
-          .toEqual(getDefaultTitleForSchema(t2));
-      });
+//         const t1 = { type: "object", properties: { a, b } };
+//         const t2 = { type: "object", properties: { b, a } };
 
-      it("order of enum values doesnt matter", () => {
-        const a = { type: "number", enum: [1, 2, 3] };
-        const b = { type: "number", enum: [3, 2, 1] };
+//         expect(getDefaultTitleForSchema(t1).title)
+//           .toEqual(getDefaultTitleForSchema(t2).title);
+//       });
 
-        expect(getDefaultTitleForSchema(a).title)
-          .toEqual(getDefaultTitleForSchema(b).title);
-      });
+//       it("when array items is an object (single schema), property ordering does not matter", () => {
+//         const a = { type: "integer", title: "foo" };
+//         const b = { title: "foo", type: "integer" };
 
-      it("definitions are ignored", () => {
-        const a = { type: "number", definitions: { a: { type: "number" } } };
-        const b = { type: "number", definitions: { b: { type: "string" } } };
+//         const t1 = { type: "array", items: a };
+//         const t2 = { type: "array", items: b };
 
-        expect(getDefaultTitleForSchema(a).title)
-          .toEqual(getDefaultTitleForSchema(b).title);
-      });
-    });
-  });
-});
+//         expect(getDefaultTitleForSchema(t1))
+//           .toEqual(getDefaultTitleForSchema(t2));
+//       });
+
+//       it("order of enum values doesnt matter", () => {
+//         const a = { type: "number", enum: [1, 2, 3] };
+//         const b = { type: "number", enum: [3, 2, 1] };
+
+//         expect(getDefaultTitleForSchema(a).title)
+//           .toEqual(getDefaultTitleForSchema(b).title);
+//       });
+
+//       it("definitions are ignored", () => {
+//         const a = { type: "number", definitions: { a: { type: "number" } } };
+//         const b = { type: "number", definitions: { b: { type: "string" } } };
+
+//         expect(getDefaultTitleForSchema(a).title)
+//           .toEqual(getDefaultTitleForSchema(b).title);
+//       });
+//     });
+//   });
+// });

@@ -2,7 +2,7 @@ import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
 import { createHash } from "crypto";
 import ensureSubschemaTitles from "./ensure-subschema-titles";
-import { joinSchemaTitles, sortEntriesByKey } from "./utils";
+import { sortEntriesByKey } from "./utils";
 
 const hashRegex = new RegExp("[^A-z | 0-9]+", "g");
 
@@ -30,6 +30,7 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema, isRootCycle = f
   if (isRootCycle === false) {
     const subSchemaTitleErrors = ensureSubschemaTitles(schema, { allowCyclesWithoutTitle: true });
     if (subSchemaTitleErrors.length > 0) {
+      console.error("Error while getting default title for schema");
       throw subSchemaTitleErrors[0];
     }
   }
@@ -65,15 +66,17 @@ export function getDefaultTitleForSchema(schema: JSONMetaSchema, isRootCycle = f
     if (schema.items instanceof Array === false) {
       const sItems = schema.items as JSONMetaSchema;
       deterministicSchema.items = Object.entries(sItems).sort(sortEntriesByKey);
-      let t = sItems.title;
-      if (isRootCycle && sItems === schema) { t = "self"; }
+      let t;
+      if (isRootCycle && sItems === schema) {
+        t = "self";
+      } else {
+        t = sItems.title;
+      }
       prefix = `unorderedSetOf_${t}`;
     } else {
-      const joinedTitles = schema.items.map((val: any) => {
-        if (isRootCycle && val[1] === schema) { return "self"; }
-
-        return val[1].title;
-      }).join("_");
+      const joinedTitles = schema.items
+        .map((val: any) => isRootCycle && val === schema ? "self" : val.title)
+        .join("_");
 
       prefix = `unorderedSetOf_${joinedTitles}`;
     }
@@ -134,4 +137,4 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
   );
 
   return s;
-}
+};

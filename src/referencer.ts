@@ -28,6 +28,15 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
     (subSchema: JSONMetaSchema) => {
       let t = "";
 
+      if (subSchema === s) {
+        definitions[s.title as Title] = { $ref: `#` };
+        subSchema.$ref = `#/definitions/${s.title}`;
+        // preserves ability to get titles from reffed subschemas
+        // the seemingly more obvious way to do this would be to just return { $ref: "#" } but this causes
+        // a lot of problems down the road, since you may very well lose which schema # refers to.. ($id shananiganry)
+        return { $ref: `#/definitions/${s.title}` };
+      }
+
       if ((subSchema as any) === true) {
         t = "AlwaysTrue";
       } else if ((subSchema as any) === false) {
@@ -36,15 +45,6 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
         return subSchema;
       } else {
         t = subSchema.title as string;
-      }
-
-      if (subSchema === s) {
-        definitions[s.title as Title] = { $ref: `#` };
-        subSchema.$ref = `#/definitions/${s.title}`;
-        // preserves ability to get titles from reffed subschemas
-        // the seemingly more obvious way to do this would be to just return { $ref: "#" } but this causes
-        // a lot of problems down the road, since you may very well lose which schema # refers to.. ($id shananiganry)
-        return { $ref: `#/definitions/${s.title}` };
       }
 
       definitions[t as string] = subSchema;
