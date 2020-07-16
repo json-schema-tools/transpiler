@@ -1,111 +1,153 @@
 from typing import NewType
 
-StringVPPt56NS = NewType("StringVPPt56NS", str)
+$Id = NewType("$Id", str)
 from typing import NewType
 
-StringNQRYvFt5 = NewType("StringNQRYvFt5", str)
+$Schema = NewType("$Schema", str)
 from typing import NewType
 
-StringDoaGddGA = NewType("StringDoaGddGA", str)
+$Ref = NewType("$Ref", str)
+from typing import NewType
+
+$Comment = NewType("$Comment", str)
+from typing import NewType
+
+Title = NewType("Title", str)
+from typing import NewType
+
+Description = NewType("Description", str)
 from typing import Any, NewType
 
-AnyL9Fw4VUO = NewType("AnyL9Fw4VUO", Any)
+AlwaysTrue = NewType("AlwaysTrue", Any)
 from typing import NewType
 
-BooleanG3T6Tn0M = NewType("BooleanG3T6Tn0M", bool)
+ReadOnly = NewType("ReadOnly", bool)
 from typing import List, NewType
 
-UnorderedSetOfAnyL9Fw4VUO55Bn0VNb = NewType("UnorderedSetOfAnyL9Fw4VUO55Bn0VNb", List[AnyL9Fw4VUO])
+Examples = NewType("Examples", List[AlwaysTrue])
 from typing import NewType
 
-Number0ErlT0It = NewType("Number0ErlT0It", float)
+MultipleOf = NewType("MultipleOf", float)
 from typing import NewType
 
-NumberHo1ClIqD = NewType("NumberHo1ClIqD", float)
+Maximum = NewType("Maximum", float)
+from typing import NewType
+
+ExclusiveMaximum = NewType("ExclusiveMaximum", float)
+from typing import NewType
+
+Minimum = NewType("Minimum", float)
+from typing import NewType
+
+ExclusiveMinimum = NewType("ExclusiveMinimum", float)
 from typing import NewType
 
 NonNegativeInteger = NewType("NonNegativeInteger", int)
 from typing import Any, NewType
 
-AnyXumYU1GW = NewType("AnyXumYU1GW", Any)
+DefaultZero = NewType("DefaultZero", Any)
 from typing import NewType, Any, Mapping
 
-NonNegativeIntegerDefault0 = NewType("NonNegativeIntegerDefault0", Mapping[Any, Any])
+NonNegativeIntegerDefaultZero = NewType("NonNegativeIntegerDefaultZero", Mapping[Any, Any])
 from typing import NewType
 
-String3JBlmrip = NewType("String3JBlmrip", str)
+Pattern = NewType("Pattern", str)
 from typing import List, NewType
 
-SchemaArray = NewType("SchemaArray", List[JSONSchema])
+SchemaArray = NewType("SchemaArray", List[JSONMetaSchema])
 from typing import NewType, Union
 
-AnyOfJSONSchemaSchemaArrayCotc6H6U = NewType("AnyOfJSONSchemaSchemaArrayCotc6H6U", Union[JSONSchema, SchemaArray])
+Items = NewType("Items", Union[JSONMetaSchema, SchemaArray])
+from typing import NewType
+
+UniqueItems = NewType("UniqueItems", bool)
+from typing import NewType
+
+StringDoaGddGA = NewType("StringDoaGddGA", str)
 from typing import List, NewType
 
-UnorderedSetOfStringDoaGddGAIEp1G0PF = NewType("UnorderedSetOfStringDoaGddGAIEp1G0PF", List[StringDoaGddGA])
+StringArray = NewType("StringArray", List[StringDoaGddGA])
 from typing import NewType, Any, Mapping
 
-ObjectWrpyYBUS = NewType("ObjectWrpyYBUS", Mapping[Any, Any])
+Definitions = NewType("Definitions", Mapping[Any, Any])
+from typing import NewType, Any, Mapping
+
+Properties = NewType("Properties", Mapping[Any, Any])
+from typing import NewType, Any, Mapping
+
+PatternProperties = NewType("PatternProperties", Mapping[Any, Any])
+from typing import NewType, Union
+
+AnyOfJSONMetaSchemaStringArrayBk9CjcAm = NewType("AnyOfJSONMetaSchemaStringArrayBk9CjcAm", Union[JSONMetaSchema, StringArray])
 from typing import NewType, Any, Mapping
 
 Dependencies = NewType("Dependencies", Mapping[Any, Any])
 from typing import List, NewType
 
-UnorderedSetOfAnyL9Fw4VUOyeAFYsFq = NewType("UnorderedSetOfAnyL9Fw4VUOyeAFYsFq", List[AnyL9Fw4VUO])
+Enum = NewType("Enum", List[AlwaysTrue])
 from typing import Any, NewType
 
-Any17L18NF5 = NewType("Any17L18NF5", Any)
+SimpleTypes = NewType("SimpleTypes", Any)
 from typing import List, NewType
 
-UnorderedSetOfAny17L18NF5VWcS9ROi = NewType("UnorderedSetOfAny17L18NF5VWcS9ROi", List[Any17L18NF5])
+ArrayOfSimpleTypes = NewType("ArrayOfSimpleTypes", List[SimpleTypes])
 from typing import NewType, Union
 
-SchemaType = NewType("SchemaType", Union[Any17L18NF5, UnorderedSetOfAny17L18NF5VWcS9ROi])
+AnyOfArrayOfSimpleTypesSimpleTypesBOu2T0PK = NewType("AnyOfArrayOfSimpleTypesSimpleTypesBOu2T0PK", Union[SimpleTypes, ArrayOfSimpleTypes])
+from typing import NewType
+
+Format = NewType("Format", str)
+from typing import NewType
+
+ContentMediaType = NewType("ContentMediaType", str)
+from typing import NewType
+
+ContentEncoding = NewType("ContentEncoding", str)
 from typing import TypedDict, Optional
 
-class JSONSchema(TypedDict):
-    $id: Optional[StringVPPt56NS]
-    $schema: Optional[StringNQRYvFt5]
-    $ref: Optional[StringVPPt56NS]
-    $comment: Optional[StringDoaGddGA]
-    title: Optional[StringDoaGddGA]
-    description: Optional[StringDoaGddGA]
-    default: Optional[AnyL9Fw4VUO]
-    readOnly: Optional[BooleanG3T6Tn0M]
-    examples: Optional[UnorderedSetOfAnyL9Fw4VUO55Bn0VNb]
-    multipleOf: Optional[Number0ErlT0It]
-    maximum: Optional[NumberHo1ClIqD]
-    exclusiveMaximum: Optional[NumberHo1ClIqD]
-    minimum: Optional[NumberHo1ClIqD]
-    exclusiveMinimum: Optional[NumberHo1ClIqD]
+class JSONMetaSchema(TypedDict):
+    $id: Optional[$Id]
+    $schema: Optional[$Schema]
+    $ref: Optional[$Ref]
+    $comment: Optional[$Comment]
+    title: Optional[Title]
+    description: Optional[Description]
+    default: Optional[AlwaysTrue]
+    readOnly: Optional[ReadOnly]
+    examples: Optional[Examples]
+    multipleOf: Optional[MultipleOf]
+    maximum: Optional[Maximum]
+    exclusiveMaximum: Optional[ExclusiveMaximum]
+    minimum: Optional[Minimum]
+    exclusiveMinimum: Optional[ExclusiveMinimum]
     maxLength: Optional[NonNegativeInteger]
-    minLength: Optional[NonNegativeIntegerDefault0]
-    pattern: Optional[String3JBlmrip]
-    additionalItems: Optional[JSONSchema]
-    items: Optional[AnyOfJSONSchemaSchemaArrayCotc6H6U]
+    minLength: Optional[NonNegativeIntegerDefaultZero]
+    pattern: Optional[Pattern]
+    additionalItems: Optional[JSONMetaSchema]
+    items: Optional[Items]
     maxItems: Optional[NonNegativeInteger]
-    minItems: Optional[NonNegativeIntegerDefault0]
-    uniqueItems: Optional[BooleanG3T6Tn0M]
-    contains: Optional[JSONSchema]
+    minItems: Optional[NonNegativeIntegerDefaultZero]
+    uniqueItems: Optional[UniqueItems]
+    contains: Optional[JSONMetaSchema]
     maxProperties: Optional[NonNegativeInteger]
-    minProperties: Optional[NonNegativeIntegerDefault0]
-    required: Optional[UnorderedSetOfStringDoaGddGAIEp1G0PF]
-    additionalProperties: Optional[JSONSchema]
-    definitions: Optional[ObjectWrpyYBUS]
-    properties: Optional[ObjectWrpyYBUS]
-    patternProperties: Optional[ObjectWrpyYBUS]
+    minProperties: Optional[NonNegativeIntegerDefaultZero]
+    required: Optional[StringArray]
+    additionalProperties: Optional[JSONMetaSchema]
+    definitions: Optional[Definitions]
+    properties: Optional[Properties]
+    patternProperties: Optional[PatternProperties]
     dependencies: Optional[Dependencies]
-    propertyNames: Optional[JSONSchema]
-    const: Optional[AnyL9Fw4VUO]
-    enum: Optional[UnorderedSetOfAnyL9Fw4VUOyeAFYsFq]
-    type: Optional[SchemaType]
-    format: Optional[StringDoaGddGA]
-    contentMediaType: Optional[StringDoaGddGA]
-    contentEncoding: Optional[StringDoaGddGA]
-    if: Optional[JSONSchema]
-    then: Optional[JSONSchema]
-    else: Optional[JSONSchema]
+    propertyNames: Optional[JSONMetaSchema]
+    const: Optional[AlwaysTrue]
+    enum: Optional[Enum]
+    type: Optional[AnyOfArrayOfSimpleTypesSimpleTypesBOu2T0PK]
+    format: Optional[Format]
+    contentMediaType: Optional[ContentMediaType]
+    contentEncoding: Optional[ContentEncoding]
+    if: Optional[JSONMetaSchema]
+    then: Optional[JSONMetaSchema]
+    else: Optional[JSONMetaSchema]
     allOf: Optional[SchemaArray]
     anyOf: Optional[SchemaArray]
     oneOf: Optional[SchemaArray]
-    not: Optional[JSONSchema]
+    not: Optional[JSONMetaSchema]

@@ -1,5 +1,7 @@
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
-import { capitalize, ensureSchemaTitles, collectAndRefSchemas, combineSchemas } from "./utils";
+import { capitalize, combineSchemas } from "./utils";
+import titleizer from "./titleizer";
+import referencer from "./referencer";
 import { CodeGen } from "./codegens/codegen";
 import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
@@ -10,15 +12,15 @@ export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "g
 /**
  * Provides a high-level interface for getting typings given a schema.
  */
-export class JsonSchemaToTypes {
+export class Transpiler {
   [toLang: string]: any;
   public megaSchema: JSONMetaSchema;
 
   constructor(s: JSONMetaSchema | JSONMetaSchema[]) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
-    const schemaWithTitles = inputSchema.map((ss) => ensureSchemaTitles(ss));
-    const reffed = schemaWithTitles.map((ss) => collectAndRefSchemas(ss));
+    const schemaWithTitles = inputSchema.map(titleizer);
+    const reffed = schemaWithTitles.map(referencer);
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
@@ -47,7 +49,7 @@ export class JsonSchemaToTypes {
   }
 
   /**
-   * Alias to [[JsonSchemaToTypes.toTypescript]]
+   * Alias to [[Transpiler.toTypescript]]
    *
    * @category Typescript
    * @category TargetCodeGenerator
@@ -147,4 +149,4 @@ export class JsonSchemaToTypes {
   }
 }
 
-export default JsonSchemaToTypes;
+export default Transpiler;

@@ -1,55 +1,90 @@
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import traverse from "@json-schema-tools/traverse";
+
+export const stringifyCircular = (obj: any) => {
+  const cache: any[] = [];
+  return JSON.stringify(obj, (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        return `[Circular: ${value.title ? value.title : "NoTitle"}]`;
+      }
+      cache.push(value);
+    }
+    return value;
+  }, "\t");
+};
 
 /**
  * Structures a nice error message
  */
-export class NoTitleError extends Error {
-  constructor(schema: JSONMetaSchema, subSchemaKey: string, subschema: JSONMetaSchema) {
-    super([
+export class NoTitleError implements Error {
+  public name = "NoTitleError";
+  public message: string;
+
+  constructor(schema: JSONMetaSchema, parentSchema: JSONMetaSchema) {
+    let schemaStr;
+    let parentSchemaStr;
+
+    try {
+      schemaStr = JSON.stringify(schema);
+    } catch (e) {
+      schemaStr = stringifyCircular(schema);
+    }
+
+    try {
+      parentSchemaStr = JSON.stringify(parentSchema);
+    } catch (e) {
+      parentSchemaStr = stringifyCircular(parentSchema);
+    }
+
+    this.message = [
       "Title is required on subschemas.",
       "Without title, identical schemas would return differing names.",
       "",
-      "Schema in question:",
-      JSON.stringify(schema),
+      "Subschema in question:",
+      schemaStr,
       "",
-      "Key containing problematic subschema:",
-      subSchemaKey,
-      "",
-      "offending subschema:",
-      JSON.stringify(subschema),
-    ].join("\n"));
+      "Parent Schema:",
+      parentSchemaStr,
+    ].join("\n");
   }
+}
+
+export interface EnsureSubschemasTitleOptions {
+  allowLocalRefs?: boolean;
+  allowCyclesWithoutTitle?: boolean;
 }
 
 /**
  * Check all subschemas of the passed in schema to ensure that they have a title.
  */
-export const ensureSubschemaTitles = (s: JSONMetaSchema): NoTitleError[] => {
-  const errors = [];
+export default (s: JSONMetaSchema, options?: EnsureSubschemasTitleOptions): NoTitleError[] => {
+  const errors = [] as NoTitleError[];
 
-  ["anyOf", "oneOf", "allOf"].forEach((k) => {
-    if (!s[k]) { return; }
-    s[k].forEach((ss: JSONMetaSchema, i: number) => {
-      if (ss.title === undefined) { errors.push(new NoTitleError(s, `${k}[${i}]`, ss)); }
-    });
-  });
-
-  if (s.items) {
-    if (s.items instanceof Array) {
-      s.items.forEach((ss: JSONMetaSchema, i: number) => {
-        if (ss.title === undefined) { errors.push(new NoTitleError(s, `items[${i}]`, ss)); }
-      });
-    } else {
-      if (s.items.title === undefined) { errors.push(new NoTitleError(s, "items", s.items)); }
+  let insideCycle = false;
+  traverse(s, (ss, isRootCycle) => {
+    if (!insideCycle && isRootCycle) {
+      insideCycle = isRootCycle;
     }
-  }
 
-  if (s.properties) {
-    const propVals = Object.entries(s.properties) as [string, JSONMetaSchema][];
-    propVals.forEach(([key, ss]: [string, JSONMetaSchema]) => {
-      if (ss.title === undefined) { errors.push(new NoTitleError(s, `properties.${key}`, ss)); }
-    });
-  }
+    if ((ss as any) === true || (ss as any) === false || ss.title !== undefined) {
+      return ss;
+    }
+
+    if (options && options.allowLocalRefs === true) {
+      if (ss.$ref !== undefined && ss.$ref.indexOf("#") !== -1) {
+        return ss;
+      }
+    }
+
+    if (options && options.allowCyclesWithoutTitle === true && insideCycle) {
+      return ss;
+    }
+
+    errors.push(new NoTitleError(ss, s));
+
+    return ss;
+  }, { skipFirstMutation: true, mutable: true });
 
   return errors;
 };

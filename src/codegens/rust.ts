@@ -144,6 +144,16 @@ export default class Rust extends CodeGen {
     return this.buildEnum(s.oneOf as JSONMetaSchema[]);
   }
 
+  protected handleCompositeType(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
+  }
+
+  protected handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation {
+    return {
+      typing: `type Always${(s as any) === true ? "True" : "False"} = serde_json::Value;`,
+    };
+  }
+
   protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "serde_json::Value" };
   }

@@ -1,89 +1,113 @@
-export type StringVPPt56NS = string;
-export type StringNQRYvFt5 = string;
-export type StringDoaGddGA = string;
-export type AnyL9Fw4VUO = any;
-export type BooleanG3T6Tn0M = boolean;
-export type UnorderedSetOfAnyL9Fw4VUO55Bn0VNb = AnyL9Fw4VUO[];
-export type Number0ErlT0It = number;
-export type NumberHo1ClIqD = number;
+export type $Id = string;
+export type $Schema = string;
+export type $Ref = string;
+export type $Comment = string;
+export type Title = string;
+export type Description = string;
+type AlwaysTrue = any;
+export type ReadOnly = boolean;
+export type Examples = AlwaysTrue[];
+export type MultipleOf = number;
+export type Maximum = number;
+export type ExclusiveMaximum = number;
+export type Minimum = number;
+export type ExclusiveMinimum = number;
 export type NonNegativeInteger = number;
-export type AnyXumYU1GW = any;
-export type NonNegativeIntegerDefault0 = NonNegativeInteger & AnyXumYU1GW;
-export type String3JBlmrip = string;
-export type SchemaArray = JSONSchema[];
+export type DefaultZero = any;
+export type NonNegativeIntegerDefaultZero = NonNegativeInteger & DefaultZero;
+export type Pattern = string;
+export type SchemaArray = JSONMetaSchema[];
 /**
  *
  * @default true
  *
  */
-export type AnyOfJSONSchemaSchemaArrayCotc6H6U = JSONSchema | SchemaArray;
+export type Items = JSONMetaSchema | SchemaArray;
+export type UniqueItems = boolean;
+export type StringDoaGddGA = string;
 /**
  *
  * @default []
  *
  */
-export type UnorderedSetOfStringDoaGddGAIEp1G0PF = StringDoaGddGA[];
+export type StringArray = StringDoaGddGA[];
 /**
  *
  * @default {}
  *
  */
-export interface ObjectWrpyYBUS { [key: string]: any; }
+export interface Definitions { [key: string]: any; }
+/**
+ *
+ * @default {}
+ *
+ */
+export interface Properties { [key: string]: any; }
+/**
+ *
+ * @default {}
+ *
+ */
+export interface PatternProperties { [key: string]: any; }
+export type AnyOfJSONMetaSchemaStringArrayBk9CjcAm = JSONMetaSchema | StringArray;
 export interface Dependencies { [key: string]: any; }
-export type UnorderedSetOfAnyL9Fw4VUOyeAFYsFq = AnyL9Fw4VUO[];
-export type Any17L18NF5 = any;
-export type UnorderedSetOfAny17L18NF5VWcS9ROi = Any17L18NF5[];
-export type SchemaType = Any17L18NF5 | UnorderedSetOfAny17L18NF5VWcS9ROi;
+export type Enum = AlwaysTrue[];
+export type SimpleTypes = any;
+export type ArrayOfSimpleTypes = SimpleTypes[];
+export type AnyOfArrayOfSimpleTypesSimpleTypesBOu2T0PK = SimpleTypes | ArrayOfSimpleTypes;
+export type Format = string;
+export type ContentMediaType = string;
+export type ContentEncoding = string;
 /**
  *
  * @default true
  *
  */
-export interface JSONSchema {
-  $id?: StringVPPt56NS;
-  $schema?: StringNQRYvFt5;
-  $ref?: StringVPPt56NS;
-  $comment?: StringDoaGddGA;
-  title?: StringDoaGddGA;
-  description?: StringDoaGddGA;
-  default?: AnyL9Fw4VUO;
-  readOnly?: BooleanG3T6Tn0M;
-  examples?: UnorderedSetOfAnyL9Fw4VUO55Bn0VNb;
-  multipleOf?: Number0ErlT0It;
-  maximum?: NumberHo1ClIqD;
-  exclusiveMaximum?: NumberHo1ClIqD;
-  minimum?: NumberHo1ClIqD;
-  exclusiveMinimum?: NumberHo1ClIqD;
+export interface JSONMetaSchema {
+  $id?: $Id;
+  $schema?: $Schema;
+  $ref?: $Ref;
+  $comment?: $Comment;
+  title?: Title;
+  description?: Description;
+  default?: AlwaysTrue;
+  readOnly?: ReadOnly;
+  examples?: Examples;
+  multipleOf?: MultipleOf;
+  maximum?: Maximum;
+  exclusiveMaximum?: ExclusiveMaximum;
+  minimum?: Minimum;
+  exclusiveMinimum?: ExclusiveMinimum;
   maxLength?: NonNegativeInteger;
-  minLength?: NonNegativeIntegerDefault0;
-  pattern?: String3JBlmrip;
-  additionalItems?: JSONSchema;
-  items?: AnyOfJSONSchemaSchemaArrayCotc6H6U;
+  minLength?: NonNegativeIntegerDefaultZero;
+  pattern?: Pattern;
+  additionalItems?: JSONMetaSchema;
+  items?: Items;
   maxItems?: NonNegativeInteger;
-  minItems?: NonNegativeIntegerDefault0;
-  uniqueItems?: BooleanG3T6Tn0M;
-  contains?: JSONSchema;
+  minItems?: NonNegativeIntegerDefaultZero;
+  uniqueItems?: UniqueItems;
+  contains?: JSONMetaSchema;
   maxProperties?: NonNegativeInteger;
-  minProperties?: NonNegativeIntegerDefault0;
-  required?: UnorderedSetOfStringDoaGddGAIEp1G0PF;
-  additionalProperties?: JSONSchema;
-  definitions?: ObjectWrpyYBUS;
-  properties?: ObjectWrpyYBUS;
-  patternProperties?: ObjectWrpyYBUS;
+  minProperties?: NonNegativeIntegerDefaultZero;
+  required?: StringArray;
+  additionalProperties?: JSONMetaSchema;
+  definitions?: Definitions;
+  properties?: Properties;
+  patternProperties?: PatternProperties;
   dependencies?: Dependencies;
-  propertyNames?: JSONSchema;
-  const?: AnyL9Fw4VUO;
-  enum?: UnorderedSetOfAnyL9Fw4VUOyeAFYsFq;
-  type?: SchemaType;
-  format?: StringDoaGddGA;
-  contentMediaType?: StringDoaGddGA;
-  contentEncoding?: StringDoaGddGA;
-  if?: JSONSchema;
-  then?: JSONSchema;
-  else?: JSONSchema;
+  propertyNames?: JSONMetaSchema;
+  const?: AlwaysTrue;
+  enum?: Enum;
+  type?: AnyOfArrayOfSimpleTypesSimpleTypesBOu2T0PK;
+  format?: Format;
+  contentMediaType?: ContentMediaType;
+  contentEncoding?: ContentEncoding;
+  if?: JSONMetaSchema;
+  then?: JSONMetaSchema;
+  else?: JSONMetaSchema;
   allOf?: SchemaArray;
   anyOf?: SchemaArray;
   oneOf?: SchemaArray;
-  not?: JSONSchema;
+  not?: JSONMetaSchema;
   [k: string]: any;
 }

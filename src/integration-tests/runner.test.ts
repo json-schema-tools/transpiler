@@ -1,11 +1,12 @@
 import * as fs from "fs";
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
-import JsonSchemaToTypes from "../index";
+import Transpiler from "../index";
 import { capitalize } from "../utils";
 import Dereferencer from "@json-schema-tools/dereferencer";
 import { promisify } from "util";
 
 import { getAvailableLanguages, getTestCasesNames } from "./helpers";
+import { stringifyCircular } from "../ensure-subschema-titles";
 
 interface TestCase {
   name: string;
@@ -31,23 +32,61 @@ const ensureAllHaveExpectedResult = async (names: string[], languages: string[])
   return false;
 };
 
+const getTestCaseBase = async (names: string[], languages: string[]): Promise<TestCase[]> => {
+  const promises: any[] = [];
+  const testCases: TestCase[] = [];
+
+  languages.forEach((language) => {
+    // if (language !== "ts") { return; }
+
+    names.forEach((name) => {
+      // if (name !== "json-schema-meta-schema") { return; }
+
+      promises.push(readFile(`${testCaseDir}/${name}.json`, "utf8")
+        .then((fileContents) => {
+          const schema = JSON.parse(fileContents);
+          testCases.push({ name, language, schema, expectedTypings: "" });
+          return schema;
+        }));
+    });
+  });
+
+  await Promise.all(promises);
+  return testCases;
+};
+
+const addExpectedTypings = async (tcs: TestCase[]): Promise<TestCase[]> => {
+  const expectedTypingsPromises: any[] = [];
+
+  tcs.forEach((tc) => {
+    const expectationFile = `${expectedsDir}/${tc.language}/${tc.name}.${tc.language}`;
+    expectedTypingsPromises.push(readFile(expectationFile, "utf8").then((s) => tc.expectedTypings = s.trim()));
+  });
+
+  await Promise.all(expectedTypingsPromises);
+
+  return tcs;
+};
+
+const derefTestCases = async (tcs: TestCase[]): Promise<TestCase[]> => {
+  const derefPromises: any[] = [];
+
+  tcs.forEach((tc) => {
+    const dereffer = new Dereferencer(tc.schema);
+    derefPromises.push(dereffer.resolve().then((s) => tc.schema = s));
+  });
+
+  await Promise.all(derefPromises);
+
+  return tcs;
+};
+
 const getTestCases = async (names: string[], languages: string[]): Promise<TestCase[]> => {
-  const unflattedTestCases = await Promise.all(
-    languages.map((language) => {
-      return Promise.all(names.map(async (name) => {
-        const dereffer = new Dereferencer(JSON.parse(await readFile(`${testCaseDir}/${name}.json`, "utf8")));
-        const schema = await dereffer.resolve();
-        const expectationFile = `${expectedsDir}/${language}/${name}.${language}`;
-        return {
-          name,
-          language,
-          expectedTypings: await readFile(expectationFile, "utf8").then((s) => s.trim()),
-          schema,
-        };
-      }));
-    }),
-  );
-  return unflattedTestCases.reduce((m, tcs) => [...m, ...tcs], []);
+  const testCases: TestCase[] = await getTestCaseBase(names, languages);
+
+  const testCasesWithExpectedTypings = await addExpectedTypings(testCases);
+
+  return derefTestCases(testCasesWithExpectedTypings);
 };
 
 describe("Integration tests", () => {
@@ -61,24 +100,21 @@ describe("Integration tests", () => {
     } catch (e) {
       console.error("Error in integration test setup: getAvailableLanguages");
       console.error(e);
-      throw e;
-      // process.exit(1);
+      process.exit(1);
     }
     try {
       testCaseNames = await getTestCasesNames();
     } catch (e) {
       console.error("Error in integration test setup: getTestCasesNames");
       console.error(e);
-      throw e;
-      // process.exit(1);
+      process.exit(1);
     }
     try {
       testCases = await getTestCases(testCaseNames, languages);
     } catch (e) {
       console.error("Error in integration test setup: getTestCases");
       console.error(e);
-      throw e;
-      // process.exit(1);
+      process.exit(1);
     }
   });
 
@@ -87,20 +123,26 @@ describe("Integration tests", () => {
   });
 
   it("checks out", async () => {
-    expect.assertions(1); // testCases.length);
+    expect.assertions(testCases.length);
 
     const proms = testCases.map(async (testCase: TestCase) => {
-      if (testCase.name !== "circular-reference") {
-        return Promise.resolve();
+      let transpiler;
+      try {
+        transpiler = new Transpiler(testCase.schema);
+      } catch (e) {
+        console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}`); //tslint:disable-line
+        console.error(stringifyCircular(testCase.schema)); //tslint:disable-line
+        throw e;
       }
 
-      if (testCase.language !== "ts") {
-        return Promise.resolve();
+      let typings;
+      try {
+        typings = transpiler[`to${capitalize(testCase.language)}`]();
+      } catch (e) {
+        console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}`); //tslint:disable-line
+        throw e;
       }
-
-      const transpiler = new JsonSchemaToTypes(await testCase.schema);
-      const typings = transpiler[`to${capitalize(testCase.language)}`]();
-      return expect(typings).toBe(await testCase.expectedTypings);
+      return expect(typings).toBe(testCase.expectedTypings);
     });
 
     return Promise.all(proms);
