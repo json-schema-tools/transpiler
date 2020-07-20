@@ -1,3 +1,23 @@
+# [1.2.0](https://github.com/json-schema-tools/transpiler/compare/1.1.0...1.2.0) (2020-07-20)
+
+
+### Bug Fixes
+
+* all unit tests passing ([15cb174](https://github.com/json-schema-tools/transpiler/commit/15cb174fa8d910424aaa1efcca11bae6a0932e9c))
+* almost there... ([0f5db50](https://github.com/json-schema-tools/transpiler/commit/0f5db5041fdf458ee4d3a356bb2b50bfc1c44767))
+* broken test and extra garbage log ([65739ff](https://github.com/json-schema-tools/transpiler/commit/65739ff355159d5f67907517d40f238a36174838))
+* getting close to being the best in the world ([31b9168](https://github.com/json-schema-tools/transpiler/commit/31b9168253ba8a80a2c04ea146dc3938757c796a))
+* oh my god its alive ([cd0b386](https://github.com/json-schema-tools/transpiler/commit/cd0b38693cab2755a149e4579ce5f2f907c9509c))
+* things looking good ([36e4b1f](https://github.com/json-schema-tools/transpiler/commit/36e4b1f5a5d7d591c88146b2161d97086318bf2e))
+* update package lock after rebase ([5692401](https://github.com/json-schema-tools/transpiler/commit/5692401b32cbbb561fb92bf1ce735a22544663b7))
+* wip wip ([a92df4a](https://github.com/json-schema-tools/transpiler/commit/a92df4a8edee6bb9705d14da470ca57272e4dc76))
+
+
+### Features
+
+* fuck yeah boys!! ([a125582](https://github.com/json-schema-tools/transpiler/commit/a12558237b660f7fb95e3914525b4281d955406e))
+* referencer ownage ([469f8db](https://github.com/json-schema-tools/transpiler/commit/469f8dbc23e310a9a14667c55a75e7846647cb90))
+
 # [1.1.0](https://github.com/json-schema-tools/transpiler/compare/1.0.1...1.1.0) (2020-07-02)
 
 
