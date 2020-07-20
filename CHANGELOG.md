@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/json-schema-tools/transpiler/compare/1.2.0...1.2.1) (2020-07-20)
+
+
+### Bug Fixes
+
+* add mode docs ([82d2774](https://github.com/json-schema-tools/transpiler/commit/82d277411906d9867aa8d27468e45b524be956c0))
+
 # [1.2.0](https://github.com/json-schema-tools/transpiler/compare/1.1.0...1.2.0) (2020-07-20)
 
 
