@@ -79,13 +79,8 @@ workflows:
           filters: *filter-only-master
       - build:
           filters: *filter-only-master
-      - hold:
-          filters: *filter-only-master
-          type: approval
-          requires:
-            - test
-            - build
       - release:
           filters: *filter-only-master
           requires:
-            - hold
+            - test
+            - build

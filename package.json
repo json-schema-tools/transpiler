@@ -1,7 +1,7 @@
 {
   "name": "@json-schema-tools/transpiler",
   "version": "0.0.0-development",
-  "description": "",
+  "description": "Turn your json schema into typings for various languages. Achieve master class dev tooling.",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
@@ -11,7 +11,15 @@
     "lint": "tslint --fix -p .",
     "test": "npm run lint && jest --coverage"
   },
-  "author": "",
+  "homepage": "https://json-schema.tools",
+  "bugs": {
+    "url": "https://github.com/json-schema-tools/traverse/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/json-schema-tools/traverse.git"
+  },
+  "author": "Zachary Belford<belfordz66@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
     "@json-schema-tools/dereferencer": "^1.1.0",
