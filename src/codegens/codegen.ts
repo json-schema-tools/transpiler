@@ -1,4 +1,4 @@
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema, JSONSchemaObject, JSONSchemaBoolean } from "@json-schema-tools/meta-schema";
 import { languageSafeName } from "../utils";
 
 export interface TypeIntermediateRepresentation {
@@ -12,24 +12,23 @@ export interface TypeIntermediateRepresentation {
  * Base class for all code generators.
  */
 export abstract class CodeGen {
-  constructor(protected schema: JSONMetaSchema) { }
+  constructor(protected schema: JSONSchema) { }
 
   /**
    * Given a schema, it will generate code for both the schema and the schemas in its definitions section
    */
   public transpile() {
+
+    if (this.schema === true || this.schema === false) {
+      const ir = this.toIR(this.schema);
+      return ir.typing.trim();
+    }
+
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
-      if ((this.schema as any) !== true && (this.schema as any) !== false) { // hack
-        this.schema.$ref = `#/definitions/${this.schema.title}`; // hack
-      } // hack
+      this.schema.$ref = `#/definitions/${this.schema.title}`; // hack, i think dont need anymore
 
       const ir = this.toIR(this.schema);
-
-      if ((this.schema as any) === true || (this.schema as any) === false) {
-        rootSchemaTypes = ir.typing;
-      }
-
       rootSchemaTypes = this.generate(this.schema, ir);
 
       if (this.schema.$ref) { // hack
@@ -38,10 +37,10 @@ export abstract class CodeGen {
     }
 
     const defsSchemaTypes: string[] = [];
-    if (this.schema.definitions) {
+    if (this.schema.definitions !== undefined) {
       Object
         .entries(this.schema.definitions)
-        .filter(([n]: [string, any]) => n !== this.schema.title)
+        .filter(([n]: [string, any]) => n !== (this.schema as JSONSchemaObject).title)
         .forEach(([n, schema]: [string, any]) => {
           const ir = this.toIR(schema);
 
@@ -70,38 +69,38 @@ export abstract class CodeGen {
 
   public getCodePrefix(): string { return ""; }
 
-  protected abstract generate(s: JSONMetaSchema, ir: TypeIntermediateRepresentation): string;
+  protected abstract generate(s: JSONSchema, ir: TypeIntermediateRepresentation): string;
 
-  protected abstract handleBoolean(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleNull(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleBoolean(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleNull(schema: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleNumber(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleInteger(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleNumericalEnum(s: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleNumber(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleInteger(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleNumericalEnum(s: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleString(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleStringEnum(s: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleString(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleStringEnum(s: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleOrderedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleUnorderedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleUntypedArray(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleOrderedArray(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleUnorderedArray(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleUntypedArray(schema: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleObject(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleUntypedObject(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleObject(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleUntypedObject(schema: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleAnyOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleAllOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleOneOf(schema: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleAnyOf(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleAllOf(schema: JSONSchemaObject): TypeIntermediateRepresentation;
+  protected abstract handleOneOf(schema: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected abstract handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation;
-  protected abstract handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation;
+  protected abstract handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation;
+  protected abstract handleUntyped(s: JSONSchemaObject): TypeIntermediateRepresentation;
 
-  protected refToTitle(schema: JSONMetaSchema) {
-    if (schema as any === true) {
+  protected refToTitle(schema: JSONSchema) {
+    if (schema === true) {
       return "AlwaysTrue";
     }
 
-    if (schema as any === false) {
+    if (schema === false) {
       return "AlwaysFalse";
     }
 
@@ -123,16 +122,19 @@ export abstract class CodeGen {
     return schema.$ref.replace("#/definitions/", "");
   }
 
-  protected getJoinedSafeTitles(schemas: JSONMetaSchema[], seperator = ", ") {
-    return schemas.map(this.refToTitle).map(this.getSafeTitle.bind(this)).join(seperator);
+  protected getJoinedSafeTitles(schemas: JSONSchema[], seperator = ", ") {
+    return schemas
+      .map(this.refToTitle)
+      .map(this.getSafeTitle.bind(this))
+      .join(seperator);
   }
 
-  private toIR(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    if ((s as any) === true || (s as any) === false) {
+  private toIR(s: JSONSchema): TypeIntermediateRepresentation {
+    if (s === true || s === false) {
       return this.handleConstantBool(s);
     }
 
-    switch (s.type instanceof Array ? s.type[0] : s.type) {
+    switch (s.type) {
       case "boolean": return this.handleBoolean(s);
 
       case "null": return this.handleNull(s);

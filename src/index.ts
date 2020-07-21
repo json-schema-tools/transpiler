@@ -1,4 +1,4 @@
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema, Definitions, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { capitalize, combineSchemas } from "./utils";
 import titleizer from "./titleizer";
 import referencer from "./referencer";
@@ -14,11 +14,11 @@ export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "g
  */
 export class Transpiler {
   [toLang: string]: any;
-  public megaSchema: JSONMetaSchema;
+  public megaSchema: JSONSchema;
 
-  constructor(s: JSONMetaSchema | JSONMetaSchema[]) {
+  constructor(s: JSONSchema | JSONSchema[]) {
     const useMerge = s instanceof Array;
-    const inputSchema: JSONMetaSchema[] = useMerge ? s as JSONMetaSchema[] : [s];
+    const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
     const schemaWithTitles = inputSchema.map(titleizer);
     const reffed = schemaWithTitles.map(referencer);
     if (useMerge) {

@@ -1,5 +1,5 @@
 import Transpiler from "./index";
-import { Definitions, Properties } from "@json-schema-tools/meta-schema";
+import { Definitions, Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 
 describe("Transpiler", () => {
   it("can be instantiated with a schema with subschemas", () => {
@@ -11,7 +11,7 @@ describe("Transpiler", () => {
         bar: { type: "string" },
       },
     });
-    const megaDefs = t.megaSchema.definitions as Definitions;
+    const megaDefs = (t.megaSchema as JSONSchemaObject).definitions as Definitions;
     expect(megaDefs.string_doaGddGA).toBeDefined();
   });
 
@@ -21,7 +21,7 @@ describe("Transpiler", () => {
   });
 
   it("can deal with boolean schema at the root", () => {
-    const t = new Transpiler((true as any));
+    const t = new Transpiler(true);
     expect(t).toBeDefined();
   });
 
@@ -35,7 +35,7 @@ describe("Transpiler", () => {
     });
     expect(t).toBeDefined();
 
-    const megaDefs = t.megaSchema.definitions as Definitions;
+    const megaDefs = (t.megaSchema as JSONSchemaObject).definitions as Definitions;
     expect(megaDefs.AlwaysTrue).toBe(true);
     expect(megaDefs.AlwaysFalse).toBe(false);
   });
@@ -55,8 +55,8 @@ describe("Transpiler", () => {
     testSchema.properties.fooBar = testSchema;
 
     const transpiler = new Transpiler(testSchema);
-    const props = (transpiler.megaSchema.properties as Properties);
-    const defs = (transpiler.megaSchema.definitions as Definitions);
+    const props = ((transpiler.megaSchema as JSONSchemaObject).properties as Properties);
+    const defs = ((transpiler.megaSchema as JSONSchemaObject).definitions as Definitions);
     expect(props.foo.$ref).toBe("#/definitions/string_doaGddGA");
     expect(props.fooBar.$ref).toBe("#/definitions/foo bar");
     expect(defs["foo bar"].$ref).toBe("#");

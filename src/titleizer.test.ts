@@ -1,12 +1,12 @@
 import titleizer, { getDefaultTitleForSchema } from "./titleizer";
 import { NoTitleError } from "./ensure-subschema-titles";
-import { Properties, JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { Properties, JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 
 describe("titleizer", () => {
 
   it("does not change anything if theres already a title", () => {
     const testSchema = { title: "foo" };
-    const result = titleizer(testSchema);
+    const result = titleizer(testSchema) as JSONSchemaObject;
     expect(result.title).toBe("foo");
   });
 
@@ -24,7 +24,7 @@ describe("titleizer", () => {
       },
     };
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
     expect(titledSchema).toHaveProperty("title");
 
     const props = (titledSchema.properties as Properties);
@@ -52,7 +52,7 @@ describe("titleizer", () => {
 
     testSchema.properties.bar.anyOf.push(testSchema.properties.foo);
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
     const props = (titledSchema.properties as Properties);
 
     expect(props.foo.title).toBe("string_doaGddGA");
@@ -68,14 +68,14 @@ describe("titleizer", () => {
           oneOf: [
             { type: "string" },
             { type: "number" },
-          ] as JSONMetaSchema[],
+          ] as JSONSchema[],
         },
       },
     };
 
     testSchema.properties.bar.oneOf.push(testSchema.properties.bar);
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
     const props = (titledSchema.properties as Properties);
 
     expect(titledSchema).toHaveProperty("title");
@@ -93,14 +93,14 @@ describe("titleizer", () => {
           anyOf: [
             { type: "string", enum: ["a", "b", "c"] },
             { type: "array", items: {} },
-          ] as JSONMetaSchema[],
+          ] as JSONSchemaObject[],
         },
       },
     };
 
     testSchema.properties.bar.anyOf[1].items = testSchema.properties.bar.anyOf[0];
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
     const props = (titledSchema.properties as Properties);
 
     expect(titledSchema).toHaveProperty("title");
@@ -120,12 +120,13 @@ describe("titleizer", () => {
 
     testSchema.anyOf.push(testSchema);
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
 
     expect(titledSchema).toHaveProperty("title");
     expect(titledSchema.title).toBe("anyOf_number_Ho1clIqD_self_vpYSV1F8");
-    expect(titledSchema.anyOf[1]).toHaveProperty("title");
-    expect(titledSchema.anyOf[1]).toBe(titledSchema);
+    const anyOf = titledSchema.anyOf as JSONSchemaObject[];
+    expect(anyOf[1]).toHaveProperty("title");
+    expect(anyOf[1]).toBe(titledSchema);
   });
 
   it("handles deep cycles to the root", () => {
@@ -144,7 +145,7 @@ describe("titleizer", () => {
 
     testSchema.properties.foo.anyOf.push(testSchema);
 
-    const titledSchema = titleizer(testSchema);
+    const titledSchema = titleizer(testSchema) as JSONSchemaObject;
 
     expect(titledSchema).toHaveProperty("title");
 
@@ -154,7 +155,7 @@ describe("titleizer", () => {
     expect(props.foo.anyOf[1]).toBe(titledSchema);
   });
 
-  describe.only("getDefaultTitleForSchema", () => {
+  describe("getDefaultTitleForSchema", () => {
 
     describe("subschemas must have titles", () => {
       it("anyOf", () => {
@@ -230,8 +231,8 @@ describe("titleizer", () => {
         ["anyOf", "oneOf", "allOf"].forEach((k) => {
           const t1 = { [k]: [a, b] };
           const t2 = { [k]: [b, a] };
-          expect(getDefaultTitleForSchema(t1).title)
-            .toEqual(getDefaultTitleForSchema(t2).title);
+          expect((getDefaultTitleForSchema(t1) as JSONSchemaObject).title)
+            .toEqual((getDefaultTitleForSchema(t2) as JSONSchemaObject).title);
         });
       });
 
@@ -242,8 +243,8 @@ describe("titleizer", () => {
         const t1 = { type: "object", properties: { a, b } };
         const t2 = { type: "object", properties: { b, a } };
 
-        expect(getDefaultTitleForSchema(t1).title)
-          .toEqual(getDefaultTitleForSchema(t2).title);
+        expect((getDefaultTitleForSchema(t1) as JSONSchemaObject).title)
+          .toEqual((getDefaultTitleForSchema(t2) as JSONSchemaObject).title);
       });
 
       it("when array items is an object (single schema), property ordering does not matter", () => {
@@ -253,24 +254,24 @@ describe("titleizer", () => {
         const t1 = { type: "array", items: a };
         const t2 = { type: "array", items: b };
 
-        expect(getDefaultTitleForSchema(t1))
-          .toEqual(getDefaultTitleForSchema(t2));
+        expect((getDefaultTitleForSchema(t1) as JSONSchemaObject))
+          .toEqual((getDefaultTitleForSchema(t2) as JSONSchemaObject));
       });
 
       it("order of enum values doesnt matter", () => {
         const a = { type: "number", enum: [1, 2, 3] };
         const b = { type: "number", enum: [3, 2, 1] };
 
-        expect(getDefaultTitleForSchema(a).title)
-          .toEqual(getDefaultTitleForSchema(b).title);
+        expect((getDefaultTitleForSchema(a) as JSONSchemaObject).title)
+          .toEqual((getDefaultTitleForSchema(b) as JSONSchemaObject).title);
       });
 
       it("definitions are ignored", () => {
         const a = { type: "number", definitions: { a: { type: "number" } } };
         const b = { type: "number", definitions: { b: { type: "string" } } };
 
-        expect(getDefaultTitleForSchema(a).title)
-          .toEqual(getDefaultTitleForSchema(b).title);
+        expect((getDefaultTitleForSchema(a) as JSONSchemaObject).title)
+          .toEqual((getDefaultTitleForSchema(b) as JSONSchemaObject).title);
       });
     });
   });

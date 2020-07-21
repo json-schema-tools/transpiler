@@ -1,4 +1,4 @@
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
 
 export const stringifyCircular = (obj: any) => {
@@ -21,7 +21,7 @@ export class NoTitleError implements Error {
   public name = "NoTitleError";
   public message: string;
 
-  constructor(schema: JSONMetaSchema, parentSchema: JSONMetaSchema) {
+  constructor(schema: JSONSchema, parentSchema: JSONSchema) {
     let schemaStr;
     let parentSchemaStr;
 
@@ -58,7 +58,7 @@ export interface EnsureSubschemasTitleOptions {
 /**
  * Check all subschemas of the passed in schema to ensure that they have a title.
  */
-export default (s: JSONMetaSchema, options?: EnsureSubschemasTitleOptions): NoTitleError[] => {
+export default (s: JSONSchema, options?: EnsureSubschemasTitleOptions): NoTitleError[] => {
   const errors = [] as NoTitleError[];
 
   let insideCycle = false;
@@ -67,7 +67,7 @@ export default (s: JSONMetaSchema, options?: EnsureSubschemasTitleOptions): NoTi
       insideCycle = isRootCycle;
     }
 
-    if ((ss as any) === true || (ss as any) === false || ss.title !== undefined) {
+    if (ss === true || ss === false || ss.title !== undefined) {
       return ss;
     }
 

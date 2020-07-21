@@ -1,5 +1,5 @@
 import traverse from "@json-schema-tools/traverse";
-import { JSONMetaSchema, Title } from "@json-schema-tools/meta-schema";
+import { JSONSchema } from "@json-schema-tools/meta-schema";
 import ensureSubschemaTitles from "./ensure-subschema-titles";
 
 const deleteAllProps = (o: { [k: string]: any }) => {
@@ -18,7 +18,7 @@ const deleteAllProps = (o: { [k: string]: any }) => {
  * @category SchemaImprover
  *
  */
-export default (s: JSONMetaSchema): JSONMetaSchema => {
+export default (s: JSONSchema): JSONSchema => {
   const definitions: any = {};
 
   // check first since we are going to mutate the input. Slower but safer...
@@ -31,9 +31,9 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
 
   traverse(
     s,
-    (subSchema: JSONMetaSchema, isRootCycle: boolean) => {
+    (subSchema: JSONSchema, isRootCycle: boolean) => {
       let t = "";
-      if (isRootCycle) {
+      if (isRootCycle && subSchema !== true && subSchema !== false) {
         if (subSchema.$ref) {
           const title = subSchema.$ref.replace("#/definitions/", "");
           const hasDefForRef = definitions[title];
@@ -56,10 +56,10 @@ export default (s: JSONMetaSchema): JSONMetaSchema => {
         return subSchema;
       }
 
-      if ((subSchema as any) === true) {
+      if (subSchema === true) {
         t = "AlwaysTrue";
         definitions[t as string] = true;
-      } else if ((subSchema as any) === false) {
+      } else if (subSchema === false) {
         t = "AlwaysFalse";
         definitions[t as string] = false;
       } else if (subSchema.$ref !== undefined && subSchema.$ref.indexOf("#") !== -1) {

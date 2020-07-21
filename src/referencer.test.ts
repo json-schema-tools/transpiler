@@ -1,7 +1,6 @@
 import referencer from "./referencer";
 import { NoTitleError } from "./ensure-subschema-titles";
-import { Properties, Definitions } from "@json-schema-tools/meta-schema";
-import { JSONMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema, Properties, Definitions, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 
 describe("referencer", () => {
   it("does not change anything if are no sub schemas", () => {
@@ -35,7 +34,7 @@ describe("referencer", () => {
         },
       },
     };
-    const reffed = referencer(testSchema);
+    const reffed = referencer(testSchema) as JSONSchemaObject;
 
     const props = reffed.properties as Properties;
     const defs = reffed.definitions as Definitions;
@@ -46,7 +45,7 @@ describe("referencer", () => {
     expect(defs.baz.title).toBe("baz");
     const bazItems = defs.baz.items as JSONSchema[];
     expect(bazItems).toHaveLength(1);
-    expect(bazItems[0].$ref).toBe("#/definitions/whatsAfterBazAgain");
+    expect((bazItems[0] as JSONSchemaObject).$ref).toBe("#/definitions/whatsAfterBazAgain");
     expect(defs.whatsAfterBazAgain.title).toBe("whatsAfterBazAgain");
   });
 
@@ -67,7 +66,7 @@ describe("referencer", () => {
         },
       ],
     };
-    const reffed = referencer(testSchema);
+    const reffed = referencer(testSchema) as JSONSchemaObject;
 
     const defs = reffed.definitions as Definitions;
 
@@ -78,8 +77,9 @@ describe("referencer", () => {
     expect(defs.abc.title).toBe("abc");
 
     expect(reffed.anyOf).toHaveLength(2);
-    expect(reffed.anyOf[0].$ref).toBe("#/definitions/allOfFoo");
-    expect(reffed.anyOf[1].$ref).toBe("#/definitions/bar");
+    const anyOfs = reffed.anyOf as JSONSchemaObject[];
+    expect(anyOfs[0].$ref).toBe("#/definitions/allOfFoo");
+    expect(anyOfs[1].$ref).toBe("#/definitions/bar");
 
     expect(defs.bar.oneOf).toHaveLength(2);
     expect(defs.bar.oneOf[0].$ref).toBe("#/definitions/baz");
@@ -95,7 +95,7 @@ describe("referencer", () => {
 
     testSchema.properties.anotherFoo = testSchema;
 
-    const reffed = referencer(testSchema);
+    const reffed = referencer(testSchema) as JSONSchemaObject;
 
     const props = reffed.properties as Properties;
     const defs = reffed.definitions as Definitions;
@@ -134,7 +134,7 @@ describe("referencer", () => {
         },
       },
     };
-    const reffed = referencer(testSchema);
+    const reffed = referencer(testSchema) as JSONSchemaObject;
 
     const defs = reffed.definitions as Definitions;
 

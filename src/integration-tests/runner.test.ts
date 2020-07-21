@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema } from "@json-schema-tools/meta-schema";
 import Transpiler from "../index";
 import { capitalize } from "../utils";
 import Dereferencer from "@json-schema-tools/dereferencer";
@@ -12,7 +12,7 @@ interface TestCase {
   name: string;
   language: string;
   expectedTypings: string;
-  schema: JSONMetaSchema;
+  schema: JSONSchema;
 }
 
 const [readDir, readFile] = [promisify(fs.readdir), promisify(fs.readFile)];
@@ -95,27 +95,9 @@ describe("Integration tests", () => {
   let testCases: TestCase[];
 
   beforeAll(async () => {
-    try {
-      languages = await getAvailableLanguages();
-    } catch (e) {
-      console.error("Error in integration test setup: getAvailableLanguages");
-      console.error(e);
-      process.exit(1);
-    }
-    try {
-      testCaseNames = await getTestCasesNames();
-    } catch (e) {
-      console.error("Error in integration test setup: getTestCasesNames");
-      console.error(e);
-      process.exit(1);
-    }
-    try {
-      testCases = await getTestCases(testCaseNames, languages);
-    } catch (e) {
-      console.error("Error in integration test setup: getTestCases");
-      console.error(e);
-      process.exit(1);
-    }
+    languages = await getAvailableLanguages();
+    testCaseNames = await getTestCasesNames();
+    testCases = await getTestCases(testCaseNames, languages);
   });
 
   it("can load the test languages", () => {

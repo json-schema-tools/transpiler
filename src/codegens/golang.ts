@@ -1,5 +1,6 @@
-import { JSONMetaSchema, Enum } from "@json-schema-tools/meta-schema";
+import { JSONSchema, Enum, JSONSchemaBoolean, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
+import { getTitle } from "../utils";
 
 export default class Golang extends CodeGen {
 
@@ -10,35 +11,35 @@ export default class Golang extends CodeGen {
     return n.replace(/^[^A-Z]+/m, "");
   }
 
-  protected generate(s: JSONMetaSchema, ir: TypeIntermediateRepresentation) {
+  protected generate(s: JSONSchema, ir: TypeIntermediateRepresentation) {
     return [
       ir.documentationComment,
       [
         "type ",
-        `${this.getSafeTitle(s.title as string)} `,
+        `${this.getSafeTitle(getTitle(s))} `,
         ir.prefix ? `${ir.prefix} ` : "",
       ].join(""),
       ir.macros ? [ir.typing, ir.macros].join("\n") : ir.typing,
     ].join("");
   }
 
-  protected handleBoolean(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleBoolean(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { typing: "bool", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNull(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleNull(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { typing: "interface{}", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNumber(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleNumber(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { typing: "float64", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleInteger(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleInteger(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { typing: "int64", documentationComment: this.buildDocs(s) };
   }
 
-  protected handleNumericalEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleNumericalEnum(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const safeTitle = this.getSafeTitle(s.title as string);
     const sEnum = s.enum as Enum;
     const enumFields = sEnum
@@ -51,11 +52,11 @@ export default class Golang extends CodeGen {
     return ir;
   }
 
-  protected handleString(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleString(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), typing: "string" };
   }
 
-  protected handleStringEnum(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleStringEnum(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const safeTitle = this.getSafeTitle(s.title as string);
     const sEnum = s.enum as Enum;
     const enumFields = sEnum
@@ -68,28 +69,28 @@ export default class Golang extends CodeGen {
     return ir;
   }
 
-  protected handleOrderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleOrderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return {
-      typing: `(${this.getJoinedSafeTitles(s.items as JSONMetaSchema[])})`,
+      typing: `(${this.getJoinedSafeTitles(s.items as JSONSchema[])})`,
       documentationComment: this.buildDocs(s),
     };
   }
 
-  protected handleUnorderedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return {
-      typing: `[]${this.getSafeTitle(this.refToTitle(s.items as JSONMetaSchema))}`,
+      typing: `[]${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}`,
       documentationComment: this.buildDocs(s),
     };
   }
 
-  protected handleUntypedArray(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleUntypedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const ir = this.handleUntyped(s);
     ir.typing = `[]${ir.typing}`;
     return ir;
   }
 
-  protected handleObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    const sProps = s.properties as { [k: string]: JSONMetaSchema };
+  protected handleObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    const sProps = s.properties as { [k: string]: JSONSchema };
     const propKeys = Object.keys(sProps);
     const safeTitles = propKeys.map((k) => this.getSafeTitle(k));
     const propSchemaTitles = propKeys.map((k) => this.getSafeTitle(this.refToTitle(sProps[k])));
@@ -119,7 +120,7 @@ export default class Golang extends CodeGen {
     };
   }
 
-  protected handleUntypedObject(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const ir = this.handleUntyped(s);
     ir.typing = `map[string]${ir.typing}`;
     return ir;
@@ -209,9 +210,9 @@ export default class Golang extends CodeGen {
     ].join("\n");
   }
 
-  protected handleAnyOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    const sAny = s.anyOf as JSONMetaSchema[];
-    const titles = sAny.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
+  protected handleAnyOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    const sAny = s.anyOf as JSONSchema[];
+    const titles = sAny.map((ss: JSONSchema) => this.getSafeTitle(this.refToTitle(ss)));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
     const anyOfType = titles.reduce((typings: string[], anyOfTitle: string) => {
       return [...typings, `\t${anyOfTitle.padEnd(titleMaxLength)} *${anyOfTitle}`]; // Here, the pointer is added.
@@ -232,16 +233,16 @@ export default class Golang extends CodeGen {
   /**
    * must be a set of schemas with type: object
    */
-  protected handleAllOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleAllOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
     this.warnNotWellSupported("allOf");
     return this.handleUntypedObject(s);
   }
 
-  protected handleOneOf(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    const sOne = s.oneOf as JSONMetaSchema[];
-    const titles = sOne.map((ss: JSONMetaSchema) => this.getSafeTitle(this.refToTitle(ss)));
+  protected handleOneOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    const sOne = s.oneOf as JSONSchema[];
+    const titles = sOne.map((ss: JSONSchema) => this.getSafeTitle(this.refToTitle(ss)));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
-    const oneOfType = sOne.reduce((typings: string[], oneOfSchema: JSONMetaSchema, i: number) => {
+    const oneOfType = sOne.reduce((typings: string[], oneOfSchema: JSONSchema, i: number) => {
       const oneOfTitle = titles[i];
       return [
         ...typings,
@@ -264,21 +265,17 @@ export default class Golang extends CodeGen {
     };
   }
 
-  protected handleCompositeType(s: JSONMetaSchema): TypeIntermediateRepresentation {
-    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "any" };
-  }
-
-  protected handleConstantBool(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation {
     return {
       typing: `type Always${(s as any) === true ? "True" : "False"} interface{}`,
     };
   }
 
-  protected handleUntyped(s: JSONMetaSchema): TypeIntermediateRepresentation {
+  protected handleUntyped(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return { documentationComment: this.buildDocs(s), prefix: "", typing: "interface{}" };
   }
 
-  private buildDocs(s: JSONMetaSchema): string | undefined {
+  private buildDocs(s: JSONSchemaObject): string | undefined {
     const docStringLines = [];
 
     if (s.description) {

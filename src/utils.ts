@@ -1,6 +1,6 @@
 import deburr from "lodash.deburr";
 import trim from "lodash.trim";
-import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
+import { JSONSchema, Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 
 /**
  * Capitalize the first letter of the string.
@@ -30,26 +30,63 @@ export const languageSafeName = (title: string) => {
       .replace(regexes[5], ""));
 };
 
-export const schemaToRef = (s: JSONMetaSchema) => ({ $ref: `#/definitions/${s.title}` });
-export const joinSchemaTitles = (s: JSONMetaSchema[]): string => s.map(({ title }: JSONMetaSchema) => title).join("_");
+export const getTitle = (s: JSONSchema): string => {
+  if (s === true) {
+    return "AlwaysTrue";
+  }
 
-type SchemEntry = [string, JSONMetaSchema];
+  if (s === false) {
+    return "AlwaysFalse";
+  }
+
+  if (s.title) {
+    return s.title;
+  }
+
+  throw new Error("Could not extract title from schema: " + JSON.stringify(s));
+};
+
+export const schemaToRef = (s: JSONSchema) => {
+  const ref = getTitle(s);
+  return { $ref: `#/definitions/${ref}` }
+};
+
+export const joinSchemaTitles = (s: JSONSchema[]): string => {
+  return s.map(getTitle).join("_");
+};
+
+type SchemEntry = [string, JSONSchema];
 export const sortEntriesByKey = ([key1]: SchemEntry, [key2]: SchemEntry) => key1 > key2 ? -1 : 1;
 
-export function combineSchemas(s: JSONMetaSchema[]): JSONMetaSchema {
-  const combinedDefinitions = s.reduce((comb, schema) => ({
-    ...comb,
-    ...schema.definitions,
-  }), {});
+export function combineSchemas(s: JSONSchema[]): JSONSchemaObject {
+  let combinedDefinitions: { [k: string]: JSONSchema } = {};
+
+  s.forEach((schema) => {
+    if (schema === true || schema === false) {
+      combinedDefinitions[getTitle(schema)] = schema;
+    } else {
+      combinedDefinitions = {
+        ...combinedDefinitions,
+        ...schema.definitions,
+      };
+    }
+  });
 
   const withoutDefinitions = s.map((ss) => {
+    if (ss === true || ss === false) { return ss; }
     const copy = { ...ss };
     delete copy.definitions;
     return copy;
   });
 
-  const uniquedSchemas = withoutDefinitions.reduce((uniqued: JSONMetaSchema[], schema: JSONMetaSchema) => {
-    if (uniqued.find(({ title }: JSONMetaSchema) => title === schema.title) === undefined) {
+  const uniquedSchemas = withoutDefinitions.reduce((uniqued: JSONSchema[], schema: JSONSchema) => {
+    if (uniqued.find((us: JSONSchema) => {
+      if (us === true || us === false || schema === true || schema === false) {
+        return us === schema;
+      }
+
+      return us.title === schema.title;
+    }) === undefined) {
       return [
         ...uniqued,
         schema,
@@ -58,24 +95,31 @@ export function combineSchemas(s: JSONMetaSchema[]): JSONMetaSchema {
     return uniqued;
   }, []);
 
+
+  uniquedSchemas.forEach((us) => {
+    return combinedDefinitions[getTitle(us)] = us;
+  });
+
+
   return {
     title: `AnyOf_${joinSchemaTitles(s)}`,
     description: "Generated! Represents an alias to any of the provided schemas",
     anyOf: uniquedSchemas.map(schemaToRef),
-    definitions: {
-      ...combinedDefinitions,
-      ...uniquedSchemas.reduce((allOfs, schema) => ({
-        ...allOfs,
-        [schema.title as string]: schema,
-      }), {}),
-    },
+    definitions: combinedDefinitions,
   };
 }
 
-export function mergeObjectProperties(schemas: JSONMetaSchema[]): JSONMetaSchema {
-  const merged = schemas
-    .filter(({ properties }: JSONMetaSchema) => properties)
-    .map(({ properties }: JSONMetaSchema): Properties => properties as Properties)
-    .reduce((all: JSONMetaSchema, schema: JSONMetaSchema) => ({ ...all, ...schema }), {});
+export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
+  const merged = (schemas
+    .filter((s) => {
+      if (s === true || s === false) {
+        return false;
+      } else {
+        return !!s.properties;
+      }
+    }) as JSONSchemaObject[])
+    .map(({ properties }: JSONSchemaObject): Properties => properties as Properties)
+    .reduce((all: JSONSchemaObject, schema: JSONSchemaObject) => ({ ...all, ...schema }), {});
+
   return merged;
 }
