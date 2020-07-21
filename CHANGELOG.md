@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/json-schema-tools/transpiler/compare/1.2.1...1.3.0) (2020-07-21)
+
+
+### Features
+
+* all tests passing with new newnew ([5e2a135](https://github.com/json-schema-tools/transpiler/commit/5e2a135196a39060e93761713f2a3ccd78728e5f))
+
 ## [1.2.1](https://github.com/json-schema-tools/transpiler/compare/1.2.0...1.2.1) (2020-07-20)
 
 
