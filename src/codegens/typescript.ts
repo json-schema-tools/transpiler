@@ -86,7 +86,16 @@ export default class Typescript extends CodeGen {
       return [...typings, `  ${key}${isRequired ? "" : "?"}: ${title};`];
     }, []);
 
-    if (s.additionalProperties === undefined) {
+    if (s.patternProperties !== undefined) {
+      const subTypes: string[] = [];
+      Object.values(s.patternProperties).forEach((prop: JSONSchema) => {
+        const title = this.getSafeTitle(this.refToTitle(prop));
+        if (subTypes.includes(title) === false) {
+          subTypes.push(title);
+        }
+      });
+      propertyTypings.push(`  [regex: string]: ${subTypes.join(" | ")} | any;`);
+    } else if (s.additionalProperties !== false) {
       propertyTypings.push("  [k: string]: any;");
     }
 

@@ -1,0 +1,17 @@
+{
+  "title": "milkers",
+  "type": "object",
+  "properties": {
+    "anything": { "type": "boolean" }
+  },
+  "patternProperties": {
+    "*.": {
+      "title": "godlike",
+      "type": "number"
+    },
+    "abc": {
+      "title": "absoluteMadLad",
+      "type": "string"
+    }
+  }
+}
