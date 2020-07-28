@@ -14,11 +14,11 @@
   },
   "homepage": "https://json-schema.tools",
   "bugs": {
-    "url": "https://github.com/json-schema-tools/traverse/issues"
+    "url": "https://github.com/json-schema-tools/transpiler/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/json-schema-tools/traverse.git"
+    "url": "git+https://github.com/json-schema-tools/transpiler.git"
   },
   "author": "Zachary Belford<belfordz66@gmail.com>",
   "license": "Apache-2.0",
