@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/json-schema-tools/transpiler/compare/1.3.0...1.4.0) (2020-07-28)
+
+
+### Bug Fixes
+
+* add to package json and remove hold ([385774e](https://github.com/json-schema-tools/transpiler/commit/385774e0f60983acfd66b64d9ae5c38df75f1245))
+* adjust circle buld ([22d2105](https://github.com/json-schema-tools/transpiler/commit/22d2105c656ed4cd2aa11474bfe4186a8434a6c7))
+* properly set repo ([6fab520](https://github.com/json-schema-tools/transpiler/commit/6fab520f7c8460ac4ead65d5741192fc2d68cd08))
+* update package lock ([4059b56](https://github.com/json-schema-tools/transpiler/commit/4059b564dacfabe149caaee6e4e062dccc80b5ad))
+
+
+### Features
+
+* generate code for patternProperties ([c5e38b9](https://github.com/json-schema-tools/transpiler/commit/c5e38b9e6feaaea34e334a314224f21ff5681685))
+
 # [1.3.0](https://github.com/json-schema-tools/transpiler/compare/1.2.1...1.3.0) (2020-07-21)
 
 
