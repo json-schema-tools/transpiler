@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc && typedoc --out docs &&  touch docs/.nojekyll",
     "lint": "tslint --fix -p .",
-    "test": "npm run lint && jest --coverage"
+    "test": "npm run lint && jest --coverage",
+    "generateTest": "tsc && node ./build/integration-tests/generator.js"
   },
   "homepage": "https://json-schema.tools",
   "bugs": {
@@ -42,7 +43,7 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
-    "@json-schema-tools/traverse": "^1.4.2",
+    "@json-schema-tools/traverse": "^1.5.0",
     "lodash.deburr": "^4.1.0",
     "lodash.trim": "^4.5.1"
   }
