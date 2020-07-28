@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/json-schema-tools/transpiler/compare/1.4.0...1.4.1) (2020-07-28)
+
+
+### Bug Fixes
+
+* only publish built files ([bd90329](https://github.com/json-schema-tools/transpiler/commit/bd9032975b4db6d5b02f22c890943c2aed1ae749))
+
 # [1.4.0](https://github.com/json-schema-tools/transpiler/compare/1.3.0...1.4.0) (2020-07-28)
 
 
