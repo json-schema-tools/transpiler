@@ -125,14 +125,12 @@ export function getDefaultTitleForSchema(schema: JSONSchema, isRootCycle = false
 }
 
 /**
- * Returns a copy of the schema (deep) where if any subschema does not have a title, one will be created.
- * The subschemas can be considered a tree of schemas, and in this case, we are resolving titles on the leaves
- * of the tree. Think depth first traversal, but where the internal nodes' titles are not resolved until
- * it's entire subtree is complete.
+ * Returns the schema with a title that is deterministic and generated based on their content.
+ * It will also generate titles for subschemas that are missing them.
  *
  * @param s The schema to ensure has names for it and all subschemas of it.
  *
- * @returns Deep schema copy of the input schema where the schema and all sub schemas have titles.
+ * @returns schema with title and titles on all subschemas.
  *
  * @category Utils
  * @category SchemaImprover
