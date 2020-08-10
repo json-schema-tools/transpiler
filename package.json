@@ -39,7 +39,7 @@
     "@types/node-fetch": "^2.5.7",
     "fetch": "^1.1.0",
     "inquirer": "^7.3.3",
-    "jest": "^24.8.0",
+    "jest": "^26.2.2",
     "node-fetch": "^2.6.0",
     "ts-jest": "^24.1.0",
     "tslint": "^6.1.2",
