@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/json-schema-tools/transpiler/compare/1.4.2...1.4.3) (2020-10-08)
+
+
+### Bug Fixes
+
+* update docs for titleizer ([5c6f8fa](https://github.com/json-schema-tools/transpiler/commit/5c6f8fab79207b4aa597a06e8f3dfb759c7166ae))
+
 ## [1.4.2](https://github.com/json-schema-tools/transpiler/compare/1.4.1...1.4.2) (2020-09-09)
 
 
