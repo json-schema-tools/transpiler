@@ -92,14 +92,13 @@ export function combineSchemas(s: JSONSchema[]): JSONSchemaObject {
         schema,
       ];
     }
+
     return uniqued;
   }, []);
-
 
   uniquedSchemas.forEach((us) => {
     return combinedDefinitions[getTitle(us)] = us;
   });
-
 
   return {
     title: `AnyOf_${joinSchemaTitles(s)}`,

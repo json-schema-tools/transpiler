@@ -1,3 +1,11 @@
+## [1.4.2](https://github.com/json-schema-tools/transpiler/compare/1.4.1...1.4.2) (2020-09-09)
+
+
+### Bug Fixes
+
+* add a couple more test assertions ([4e567dd](https://github.com/json-schema-tools/transpiler/commit/4e567dda33a1e81a74893e71c017b8b5aeb1f6bf))
+* more testing ([7169139](https://github.com/json-schema-tools/transpiler/commit/7169139a21a9aac9c75db4c75e0c2d9b0f2ea804))
+
 ## [1.4.1](https://github.com/json-schema-tools/transpiler/compare/1.4.0...1.4.1) (2020-07-28)
 
 

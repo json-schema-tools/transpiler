@@ -1,6 +1,6 @@
 import referencer from "./referencer";
 import { NoTitleError } from "./ensure-subschema-titles";
-import { JSONSchema, Properties, Definitions, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+import { JSONSchema, Properties, Definitions, JSONSchemaObject, SchemaArray } from "@json-schema-tools/meta-schema";
 
 describe("referencer", () => {
   it("does not change anything if are no sub schemas", () => {
@@ -139,6 +139,7 @@ describe("referencer", () => {
     const defs = reffed.definitions as Definitions;
 
     expect(defs.cba.title).toBe("cba");
+    expect(defs.cba.type).toBe("string");
     expect(defs.allOfFoo.title).toBe("allOfFoo");
     expect(defs.foo.title).toBe("foo");
     expect(defs.baz.title).toBe("baz");
@@ -148,5 +149,7 @@ describe("referencer", () => {
     expect(defs.allOfFoo.allOf[0].$ref).toBe("#/definitions/foo");
     expect(defs.allOfFoo.allOf[1].$ref).toBe("#/definitions/baz");
     expect(defs.baz.properties.cba.$ref).toBe("#/definitions/cba");
+
+    expect((reffed.anyOf as SchemaArray)[0]).toEqual({ $ref: "#/definitions/allOfFoo" });
   });
 });
