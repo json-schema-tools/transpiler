@@ -6,6 +6,7 @@ export interface TypeIntermediateRepresentation {
   prefix?: string;
   typing: string;
   documentationComment?: string;
+  imports?: string[]
 }
 
 /**
@@ -24,17 +25,19 @@ export abstract class CodeGen {
       return ir.typing.trim();
     }
 
+    let imports = new Set();
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
       this.schema.$ref = `#/definitions/${this.schema.title}`; // hack, i think dont need anymore
 
       const ir = this.toIR(this.schema);
       rootSchemaTypes = this.generate(this.schema, ir);
-
+      if (ir.imports) { ir.imports.forEach((imp) => imports.add(imp)); }
       if (this.schema.$ref) { // hack
         delete this.schema.$ref; // hack
       } // hack
     }
+
 
     const defsSchemaTypes: string[] = [];
     if (this.schema.definitions !== undefined) {
@@ -43,7 +46,7 @@ export abstract class CodeGen {
         .filter(([n]: [string, any]) => n !== (this.schema as JSONSchemaObject).title)
         .forEach(([n, schema]: [string, any]) => {
           const ir = this.toIR(schema);
-
+          if (ir.imports) { ir.imports.forEach((imp) => imports.add(imp)); }
           if ((schema as any) === true || (schema as any) === false) {
             defsSchemaTypes.push(ir.typing);
             return;
@@ -52,8 +55,8 @@ export abstract class CodeGen {
           defsSchemaTypes.push(this.generate(schema, ir));
         });
     }
-
     return [
+      ...Array.from(imports),
       ...defsSchemaTypes,
       rootSchemaTypes,
     ].join("\n").trim();

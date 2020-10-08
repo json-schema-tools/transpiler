@@ -227,6 +227,10 @@ export default class Golang extends CodeGen {
       prefix: "struct",
       typing: ["{", ...anyOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
+      imports: [
+        "import \"encoding/json\"",
+        "import \"errors\""
+      ]
     };
   }
 
@@ -262,6 +266,10 @@ export default class Golang extends CodeGen {
       prefix: "struct",
       typing: [`{`, ...oneOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
+      imports: [
+        "import \"encoding/json\"",
+        "import \"errors\""
+      ]
     };
   }
 

@@ -4,8 +4,6 @@ import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
 export default class Python extends CodeGen {
   protected generate(s: JSONSchemaObject, ir: TypeIntermediateRepresentation) {
     return [
-      ir.macros,
-      "\n",
       ir.documentationComment,
       "\n",
       ir.typing,
@@ -16,8 +14,8 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType",
       typing: `${title} = NewType("${title}", bool)`,
+      imports: ["from typing import NewType"],
     };
   }
 
@@ -25,8 +23,8 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType",
       typing: `${title} = NewType("${title}", None)`,
+      imports: ["from typing import NewType"]
     };
   }
 
@@ -34,8 +32,8 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType",
       typing: `${title} = NewType("${title}", float)`,
+      imports: ["from typing import NewType"]
     };
   }
 
@@ -43,8 +41,8 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType",
       typing: `${title} = NewType("${title}", int)`,
+      imports: ["from typing import NewType"]
     };
   }
 
@@ -61,8 +59,8 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType",
       typing: `${title} = NewType("${title}", str)`,
+      imports: ["from typing import NewType"]
     };
   }
 
@@ -74,12 +72,12 @@ export default class Python extends CodeGen {
 
     const title = this.getSafeTitle(s.title as string);
     return {
-      macros: "from enum import Enum",
       documentationComment: this.buildDocs(s),
       typing: [
         `class ${title}(Enum):`,
         ...typeLines,
       ].join("\n"),
+      imports: ["from enum import Enum"]
     };
   }
 
@@ -88,9 +86,12 @@ export default class Python extends CodeGen {
     const sItems = s.items as JSONSchema[];
     const itemTitles = sItems.map((item: JSONSchema) => this.getSafeTitle(this.refToTitle(item)));
     return {
-      macros: "from typing import NewType, Tuple",
       documentationComment: this.buildDocs(s),
       typing: `${title} = NewType("${title}", Tuple[${itemTitles.join(", ")}])`,
+      imports: [
+        "from enum import NewType",
+        "from enum import Tuple"
+      ]
     };
   }
 
@@ -99,8 +100,11 @@ export default class Python extends CodeGen {
     const itemsTitle = this.getSafeTitle(this.refToTitle(s.items as JSONSchema));
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import List, NewType",
       typing: `${title} = NewType("${title}", List[${itemsTitle}])`,
+      imports: [
+        "from enum import List",
+        "from enum import NewType"
+      ]
     };
   }
 
@@ -108,8 +112,12 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import List, Any, NewType",
       typing: `${title} = NewType("${title}", List[Any])`,
+      imports: [
+        "from typing import List",
+        "from typing import Any",
+        "from typing import NewType"
+      ]
     };
   }
 
@@ -136,11 +144,14 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import TypedDict, Optional",
       typing: [
         `class ${title}(TypedDict):`,
         ...propertyTypings,
       ].join("\n"),
+      imports: [
+        "from typing import TypedDict",
+        "from typing import Optional"
+      ]
     };
   }
 
@@ -148,8 +159,12 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import NewType, Any, Mapping",
       typing: `${title} = NewType("${title}", Mapping[Any, Any])`,
+      imports: [
+        "from typing import NewType",
+        "from typing import Any",
+        "from typing import Mapping"
+      ]
     };
   }
 
@@ -157,10 +172,13 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     const sAny = s.anyOf as JSONSchema[];
     return {
-      macros: "from typing import NewType, Union",
       documentationComment: this.buildDocs(s),
       prefix: "type",
       typing: `${title} = NewType("${title}", Union[${this.getJoinedSafeTitles(sAny, ", ")}])`,
+      imports: [
+        "from typing import NewType",
+        "from typing import Union"
+      ]
     };
   }
 
@@ -185,21 +203,24 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     const sOne = s.oneOf as JSONSchema[];
     return {
-      macros: "from typing import NewType, Union",
       documentationComment: this.buildDocs(s),
       prefix: "type",
       typing: `${title} = NewType("${title}", Union[${this.getJoinedSafeTitles(sOne, ", ")}])`,
+      imports: [
+        "from typing import NewType",
+        "from typing import Union"
+      ]
     };
   }
 
   protected handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation {
     const t = `Always${(s as any) === true ? "True" : "False"}`;
     return {
-      typing: [
-        "from typing import Any, NewType",
-        "",
-        `${t} = NewType("${t}", Any)`,
-      ].join("\n"),
+      typing: `${t} = NewType("${t}", Any)`,
+      imports: [
+        "from typing import NewType",
+        "from typing import Any"
+      ]
     };
   }
 
@@ -207,8 +228,11 @@ export default class Python extends CodeGen {
     const title = this.getSafeTitle(s.title as string);
     return {
       documentationComment: this.buildDocs(s),
-      macros: "from typing import Any, NewType",
       typing: `${title} = NewType("${title}", Any)`,
+      imports: [
+        "from typing import NewType",
+        "from typing import Any"
+      ]
     };
   }
 
