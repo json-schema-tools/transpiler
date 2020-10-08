@@ -160,7 +160,7 @@ export default class Golang extends CodeGen {
 
     return [
       `func (o ${typeTitle}) MarshalJSON() ([]byte, error) {`,
-      "\t" + `out := []interface{}`,
+      "\t" + `out := []interface{}{}`,
       components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
       "\t" + "return json.Marshal(out)",
       "}",
