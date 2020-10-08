@@ -89,8 +89,8 @@ export default class Python extends CodeGen {
       documentationComment: this.buildDocs(s),
       typing: `${title} = NewType("${title}", Tuple[${itemTitles.join(", ")}])`,
       imports: [
-        "from enum import NewType",
-        "from enum import Tuple"
+        "from typing import NewType",
+        "from typing import Tuple"
       ]
     };
   }
@@ -102,8 +102,8 @@ export default class Python extends CodeGen {
       documentationComment: this.buildDocs(s),
       typing: `${title} = NewType("${title}", List[${itemsTitle}])`,
       imports: [
-        "from enum import List",
-        "from enum import NewType"
+        "from typing import List",
+        "from typing import NewType"
       ]
     };
   }

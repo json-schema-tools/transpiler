@@ -1,3 +1,5 @@
+import "encoding/json"
+import "errors"
 type IsMetal bool
 // Fill amounts
 //
@@ -93,7 +95,7 @@ func (a *SinkComplaints) UnmarshalJSON(bytes []byte) error {
 	return errors.New("failed to unmarshal any of the object properties")
 }
 func (o SinkComplaints) MarshalJSON() ([]byte, error) {
-	out := []interface{}
+	out := []interface{}{}
 	if o.Whining != nil {
 		out = append(out, o.Whining)
 	}
@@ -129,7 +131,7 @@ func (a *MeasurementStandard) UnmarshalJSON(bytes []byte) error {
 	return errors.New("failed to unmarshal any of the object properties")
 }
 func (o MeasurementStandard) MarshalJSON() ([]byte, error) {
-	out := []interface{}
+	out := []interface{}{}
 	if o.European != nil {
 		out = append(out, o.European)
 	}

@@ -25,7 +25,7 @@ export abstract class CodeGen {
       return ir.typing.trim();
     }
 
-    let imports = new Set();
+    const imports = new Set();
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
       this.schema.$ref = `#/definitions/${this.schema.title}`; // hack, i think dont need anymore
