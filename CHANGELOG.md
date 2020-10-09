@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/json-schema-tools/transpiler/compare/1.4.3...1.5.0) (2020-10-09)
+
+
+### Bug Fixes
+
+* get it all working ([7e10cbf](https://github.com/json-schema-tools/transpiler/commit/7e10cbff62765ad5b9ee661307ac295cc5cd71af))
+* interface was incorrect ([8a55496](https://github.com/json-schema-tools/transpiler/commit/8a55496547e671b24747dc73fce00a5ae25d59af))
+* update node version ([c2374f4](https://github.com/json-schema-tools/transpiler/commit/c2374f4f5eb7b8752fab6c7ebc3e01e890264cc5))
+
+
+### Features
+
+* implement imports as part of IR ([9f7ba6b](https://github.com/json-schema-tools/transpiler/commit/9f7ba6bfd07f70f4044279cf65cdd8274408b84b))
+
 ## [1.4.3](https://github.com/json-schema-tools/transpiler/compare/1.4.2...1.4.3) (2020-10-08)
 
 
