@@ -1,3 +1,5 @@
+import "encoding/json"
+import "errors"
 type Baz bool
 type Foo string
 // array of strings is all...
@@ -72,7 +74,7 @@ func (a *AnyOfFooFooObjectOfBazLEtnUJ56OneOfStuffBar) UnmarshalJSON(bytes []byte
 	return errors.New("failed to unmarshal any of the object properties")
 }
 func (o AnyOfFooFooObjectOfBazLEtnUJ56OneOfStuffBar) MarshalJSON() ([]byte, error) {
-	out := []interface{}
+	out := []interface{}{}
 	if o.Foo != nil {
 		out = append(out, o.Foo)
 	}

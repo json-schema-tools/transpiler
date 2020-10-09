@@ -160,7 +160,7 @@ export default class Golang extends CodeGen {
 
     return [
       `func (o ${typeTitle}) MarshalJSON() ([]byte, error) {`,
-      "\t" + `out := []interface{}`,
+      "\t" + `out := []interface{}{}`,
       components.map((c) => c.map((cl) => "\t" + cl).join("\n")).join("\n"),
       "\t" + "return json.Marshal(out)",
       "}",
@@ -227,6 +227,10 @@ export default class Golang extends CodeGen {
       prefix: "struct",
       typing: ["{", ...anyOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
+      imports: [
+        "import \"encoding/json\"",
+        "import \"errors\""
+      ]
     };
   }
 
@@ -262,6 +266,10 @@ export default class Golang extends CodeGen {
       prefix: "struct",
       typing: [`{`, ...oneOfType, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
+      imports: [
+        "import \"encoding/json\"",
+        "import \"errors\""
+      ]
     };
   }
 

@@ -1,3 +1,5 @@
+import "encoding/json"
+import "errors"
 type StringDoaGddGA string
 type OneOfStringDoaGddGAStringDoaGddGABERs71N5 struct {
 	StringDoaGddGA *StringDoaGddGA
@@ -63,7 +65,7 @@ func (a *AnyOfRGBOrHexStringDBm1TnLTColorAsAnything) UnmarshalJSON(bytes []byte)
 	return errors.New("failed to unmarshal any of the object properties")
 }
 func (o AnyOfRGBOrHexStringDBm1TnLTColorAsAnything) MarshalJSON() ([]byte, error) {
-	out := []interface{}
+	out := []interface{}{}
 	if o.RGBOrHex != nil {
 		out = append(out, o.RGBOrHex)
 	}

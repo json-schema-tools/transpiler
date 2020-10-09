@@ -1,3 +1,5 @@
+import "encoding/json"
+import "errors"
 type Ox interface{}
 type Horse interface{}
 type Donkey interface{}

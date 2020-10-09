@@ -1,10 +1,9 @@
-from typing import Any, NewType
-
+from typing import TypedDict
+from typing import Optional
+from typing import NewType
+from typing import Any
 AlwaysTrue = NewType("AlwaysTrue", Any)
-from typing import Any, NewType
-
 AlwaysFalse = NewType("AlwaysFalse", Any)
-from typing import TypedDict, Optional
 
 class ObjectOfCmepExQR(TypedDict):
     boolSchemaT: Optional[AlwaysTrue]
