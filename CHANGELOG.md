@@ -1,3 +1,14 @@
+## [1.5.1](https://github.com/json-schema-tools/transpiler/compare/1.5.0...1.5.1) (2020-10-23)
+
+
+### Bug Fixes
+
+* add readme badges ([9cd2cf2](https://github.com/json-schema-tools/transpiler/commit/9cd2cf2296637ae4b67515b06a880e936a903f95))
+* refresh package-lock ([84ae1d2](https://github.com/json-schema-tools/transpiler/commit/84ae1d269c860e34beb95a7bc9995afceea5760c))
+* remove junk deps ([f054c90](https://github.com/json-schema-tools/transpiler/commit/f054c90ff40132f62b9de33fd5609f79f4718b37))
+* remove unused dep ([050debe](https://github.com/json-schema-tools/transpiler/commit/050debec6e11b84552f67107fae0fbfc645739af))
+* update deps ([0012a47](https://github.com/json-schema-tools/transpiler/commit/0012a473684a2abdbb21923a3f993e1080d2ddb0))
+
 # [1.5.0](https://github.com/json-schema-tools/transpiler/compare/1.4.3...1.5.0) (2020-10-09)
 
 
