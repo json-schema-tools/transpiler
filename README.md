@@ -42,7 +42,7 @@ const mySchema = {
     "oneOf": [
       { "title": "Horse" },
       { "title": "Donkey" },
-      { "title": "YaMadda" },
+      { "title": "Elephant" },
     ]
   }
 };
