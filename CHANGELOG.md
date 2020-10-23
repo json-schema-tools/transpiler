@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/json-schema-tools/transpiler/compare/1.5.2...1.5.3) (2020-10-23)
+
+
+### Bug Fixes
+
+* add funding ([3519541](https://github.com/json-schema-tools/transpiler/commit/35195416503e1f12f5e9859bb359fe3bea2f40b8))
+
 ## [1.5.2](https://github.com/json-schema-tools/transpiler/compare/1.5.1...1.5.2) (2020-10-23)
 
 
