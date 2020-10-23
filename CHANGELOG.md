@@ -1,3 +1,10 @@
+## [1.5.4](https://github.com/json-schema-tools/transpiler/compare/1.5.3...1.5.4) (2020-10-23)
+
+
+### Bug Fixes
+
+* oc name ([cc5fc97](https://github.com/json-schema-tools/transpiler/commit/cc5fc979d0d86ce7aa18cc6fcc6b5c5541218c05))
+
 ## [1.5.3](https://github.com/json-schema-tools/transpiler/compare/1.5.2...1.5.3) (2020-10-23)
 
 
