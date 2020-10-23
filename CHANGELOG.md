@@ -1,3 +1,11 @@
+## [1.5.2](https://github.com/json-schema-tools/transpiler/compare/1.5.1...1.5.2) (2020-10-23)
+
+
+### Bug Fixes
+
+* clean up example ([19accca](https://github.com/json-schema-tools/transpiler/commit/19accca693089cf778c1758fd9cc9ba32ab8571f))
+* update node-fetch ([689bc50](https://github.com/json-schema-tools/transpiler/commit/689bc502502c25357d4e6497bccc3691d5cd7b51))
+
 ## [1.5.1](https://github.com/json-schema-tools/transpiler/compare/1.5.0...1.5.1) (2020-10-23)
 
 
