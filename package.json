@@ -28,7 +28,7 @@
   ],
   "devDependencies": {
     "@json-schema-tools/dereferencer": "^1.2.8",
-    "@json-schema-tools/meta-schema": "^1.5.8",
+    "@json-schema-tools/meta-schema": "^1.5.9",
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.15",
     "@types/lodash.deburr": "^4.1.6",
