@@ -1,3 +1,10 @@
+## [1.5.5](https://github.com/json-schema-tools/transpiler/compare/1.5.4...1.5.5) (2020-10-28)
+
+
+### Bug Fixes
+
+* update meta-schema ([89ead9e](https://github.com/json-schema-tools/transpiler/commit/89ead9e1681c55b12d19a1fb31e2c645dbd12367))
+
 ## [1.5.4](https://github.com/json-schema-tools/transpiler/compare/1.5.3...1.5.4) (2020-10-23)
 
 
