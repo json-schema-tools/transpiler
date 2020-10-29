@@ -1,3 +1,10 @@
+## [1.5.6](https://github.com/json-schema-tools/transpiler/compare/1.5.5...1.5.6) (2020-10-29)
+
+
+### Bug Fixes
+
+* bump dev deps ([7db8ef4](https://github.com/json-schema-tools/transpiler/commit/7db8ef4bf7d59da537879117f544bbd6919991a8))
+
 ## [1.5.5](https://github.com/json-schema-tools/transpiler/compare/1.5.4...1.5.5) (2020-10-28)
 
 
