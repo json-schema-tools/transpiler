@@ -13,6 +13,8 @@
 
 Turn your JSON Schemas into types to be used in various languages.
 
+[Try Me](https://json-schema.tools/)
+
 - Generate types for:
   - Golang
   - Typescript
