@@ -1,3 +1,11 @@
+## [1.5.7](https://github.com/json-schema-tools/transpiler/compare/1.5.6...1.5.7) (2020-11-04)
+
+
+### Bug Fixes
+
+* add docs ([d26e853](https://github.com/json-schema-tools/transpiler/commit/d26e853b326a0fd8ad4d027b68fec3a8fa504d8f))
+* add try me link ([503b4e3](https://github.com/json-schema-tools/transpiler/commit/503b4e3432dc81eb9bf75f1b751f1f08969141bb))
+
 ## [1.5.6](https://github.com/json-schema-tools/transpiler/compare/1.5.5...1.5.6) (2020-10-29)
 
 
