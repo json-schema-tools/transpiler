@@ -1,7 +1,7 @@
 import { JSONSchema, Definitions, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { capitalize, combineSchemas } from "./utils";
 import titleizer from "./titleizer";
-import referencer from "./referencer";
+import referencer from "@json-schema-tools/referencer";
 import { CodeGen } from "./codegens/codegen";
 import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
