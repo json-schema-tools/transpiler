@@ -54,7 +54,7 @@ export default class Rust extends CodeGen {
   }
 
   protected handleString(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    let typing = "String";
+    const typing = "String";
     if (s.const) {
       const copy = { ...s };
       copy.enum = [s.const];
