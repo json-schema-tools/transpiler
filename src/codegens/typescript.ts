@@ -15,7 +15,12 @@ export default class Typescript extends CodeGen {
   }
 
   protected handleBoolean(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "boolean" };
+    let typing = "boolean";
+    if (s.const) {
+      typing = s.const;
+    }
+
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing };
   }
 
   protected handleNull(s: JSONSchemaObject): TypeIntermediateRepresentation {
@@ -23,7 +28,12 @@ export default class Typescript extends CodeGen {
   }
 
   protected handleNumber(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "number" };
+    let typing = "number";
+    if (s.const) {
+      typing = s.const;
+    }
+
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing };
   }
 
   protected handleInteger(s: JSONSchemaObject): TypeIntermediateRepresentation {
@@ -39,7 +49,11 @@ export default class Typescript extends CodeGen {
   }
 
   protected handleString(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return { documentationComment: this.buildDocs(s), prefix: "type", typing: "string" };
+    let typing = "string";
+    if (s.const) {
+      typing = `"${s.const}"`;
+    }
+    return { documentationComment: this.buildDocs(s), prefix: "type", typing };
   }
 
   protected handleStringEnum(s: JSONSchemaObject): TypeIntermediateRepresentation {
@@ -51,30 +65,40 @@ export default class Typescript extends CodeGen {
   }
 
   protected handleOrderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return {
-      documentationComment: this.buildDocs(s),
-      prefix: "type",
-      typing: `[${this.getJoinedSafeTitles(s.items as JSONSchema[])}]`,
-    };
+    let typing = `[${this.getJoinedSafeTitles(s.items as JSONSchema[])}]`;
+    if (s.const) {
+      typing = s.const;
+    }
+    const prefix = "type";
+    return { documentationComment: this.buildDocs(s), typing, prefix };
   }
 
   protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return {
-      documentationComment: this.buildDocs(s),
-      prefix: "type",
-      typing: `${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}[]`,
-    };
+    let typing = `${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}[]`;
+    if (s.const) {
+      typing = s.const;
+    }
+    const prefix = "type";
+    return { documentationComment: this.buildDocs(s), prefix, typing };
   }
 
   protected handleUntypedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return {
-      documentationComment: this.buildDocs(s),
-      prefix: "type",
-      typing: `any[]`,
-    };
+    const typing = "any[]";
+    const prefix = "type";
+    return { documentationComment: this.buildDocs(s), prefix, typing };
   }
 
   protected handleObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    const ir = {
+      documentationComment: this.buildDocs(s),
+    } as TypeIntermediateRepresentation;
+
+    if (s.const) {
+      ir.typing = s.const;
+      ir.prefix = "type";
+      return ir;
+    }
+
     const sProps = s.properties as { [k: string]: JSONSchema };
     const propertyTypings = Object.keys(sProps).reduce((typings: string[], key: string) => {
       const propSchema = sProps[key];
@@ -99,11 +123,10 @@ export default class Typescript extends CodeGen {
       propertyTypings.push("  [k: string]: any;");
     }
 
-    return {
-      documentationComment: this.buildDocs(s),
-      prefix: "interface",
-      typing: [`{`, ...propertyTypings, "}"].join("\n"),
-    };
+    ir.prefix = "interface";
+    ir.typing = [`{`, ...propertyTypings, "}"].join("\n");
+
+    return ir;
   }
 
   protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {

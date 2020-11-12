@@ -1,7 +1,6 @@
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
 extern crate serde_json;
 
+use serde::{Serialize, Deserialize};
 pub type Baz = bool;
 pub type Foo = String;
 /// UnorderedSetOfFooz1UBFn8B

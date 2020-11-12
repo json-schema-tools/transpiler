@@ -1,7 +1,6 @@
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
 extern crate serde_json;
 
+use serde::{Serialize, Deserialize};
 type AlwaysTrue = serde_json::Value;
 type AlwaysFalse = serde_json::Value;
 #[derive(Serialize, Deserialize)]

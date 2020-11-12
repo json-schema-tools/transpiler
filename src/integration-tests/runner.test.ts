@@ -107,12 +107,12 @@ describe("Integration tests", () => {
   it("checks out", async () => {
     expect.assertions(testCases.length);
 
-    const proms = testCases.map(async (testCase: TestCase) => {
+    const proms = testCases.map(async (testCase: TestCase, index: number) => {
       let transpiler;
       try {
         transpiler = new Transpiler(testCase.schema);
       } catch (e) {
-        console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}`); //tslint:disable-line
+        console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}, index in array of testCases: ${index}`); //tslint:disable-line
         console.error(stringifyCircular(testCase.schema)); //tslint:disable-line
         throw e;
       }
@@ -121,7 +121,8 @@ describe("Integration tests", () => {
       try {
         typings = transpiler[`to${capitalize(testCase.language)}`]();
       } catch (e) {
-        console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}`); //tslint:disable-line
+        console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}, index in array of testCases: ${index}`); //tslint:disable-line
+        console.error(e); //tslint:disable-line
         throw e;
       }
       return expect(typings).toBe(testCase.expectedTypings);

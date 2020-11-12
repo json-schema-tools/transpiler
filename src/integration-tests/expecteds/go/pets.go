@@ -1,8 +1,8 @@
 import "encoding/json"
 import "errors"
-type Ox interface{}
-type Horse interface{}
-type Donkey interface{}
+type Ox string
+type Horse string
+type Donkey string
 type OneOfDonkeyHorseOxP55NQZsj struct {
 	Ox     *Ox
 	Horse  *Horse
@@ -42,5 +42,5 @@ func (o OneOfDonkeyHorseOxP55NQZsj) MarshalJSON() ([]byte, error) {
 	}
 	return nil, errors.New("failed to marshal any one of the object properties")
 }
-// an array of animals that are good at pulling things
+// an array of animals that are good at pulling things. Elaborate enum.
 type PlowAnimals []OneOfDonkeyHorseOxP55NQZsj
