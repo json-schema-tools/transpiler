@@ -1,3 +1,16 @@
+# [1.6.0](https://github.com/json-schema-tools/transpiler/compare/1.5.7...1.6.0) (2020-11-16)
+
+
+### Bug Fixes
+
+* replace referencer with packaged one ([ce62da2](https://github.com/json-schema-tools/transpiler/commit/ce62da2f22bbae79f5746c496dcdcf35e924ec9e))
+* run lint fix ([6a2e926](https://github.com/json-schema-tools/transpiler/commit/6a2e9265371f3d10e18be4a8b2e6e02efb3affe1))
+
+
+### Features
+
+* implement const in ts and rust ([cbeb502](https://github.com/json-schema-tools/transpiler/commit/cbeb5025ea11bafb827d6c794e5cd99bccfbb886))
+
 ## [1.5.7](https://github.com/json-schema-tools/transpiler/compare/1.5.6...1.5.7) (2020-11-04)
 
 
