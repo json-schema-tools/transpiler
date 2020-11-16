@@ -1,12 +1,12 @@
 {
   "title": "PlowAnimals",
-  "description": "an array of animals that are good at pulling things",
+  "description": "an array of animals that are good at pulling things. Elaborate enum.",
   "type": "array",
   "items": {
     "oneOf": [
-      { "title": "Ox" },
-      { "title": "Horse" },
-      { "title": "Donkey" }
+      { "title": "Ox", "type": "string", "const": "Ox" },
+      { "title": "Horse", "type": "string", "const": "Horse" },
+      { "title": "Donkey", "type": "string", "const": "Donkey" }
     ]
   }
 }

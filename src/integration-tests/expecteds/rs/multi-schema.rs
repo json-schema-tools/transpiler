@@ -1,7 +1,6 @@
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
 extern crate serde_json;
 
+use serde::{Serialize, Deserialize};
 pub type StringDoaGddGA = String;
 #[derive(Serialize, Deserialize)]
 pub enum OneOfStringDoaGddGAStringDoaGddGABERs71N5 {

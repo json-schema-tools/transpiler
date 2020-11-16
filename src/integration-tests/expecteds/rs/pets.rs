@@ -1,10 +1,21 @@
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
 extern crate serde_json;
 
-pub type Ox = serde_json::Value;
-pub type Horse = serde_json::Value;
-pub type Donkey = serde_json::Value;
+use serde::{Serialize, Deserialize};
+#[derive(Serialize, Deserialize)]
+pub enum Ox {
+    #[serde(rename = "Ox")]
+    Ox,
+}
+#[derive(Serialize, Deserialize)]
+pub enum Horse {
+    #[serde(rename = "Horse")]
+    Horse,
+}
+#[derive(Serialize, Deserialize)]
+pub enum Donkey {
+    #[serde(rename = "Donkey")]
+    Donkey,
+}
 #[derive(Serialize, Deserialize)]
 pub enum OneOfDonkeyHorseOxP55NQZsj {
     Ox,
@@ -13,6 +24,6 @@ pub enum OneOfDonkeyHorseOxP55NQZsj {
 }
 /// PlowAnimals
 ///
-/// an array of animals that are good at pulling things
+/// an array of animals that are good at pulling things. Elaborate enum.
 ///
 pub type PlowAnimals = Vec<OneOfDonkeyHorseOxP55NQZsj>;

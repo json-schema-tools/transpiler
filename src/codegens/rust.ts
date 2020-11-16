@@ -4,11 +4,7 @@ import { getTitle } from "../utils";
 
 export default class Rust extends CodeGen {
   public getCodePrefix() {
-    return [
-      "use serde::{Serialize, Deserialize};",
-      "use std::collections::HashMap;",
-      "extern crate serde_json;",
-    ].join("\n");
+    return "extern crate serde_json;";
   }
 
   protected generate(s: JSONSchemaObject, ir: TypeIntermediateRepresentation) {
@@ -28,7 +24,15 @@ export default class Rust extends CodeGen {
   }
 
   protected handleNull(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return { prefix: "type", typing: "serde_json::Value", documentationComment: this.buildDocs(s) };
+    return {
+      prefix: "type",
+      typing: "serde_json::Value",
+      documentationComment: this.buildDocs(s),
+      imports: [
+        "use serde::{Serialize, Deserialize};",
+        "use std::collections::HashMap;",
+      ]
+    };
   }
 
   protected handleNumber(s: JSONSchemaObject): TypeIntermediateRepresentation {
@@ -50,6 +54,13 @@ export default class Rust extends CodeGen {
   }
 
   protected handleString(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    const typing = "String";
+    if (s.const) {
+      const copy = { ...s };
+      copy.enum = [s.const];
+      delete copy.const;
+      return this.handleStringEnum(copy);
+    }
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "String" };
   }
 
@@ -67,6 +78,9 @@ export default class Rust extends CodeGen {
       prefix: "enum",
       typing: ["{", ...enumFields, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
+      imports: [
+        "use serde::{Serialize, Deserialize};"
+      ]
     };
   }
 
@@ -119,6 +133,9 @@ export default class Rust extends CodeGen {
       typing: [`{`, ...propertyTypings, "}"].join("\n"),
       macros: "#[derive(Serialize, Deserialize)]",
       documentationComment: this.buildDocs(s),
+      imports: [
+        "use serde::{Serialize, Deserialize};",
+      ]
     };
   }
 
@@ -127,6 +144,9 @@ export default class Rust extends CodeGen {
       prefix: "type",
       typing: "HashMap<String, Option<serde_json::Value>>",
       documentationComment: this.buildDocs(s),
+      imports: [
+        "use std::collections::HashMap;",
+      ]
     };
   }
 
@@ -164,6 +184,9 @@ export default class Rust extends CodeGen {
         this.getJoinedSafeTitles(s, ",\n").split("\n").map((l) => `    ${l}`).join("\n"),
         "}",
       ].join("\n"),
+      imports: [
+        "use serde::{Serialize, Deserialize};",
+      ]
     };
   }
 
