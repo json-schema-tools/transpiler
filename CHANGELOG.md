@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/json-schema-tools/transpiler/compare/1.6.0...1.6.1) (2020-12-07)
+
+
+### Bug Fixes
+
+* no longer use nodenv in gh action ([3a91e8e](https://github.com/json-schema-tools/transpiler/commit/3a91e8e49ba3384df118f25cc416b9c9949dd67d))
+
 # [1.6.0](https://github.com/json-schema-tools/transpiler/compare/1.5.7...1.6.0) (2020-11-16)
 
 
