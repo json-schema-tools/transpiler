@@ -1,0 +1,6 @@
+{
+  "title": "typeAsArray",
+  "type": ["string", "number"],
+  "max": 5,
+  "maxLength": 1
+}
