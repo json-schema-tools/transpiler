@@ -191,9 +191,7 @@ export default class Python extends CodeGen {
     // here is the code that doesnt work, leaving it here to demonstrate the desired outcome
     // const copy = { ...s };
     // const sAll = s.allOf as JSONSchema[];
-    // console.log(sAll); //tslint:disable-line
     // copy.properties = mergeObjectProperties(sAll);
-    // console.log(copy.properties); //tslint:disable-line
     // return this.handleObject(copy);
 
     return this.handleUntypedObject(s);

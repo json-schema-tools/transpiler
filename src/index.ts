@@ -21,7 +21,6 @@ export class Transpiler {
     const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
     const schemaWithTitles = inputSchema.map(titleizer);
     const reffed = schemaWithTitles.map(referencer);
-    console.log(JSON.stringify(reffed, undefined, "\t")); //tslint:disable-line
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
