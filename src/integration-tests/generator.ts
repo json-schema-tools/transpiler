@@ -20,7 +20,7 @@ inquirer.prompt([
     default: () => false,
   },
 ]).then(async ({ schemaName, usingUrl }) => {
-  let schemaToWrite = "";
+  let schemaToWrite = JSON.stringify({ title: schemaName });
 
   if (usingUrl !== false) {
     try {

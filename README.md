@@ -58,6 +58,30 @@ console.log(transpiler.to("go")); // same thing, different form/interface
 console.log(transpiler.to("python")); // works with shorthand of the language aswell (py or python)
 ```
 
+## Testing
+
+### Generate a test case
+
+`npm run generateTest`
+
+outputs:
+
+```
+> @json-schema-tools/transpiler@0.0.0-development generateTest /Users/zb/Code/json-schema-tools/transpiler
+> tsc && node ./build/integration-tests/generator.js
+
+? What is the name of the test schema? type-as-array
+? Enter a url to a JSON Schema, or press enter to get an empty one? false
+Detecting languages...
+Found 4 languages: go, py, rs, ts
+
+
+Writing files...
+All done
+```
+
+Edit schema if necessary, and run `npm test`. Update expected results as needed.
+
 ### Contributing
 
 How to contribute, build and release are outlined in [CONTRIBUTING.md](CONTRIBUTING.md), [BUILDING.md](BUILDING.md) and [RELEASING.md](RELEASING.md) respectively. Commits in this repository follow the [CONVENTIONAL_COMMITS.md](CONVENTIONAL_COMMITS.md) specification.
