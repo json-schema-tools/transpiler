@@ -1,8 +1,8 @@
 from typing import NewType
 from typing import Union
 
-TypeAsArrayAsstring = NewType("TypeAsArrayAsstring", str)
+TypeAsArrayAsString = NewType("TypeAsArrayAsString", str)
 
-TypeAsArrayAsnumber = NewType("TypeAsArrayAsnumber", float)
+TypeAsArrayAsNumber = NewType("TypeAsArrayAsNumber", float)
 
-TypeAsArray = NewType("TypeAsArray", Union[TypeAsArrayAsstring, TypeAsArrayAsnumber])
+TypeAsArray = NewType("TypeAsArray", Union[TypeAsArrayAsString, TypeAsArrayAsNumber])

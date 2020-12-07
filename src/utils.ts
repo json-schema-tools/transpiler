@@ -148,4 +148,4 @@ export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
 
     return subS;
   }, { mutable: true });
-};
+}

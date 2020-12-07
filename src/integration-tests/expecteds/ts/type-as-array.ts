@@ -1,3 +1,3 @@
-export type TypeAsArrayAsstring = string;
-export type TypeAsArrayAsnumber = number;
-export type TypeAsArray = TypeAsArrayAsstring | TypeAsArrayAsnumber;
+export type TypeAsArrayAsString = string;
+export type TypeAsArrayAsNumber = number;
+export type TypeAsArray = TypeAsArrayAsString | TypeAsArrayAsNumber;
