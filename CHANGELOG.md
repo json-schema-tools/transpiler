@@ -1,3 +1,16 @@
+# [1.7.0](https://github.com/json-schema-tools/transpiler/compare/1.6.1...1.7.0) (2020-12-10)
+
+
+### Bug Fixes
+
+* lint fixing ([4b22c50](https://github.com/json-schema-tools/transpiler/commit/4b22c50216912ddb8be39f96e30247d9d3617206))
+* remove console logs ([ec729f5](https://github.com/json-schema-tools/transpiler/commit/ec729f5ca07a03a8ec1e28609223f278dc6ccee7))
+
+
+### Features
+
+* handle type as array in best way possible ([e435656](https://github.com/json-schema-tools/transpiler/commit/e4356561e1e4396d5b53bb2792cb7a6a87bc7475))
+
 ## [1.6.1](https://github.com/json-schema-tools/transpiler/compare/1.6.0...1.6.1) (2020-12-07)
 
 
