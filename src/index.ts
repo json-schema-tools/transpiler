@@ -1,5 +1,5 @@
-import { JSONSchema, Definitions, JSONSchemaObject } from "@json-schema-tools/meta-schema";
-import { capitalize, combineSchemas } from "./utils";
+import { JSONSchema } from "@json-schema-tools/meta-schema";
+import { capitalize, combineSchemas, replaceTypeAsArrayWithOneOf } from "./utils";
 import titleizer from "@json-schema-tools/titleizer";
 import referencer from "@json-schema-tools/referencer";
 import { CodeGen } from "./codegens/codegen";
@@ -19,9 +19,9 @@ export class Transpiler {
   constructor(s: JSONSchema | JSONSchema[]) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
-    const schemaWithTitles = inputSchema.map(titleizer);
+    const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
+    const schemaWithTitles = noTypeArrays.map(titleizer);
     const reffed = schemaWithTitles.map(referencer);
-    console.log(JSON.stringify(reffed, undefined, "\t")); //tslint:disable-line
     if (useMerge) {
       this.megaSchema = combineSchemas(reffed);
     } else {
