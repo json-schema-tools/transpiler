@@ -4,7 +4,8 @@
     "module": "commonjs",
     "lib": [
       "es2015",
-      "dom"
+      "dom",
+      "esnext"
     ],
     "declaration": true,
     "outDir": "./build",
