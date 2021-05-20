@@ -7,6 +7,13 @@
     "number": { "type": "number", "title": "numDrains" },
     "string": { "type": "string", "title": "feelToTouch" },
     "stringEnum": { "type": "string", "title": "orientation", "enum": [ "north", "south", "west", "east" ] },
+    "gotchaStringEnum": { "type": "string", "title": "version", "enum": [
+      "1.1.1",
+      "v1",
+      "0",
+      "4",
+      "v0.0.1"
+    ] },
     "numbericalEnum": { "type": "number", "title": "userAvailability", "enum": [ 1, 2 ] },
     "integerEnum": { "type": "integer", "title": "lightsNearby", "enum": [ 1, 2, 3 ] },
     "untypedArray": { "type": "array", "title": "dishes" },
