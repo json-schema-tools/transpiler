@@ -18,10 +18,17 @@ NumDrains = NewType("NumDrains", float)
 FeelToTouch = NewType("FeelToTouch", str)
 
 class Orientation(Enum):
-    NORTH = 0
-    SOUTH = 1
-    WEST = 2
-    EAST = 3
+    North = 0
+    South = 1
+    West = 2
+    East = 3
+
+class Version(Enum):
+    OneOneOne = 0
+    VOne = 1
+    Zero = 2
+    Four = 3
+    VZeroZeroOne = 4
 
 UserAvailability = NewType("UserAvailability", float)
 
@@ -85,6 +92,7 @@ class KitchenSink(TypedDict):
     number: Optional[NumDrains]
     string: Optional[FeelToTouch]
     stringEnum: Optional[Orientation]
+    gotchaStringEnum: Optional[Version]
     numbericalEnum: Optional[UserAvailability]
     integerEnum: Optional[LightsNearby]
     untypedArray: Optional[Dishes]

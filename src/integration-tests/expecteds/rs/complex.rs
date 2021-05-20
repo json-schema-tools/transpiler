@@ -37,6 +37,19 @@ pub enum Orientation {
     #[serde(rename = "east")]
     East,
 }
+#[derive(Serialize, Deserialize)]
+pub enum Version {
+    #[serde(rename = "1.1.1")]
+    OneOneOne,
+    #[serde(rename = "v1")]
+    VOne,
+    #[serde(rename = "0")]
+    Zero,
+    #[serde(rename = "4")]
+    Four,
+    #[serde(rename = "v0.0.1")]
+    VZeroZeroOne,
+}
 pub type UserAvailability = f64;
 pub type LightsNearby = i64;
 pub type Dishes = Vec<serde_json::Value>;
@@ -90,6 +103,7 @@ pub struct KitchenSink {
     pub(crate) number: Option<NumDrains>,
     pub(crate) string: Option<FeelToTouch>,
     pub(crate) stringEnum: Option<Orientation>,
+    pub(crate) gotchaStringEnum: Option<Version>,
     pub(crate) numbericalEnum: Option<UserAvailability>,
     pub(crate) integerEnum: Option<LightsNearby>,
     pub(crate) untypedArray: Option<Dishes>,

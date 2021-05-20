@@ -28,6 +28,14 @@ const (
 	OrientationEnum2 Orientation = "west"
 	OrientationEnum3 Orientation = "east"
 )
+type Version string
+const (
+	VersionEnum0 Version = "1.1.1"
+	VersionEnum1 Version = "v1"
+	VersionEnum2 Version = "0"
+	VersionEnum3 Version = "4"
+	VersionEnum4 Version = "v0.0.1"
+)
 type UserAvailability float64
 const (
 	UserAvailabilityEnum0 UserAvailability = 1
@@ -141,18 +149,19 @@ func (o MeasurementStandard) MarshalJSON() ([]byte, error) {
 	return json.Marshal(out)
 }
 type KitchenSink struct {
-	Bool           *IsMetal             `json:"bool,omitempty"`
-	Int            *FillAmount          `json:"int,omitempty"`
-	Number         *NumDrains           `json:"number,omitempty"`
-	String         *FeelToTouch         `json:"string,omitempty"`
-	StringEnum     *Orientation         `json:"stringEnum,omitempty"`
-	NumbericalEnum *UserAvailability    `json:"numbericalEnum,omitempty"`
-	IntegerEnum    *LightsNearby        `json:"integerEnum,omitempty"`
-	UntypedArray   *Dishes              `json:"untypedArray,omitempty"`
-	OrderedArray   *Accessories         `json:"orderedArray,omitempty"`
-	UnorderedArray *YearsInService      `json:"unorderedArray,omitempty"`
-	Object         *WashEquipment       `json:"object,omitempty"`
-	AllOf          *SinkResource        `json:"allOf,omitempty"`
-	AnyOf          *SinkComplaints      `json:"anyOf,omitempty"`
-	OneOf          *MeasurementStandard `json:"oneOf,omitempty"`
+	Bool             *IsMetal             `json:"bool,omitempty"`
+	Int              *FillAmount          `json:"int,omitempty"`
+	Number           *NumDrains           `json:"number,omitempty"`
+	String           *FeelToTouch         `json:"string,omitempty"`
+	StringEnum       *Orientation         `json:"stringEnum,omitempty"`
+	GotchaStringEnum *Version             `json:"gotchaStringEnum,omitempty"`
+	NumbericalEnum   *UserAvailability    `json:"numbericalEnum,omitempty"`
+	IntegerEnum      *LightsNearby        `json:"integerEnum,omitempty"`
+	UntypedArray     *Dishes              `json:"untypedArray,omitempty"`
+	OrderedArray     *Accessories         `json:"orderedArray,omitempty"`
+	UnorderedArray   *YearsInService      `json:"unorderedArray,omitempty"`
+	Object           *WashEquipment       `json:"object,omitempty"`
+	AllOf            *SinkResource        `json:"allOf,omitempty"`
+	AnyOf            *SinkComplaints      `json:"anyOf,omitempty"`
+	OneOf            *MeasurementStandard `json:"oneOf,omitempty"`
 }

@@ -1,5 +1,6 @@
 import { JSONSchema, Enum, JSONSchemaBoolean, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
+import { enumIdentifierFromTitle } from "./rust";
 
 export default class Python extends CodeGen {
   protected generate(s: JSONSchemaObject, ir: TypeIntermediateRepresentation) {
@@ -68,7 +69,7 @@ export default class Python extends CodeGen {
     const sEnum = s.enum as Enum;
     const typeLines = sEnum
       .filter((enumString: any) => typeof enumString === "string")
-      .map((enumString: string, i: number) => `    ${enumString.toUpperCase()} = ${i}`);
+      .map((enumString: string, i: number) => `    ${enumIdentifierFromTitle(enumString)} = ${i}`);
 
     const title = this.getSafeTitle(s.title as string);
     return {
@@ -186,7 +187,7 @@ export default class Python extends CodeGen {
     this.warnNotWellSupported("allOf");
     // note - this doesnt work because subschemas are fully reffd when they get here
     // so pulling out the properties and merging them isn't gonna fly.
-    // in TS this is made easy by the `&` operator which afaik there is no equiv in py
+    // in TS this is made easy by the `& ` operator which afaik there is no equiv in py
 
     // here is the code that doesnt work, leaving it here to demonstrate the desired outcome
     // const copy = { ...s };
@@ -242,7 +243,7 @@ export default class Python extends CodeGen {
     const docStringLines: string[] = [];
 
     if (s.description) {
-      docStringLines.push(`${s.description}`);
+      docStringLines.push(`${s.description} `);
       docStringLines.push("");
     }
 

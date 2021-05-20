@@ -19,6 +19,7 @@ export type FillAmount = number;
 export type NumDrains = number;
 export type FeelToTouch = string;
 export type Orientation = "north" | "south" | "west" | "east";
+export type Version = "1.1.1" | "v1" | "0" | "4" | "v0.0.1";
 export type UserAvailability = 1 | 2;
 export type LightsNearby = 1 | 2 | 3;
 export type Dishes = any[];
@@ -59,6 +60,7 @@ export interface KitchenSink {
   number?: NumDrains;
   string?: FeelToTouch;
   stringEnum?: Orientation;
+  gotchaStringEnum?: Version;
   numbericalEnum?: UserAvailability;
   integerEnum?: LightsNearby;
   untypedArray?: Dishes;
