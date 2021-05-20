@@ -1,3 +1,12 @@
+## [1.7.1](https://github.com/json-schema-tools/transpiler/compare/1.7.0...1.7.1) (2021-05-20)
+
+
+### Bug Fixes
+
+* bump deps for security fixes ([32cb664](https://github.com/json-schema-tools/transpiler/commit/32cb6645a311abc051cad766a66783c4c1745afc))
+* code cleanup ([03cad4e](https://github.com/json-schema-tools/transpiler/commit/03cad4e8003c1cc342a8966a32a82d2b4f8cf738))
+* string enums for rust python and go ([206d288](https://github.com/json-schema-tools/transpiler/commit/206d2889d648ea6092145c9e77d47c0f17548275))
+
 # [1.7.0](https://github.com/json-schema-tools/transpiler/compare/1.6.1...1.7.0) (2020-12-10)
 
 
