@@ -243,7 +243,7 @@ export default class Python extends CodeGen {
     const docStringLines: string[] = [];
 
     if (s.description) {
-      docStringLines.push(`${s.description} `);
+      docStringLines.push(`${s.description}`);
       docStringLines.push("");
     }
 

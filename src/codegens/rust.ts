@@ -82,17 +82,9 @@ export default class Rust extends CodeGen {
     const enumFields = sEnum
       .filter((enumField: any) => typeof enumField === "string")
       .map((enumField: string) => {
-        let t = enumIdentifierFromTitle(enumField);
-        // if (startsWithDigitRegex.test(enumField)) {
-        //   console.log(enumField.replace(periodRegex, "_"));
-        //   t = this.getSafeTitle(enumField.replace(periodRegex, "_"));
-        // } else {
-        //   t = this.getSafeTitle(enumField);
-        // }
-
         return [
           `    #[serde(rename = "${enumField}")]`,
-          `    ${t},`,
+          `    ${enumIdentifierFromTitle(enumField)},`,
         ].join("\n")
       });
 
