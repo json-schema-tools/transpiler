@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/json-schema-tools/transpiler/compare/1.7.2...1.7.3) (2021-05-26)
+
+
+### Bug Fixes
+
+* rust struct field naming ([cc664d5](https://github.com/json-schema-tools/transpiler/commit/cc664d5791b8f5a8f89bfd381d63bd14ddfe8ce3))
+
 ## [1.7.2](https://github.com/json-schema-tools/transpiler/compare/1.7.1...1.7.2) (2021-05-26)
 
 
