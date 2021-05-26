@@ -3,6 +3,7 @@ import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
 import { capitalize, getTitle, languageSafeName, numToWord } from "../utils";
 import deburr from "lodash.deburr";
 import camelCase from "lodash.camelcase";
+import snakeCase from "lodash.snakecase";
 
 const startsWithDigitRegex = /^\d/;
 const periodRegex = /\./g;
@@ -141,10 +142,31 @@ export default class Rust extends CodeGen {
 
       const typeName = this.getSafeTitle(this.refToTitle(propSchema));
 
+      let macro: string | false = false;
+      let structFieldName = key;
+
+      const reservedWords = ["if", "else", "type", "ref", "const", "enum"];
+      if (reservedWords.indexOf(key) !== -1) {
+        macro = `#[serde(rename="${key}")]`;
+        structFieldName = "_" + key;
+      }
+
+      const unallowedSymbolPrefixes = ["$", "@"];
+      if (unallowedSymbolPrefixes.reduce((m, s) => m || key.startsWith(s), false)) {
+        macro = `#[serde(rename="${key}")]`;
+        structFieldName = key.substring(1);
+      }
+
+      if (snakeCase(key) !== key) {
+        macro = `#[serde(rename="${key}")]`;
+        structFieldName = snakeCase(key);
+      }
+
       return [
         ...typings,
         [
-          `    pub(crate) ${key}: `,
+          macro ? `    ${macro}\n` : "",
+          `    pub(crate) ${structFieldName}: `,
           isRequired ? typeName + "," : `Option<${typeName}>,`,
         ].join(""),
       ];

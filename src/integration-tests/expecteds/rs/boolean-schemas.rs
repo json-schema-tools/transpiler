@@ -5,6 +5,8 @@ type AlwaysTrue = serde_json::Value;
 type AlwaysFalse = serde_json::Value;
 #[derive(Serialize, Deserialize)]
 pub struct ObjectOfCmepExQR {
-    pub(crate) boolSchemaT: Option<AlwaysTrue>,
-    pub(crate) boolSchemaF: Option<AlwaysFalse>,
+    #[serde(rename="boolSchemaT")]
+    pub(crate) bool_schema_t: Option<AlwaysTrue>,
+    #[serde(rename="boolSchemaF")]
+    pub(crate) bool_schema_f: Option<AlwaysFalse>,
 }

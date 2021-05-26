@@ -12,7 +12,8 @@ pub type Bar = i64;
 pub type SetOfNumbers = (Bar);
 #[derive(Serialize, Deserialize)]
 pub struct ObjectOfBazLEtnUJ56 {
-    pub(crate) NotFoo: Option<Baz>,
+    #[serde(rename="NotFoo")]
+    pub(crate) not_foo: Option<Baz>,
 }
 #[derive(Serialize, Deserialize)]
 pub enum OneOfStuff {
