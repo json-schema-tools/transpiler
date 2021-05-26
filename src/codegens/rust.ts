@@ -20,6 +20,13 @@ export default class Rust extends CodeGen {
     return "extern crate serde_json;";
   }
 
+  public getSafeTitle(title: string): string {
+    const n = super.getSafeTitle(title);
+
+    // Remove all non-capitalized-alpha characters before the first capitalized alpha character.
+    return n.replace(/^[^A-Z]+/m, "");
+  }
+
   protected generate(s: JSONSchemaObject, ir: TypeIntermediateRepresentation) {
     return [
       ir.documentationComment,
