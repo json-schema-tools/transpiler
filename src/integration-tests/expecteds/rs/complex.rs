@@ -76,8 +76,10 @@ pub type StreetName = HashMap<String, Option<serde_json::Value>>;
 pub type StreetNumber = f64;
 #[derive(Serialize, Deserialize)]
 pub struct SinkLocation {
-    pub(crate) residenceStreet: Option<StreetName>,
-    pub(crate) residenceNumber: Option<StreetNumber>,
+    #[serde(rename="residenceStreet")]
+    pub(crate) residence_street: Option<StreetName>,
+    #[serde(rename="residenceNumber")]
+    pub(crate) residence_number: Option<StreetNumber>,
 }
 pub type SinkResource = HashMap<String, Option<serde_json::Value>>;
 pub type Whining = bool;
@@ -102,15 +104,25 @@ pub struct KitchenSink {
     pub(crate) int: Option<FillAmount>,
     pub(crate) number: Option<NumDrains>,
     pub(crate) string: Option<FeelToTouch>,
-    pub(crate) stringEnum: Option<Orientation>,
-    pub(crate) gotchaStringEnum: Option<Version>,
-    pub(crate) numbericalEnum: Option<UserAvailability>,
-    pub(crate) integerEnum: Option<LightsNearby>,
-    pub(crate) untypedArray: Option<Dishes>,
-    pub(crate) orderedArray: Option<Accessories>,
-    pub(crate) unorderedArray: Option<YearsInService>,
+    #[serde(rename="stringEnum")]
+    pub(crate) string_enum: Option<Orientation>,
+    #[serde(rename="gotchaStringEnum")]
+    pub(crate) gotcha_string_enum: Option<Version>,
+    #[serde(rename="numbericalEnum")]
+    pub(crate) numberical_enum: Option<UserAvailability>,
+    #[serde(rename="integerEnum")]
+    pub(crate) integer_enum: Option<LightsNearby>,
+    #[serde(rename="untypedArray")]
+    pub(crate) untyped_array: Option<Dishes>,
+    #[serde(rename="orderedArray")]
+    pub(crate) ordered_array: Option<Accessories>,
+    #[serde(rename="unorderedArray")]
+    pub(crate) unordered_array: Option<YearsInService>,
     pub(crate) object: Option<WashEquipment>,
-    pub(crate) allOf: Option<SinkResource>,
-    pub(crate) anyOf: Option<SinkComplaints>,
-    pub(crate) oneOf: Option<MeasurementStandard>,
+    #[serde(rename="allOf")]
+    pub(crate) all_of: Option<SinkResource>,
+    #[serde(rename="anyOf")]
+    pub(crate) any_of: Option<SinkComplaints>,
+    #[serde(rename="oneOf")]
+    pub(crate) one_of: Option<MeasurementStandard>,
 }
