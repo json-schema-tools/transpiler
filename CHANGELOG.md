@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/json-schema-tools/transpiler/compare/1.7.1...1.7.2) (2021-05-26)
+
+
+### Bug Fixes
+
+* remove leading symbols in languages that dont allow them ([8ab3291](https://github.com/json-schema-tools/transpiler/commit/8ab3291b02a08551341e821b723e911f71e25b37))
+
 ## [1.7.1](https://github.com/json-schema-tools/transpiler/compare/1.7.0...1.7.1) (2021-05-20)
 
 
