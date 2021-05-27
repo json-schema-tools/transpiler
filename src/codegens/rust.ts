@@ -148,16 +148,17 @@ export default class Rust extends CodeGen {
       let macro: string | false = false;
       let structFieldName = key;
 
-      const reservedWords = ["if", "else", "type", "ref", "const", "enum"];
-      if (reservedWords.indexOf(key) !== -1) {
-        macro = `#[serde(rename="${key}")]`;
-        structFieldName = "_" + key;
-      }
 
       const unallowedSymbolPrefixes = ["$", "@"];
       if (unallowedSymbolPrefixes.reduce((m, s) => m || key.startsWith(s), false)) {
         macro = `#[serde(rename="${key}")]`;
         structFieldName = key.substring(1);
+      }
+
+      const reservedWords = ["if", "else", "type", "ref", "const", "enum"];
+      if (reservedWords.indexOf(structFieldName) !== -1) {
+        macro = `#[serde(rename="${key}")]`;
+        structFieldName = "_" + structFieldName;
       }
 
       if (snakeCase(key) !== key) {
