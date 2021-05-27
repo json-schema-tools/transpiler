@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/json-schema-tools/transpiler/compare/1.7.4...1.7.5) (2021-05-27)
+
+
+### Bug Fixes
+
+* reserved words checked after prefix ([59b8e10](https://github.com/json-schema-tools/transpiler/commit/59b8e107e1b98e9f638efeb3d613d61e05fcc84a))
+
 ## [1.7.4](https://github.com/json-schema-tools/transpiler/compare/1.7.3...1.7.4) (2021-05-27)
 
 
