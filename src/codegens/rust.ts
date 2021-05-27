@@ -18,7 +18,10 @@ export const enumIdentifierFromTitle = (t: string) => {
 
 export default class Rust extends CodeGen {
   public getCodePrefix() {
-    return "extern crate serde_json;";
+    return [
+      "extern crate serde;",
+      "extern crate serde_json;"
+    ].join("\n");
   }
 
   public getSafeTitle(title: string): string {

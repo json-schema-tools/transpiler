@@ -1,4 +1,8 @@
 {
   "title":"$foo",
-  "type": "string"
+  "type": "object",
+  "properties": {
+    "$friggity": { "title": "hi", "type": "string" },
+    "ref": { "title": "ref", "type": "string" }
+  }
 }
