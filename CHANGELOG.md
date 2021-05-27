@@ -1,3 +1,10 @@
+## [1.7.6](https://github.com/json-schema-tools/transpiler/compare/1.7.5...1.7.6) (2021-05-27)
+
+
+### Bug Fixes
+
+* update test and fix edge case ([8ea5304](https://github.com/json-schema-tools/transpiler/commit/8ea5304fcb82b1204142ecd8aa0db6db0f77a906))
+
 ## [1.7.5](https://github.com/json-schema-tools/transpiler/compare/1.7.4...1.7.5) (2021-05-27)
 
 
