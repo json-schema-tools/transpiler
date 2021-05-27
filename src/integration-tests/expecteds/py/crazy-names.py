@@ -8,4 +8,4 @@ Ref = NewType("Ref", str)
 
 class Foo(TypedDict):
     $friggity: Optional[Hi]
-    ref: Optional[Ref]
+    $ref: Optional[Ref]

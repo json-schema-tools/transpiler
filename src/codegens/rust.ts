@@ -159,9 +159,7 @@ export default class Rust extends CodeGen {
       if (reservedWords.indexOf(structFieldName) !== -1) {
         macro = `#[serde(rename="${key}")]`;
         structFieldName = "_" + structFieldName;
-      }
-
-      if (snakeCase(key) !== key) {
+      } else if (snakeCase(key) !== key) {
         macro = `#[serde(rename="${key}")]`;
         structFieldName = snakeCase(key);
       }

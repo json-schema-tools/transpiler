@@ -8,6 +8,6 @@ pub type Ref = String;
 pub struct Foo {
     #[serde(rename="$friggity")]
     pub(crate) friggity: Option<Hi>,
-    #[serde(rename="ref")]
+    #[serde(rename="$ref")]
     pub(crate) _ref: Option<Ref>,
 }
