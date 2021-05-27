@@ -1,3 +1,10 @@
+## [1.7.4](https://github.com/json-schema-tools/transpiler/compare/1.7.3...1.7.4) (2021-05-27)
+
+
+### Bug Fixes
+
+* serde include ([0ff8942](https://github.com/json-schema-tools/transpiler/commit/0ff894213e9112e2463a6560cb977a3d6b296073))
+
 ## [1.7.3](https://github.com/json-schema-tools/transpiler/compare/1.7.2...1.7.3) (2021-05-26)
 
 
