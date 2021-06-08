@@ -27,8 +27,8 @@
     "!build/**/*.test.*"
   ],
   "devDependencies": {
-    "@json-schema-tools/dereferencer": "^1.4.0",
-    "@json-schema-tools/meta-schema": "^1.5.10",
+    "@json-schema-tools/dereferencer": "^1.5.2",
+    "@json-schema-tools/meta-schema": "^1.6.10",
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.15",
     "@types/lodash.camelcase": "^4.3.6",
@@ -44,13 +44,13 @@
     "jest": "^26.6.1",
     "node-fetch": "^2.6.1",
     "ts-jest": "^26.4.3",
-    "typedoc": "^0.19.2",
-    "typescript": "^4.0.5"
+    "typedoc": "^0.20.36",
+    "typescript": "4.2.4"
   },
   "dependencies": {
-    "@json-schema-tools/referencer": "^1.0.3",
-    "@json-schema-tools/titleizer": "^1.0.4",
-    "@json-schema-tools/traverse": "^1.7.7",
+    "@json-schema-tools/referencer": "^1.0.4",
+    "@json-schema-tools/titleizer": "^1.0.5",
+    "@json-schema-tools/traverse": "^1.7.8",
     "lodash.camelcase": "^4.3.0",
     "lodash.deburr": "^4.1.0",
     "lodash.snakecase": "^4.1.1",

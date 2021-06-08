@@ -1,0 +1,8 @@
+{
+  "title":"additional-props",
+  "type": "object",
+  "additionalProperties": {
+    "title": "theProps",
+    "type": "string"
+  }
+}

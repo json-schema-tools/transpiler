@@ -1,27 +1,30 @@
 extern crate serde;
 extern crate serde_json;
+extern crate derive_builder;
 
 use serde::{Serialize, Deserialize};
-#[derive(Serialize, Deserialize)]
+use derive_builder::Builder;
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub enum Ox {
     #[serde(rename = "Ox")]
     Ox,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub enum Horse {
     #[serde(rename = "Horse")]
     Horse,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub enum Donkey {
     #[serde(rename = "Donkey")]
     Donkey,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[serde(untagged)]
 pub enum OneOfDonkeyHorseOxP55NQZsj {
-    Ox,
-    Horse,
-    Donkey
+    Ox(Ox),
+    Horse(Horse),
+    Donkey(Donkey),
 }
 /// PlowAnimals
 ///

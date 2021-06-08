@@ -1,7 +1,6 @@
 {
   "name": "@json-schema-tools/transpiler",
-  "mode": "file",
-  "inputFiles": [
+  "entryPoints": [
     "./src/index.ts"
   ],
   "out": "docs",
@@ -14,6 +13,6 @@
     "src/*.test.ts"
   ],
   "toc": [
-    "traverse"
+    "Transpiler"
   ]
 }

@@ -20,14 +20,15 @@ export default class Rust extends CodeGen {
   public getCodePrefix() {
     return [
       "extern crate serde;",
-      "extern crate serde_json;"
+      "extern crate serde_json;",
+      "extern crate derive_builder;"
     ].join("\n");
   }
 
   public getSafeTitle(title: string): string {
     const n = super.getSafeTitle(title);
 
-    // Remove all non-capitalized-alpha characters before the first capitalized alpha character.
+    // Remove all non-alphabetic characters before the first char
     return n.replace(/^[^A-Z]+/m, "");
   }
 
@@ -78,7 +79,6 @@ export default class Rust extends CodeGen {
   }
 
   protected handleString(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    const typing = "String";
     if (s.const) {
       const copy = { ...s };
       copy.enum = [s.const];
@@ -100,12 +100,13 @@ export default class Rust extends CodeGen {
       });
 
     return {
-      macros: "#[derive(Serialize, Deserialize)]",
+      macros: "#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]",
       prefix: "enum",
       typing: ["{", ...enumFields, "}"].join("\n"),
       documentationComment: this.buildDocs(s),
       imports: [
-        "use serde::{Serialize, Deserialize};"
+        "use serde::{Serialize, Deserialize};",
+        "use derive_builder::Builder;",
       ]
     };
   }
@@ -143,33 +144,55 @@ export default class Rust extends CodeGen {
         isRequired = s.required.indexOf(key) !== -1;
       }
 
-      const typeName = this.getSafeTitle(this.refToTitle(propSchema));
+      const refTitle = this.refToTitle(propSchema);
+      let typeName = this.getSafeTitle(refTitle);
+      const isCycle = refTitle === s.title;
+      if (isCycle) {
+        typeName = `Box<${typeName}>`;
+      }
 
-      let macro: string | false = false;
+      if (!isRequired) {
+        typeName = `Option<${typeName}>`;
+      }
+
+      let serdeRename = false;
       let structFieldName = key;
-
 
       const unallowedSymbolPrefixes = ["$", "@"];
       if (unallowedSymbolPrefixes.reduce((m, s) => m || key.startsWith(s), false)) {
-        macro = `#[serde(rename="${key}")]`;
+        serdeRename = true;
         structFieldName = key.substring(1);
       }
 
-      const reservedWords = ["if", "else", "type", "ref", "const", "enum"];
+      const reservedWords = ["if", "else", "type", "ref", "const", "enum", "default"];
+
       if (reservedWords.indexOf(structFieldName) !== -1) {
-        macro = `#[serde(rename="${key}")]`;
+        serdeRename = true;
         structFieldName = "_" + structFieldName;
       } else if (snakeCase(key) !== key) {
-        macro = `#[serde(rename="${key}")]`;
+        serdeRename = true;
         structFieldName = snakeCase(key);
       }
+
+      let macro = "";
+      if (serdeRename) {
+        if (isRequired) {
+          macro = `#[serde(rename="${key}")]`;
+        } else {
+          macro = `#[serde(rename="${key}", skip_serializing_if("Option::is_none"))]`;
+        }
+      } else {
+        if (!isRequired) {
+          macro = `#[serde(skip_serializing_if("Option::is_none"))]`;
+        }
+      }
+
 
       return [
         ...typings,
         [
           macro ? `    ${macro}\n` : "",
-          `    pub(crate) ${structFieldName}: `,
-          isRequired ? typeName + "," : `Option<${typeName}>,`,
+          `    pub ${structFieldName}: ${typeName},`,
         ].join(""),
       ];
     }, []);
@@ -177,23 +200,51 @@ export default class Rust extends CodeGen {
     return {
       prefix: "struct",
       typing: [`{`, ...propertyTypings, "}"].join("\n"),
-      macros: "#[derive(Serialize, Deserialize)]",
+      macros: [
+        "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]",
+        "#[builder(setter(strip_option), default)]",
+        "#[serde(default)]"
+      ].join("\n"),
       documentationComment: this.buildDocs(s),
       imports: [
         "use serde::{Serialize, Deserialize};",
+        "use derive_builder::Builder;",
       ]
     };
   }
 
   protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return {
-      prefix: "type",
-      typing: "HashMap<String, Option<serde_json::Value>>",
-      documentationComment: this.buildDocs(s),
-      imports: [
-        "use std::collections::HashMap;",
-      ]
-    };
+    if (s.additionalProperties) {
+      const refTitle = this.refToTitle(s.additionalProperties);
+      const typeName = this.getSafeTitle(refTitle);
+      const propertyTypings = [
+        "#[serde(flatten)]",
+        `pub additional_properties: Option<${typeName}>`
+      ].map((s) => `    ${s}`);
+      return {
+        prefix: "struct",
+        typing: ["{", ...propertyTypings, "}"].join("\n"),
+        macros: [
+          "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]",
+          "#[builder(setter(strip_option), default)]",
+          "#[serde(default)]"
+        ].join("\n"),
+        documentationComment: this.buildDocs(s),
+        imports: [
+          "use serde::{Serialize, Deserialize};",
+          "use derive_builder::Builder;",
+        ]
+      };
+    } else {
+      return {
+        prefix: "type",
+        typing: "HashMap<String, Option<serde_json::Value>>",
+        documentationComment: this.buildDocs(s),
+        imports: [
+          "use std::collections::HashMap;",
+        ]
+      };
+    }
   }
 
   protected handleAnyOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
@@ -223,11 +274,17 @@ export default class Rust extends CodeGen {
 
   private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
     return {
-      macros: "#[derive(Serialize, Deserialize)]",
+      macros: [
+        "#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]",
+        "#[serde(untagged)]"
+      ].join("\n"),
       prefix: "enum",
       typing: [
         "{",
-        this.getJoinedSafeTitles(s, ",\n").split("\n").map((l) => `    ${l}`).join("\n"),
+        this.getJoinedSafeTitles(s, "\n")
+          .split("\n")
+          .map((l) => `    ${l}(${l}),`)
+          .join("\n"),
         "}",
       ].join("\n"),
       imports: [

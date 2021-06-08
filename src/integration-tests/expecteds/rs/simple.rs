@@ -1,5 +1,6 @@
 extern crate serde;
 extern crate serde_json;
+extern crate derive_builder;
 
 /// StringLxWtMXSJ
 ///
