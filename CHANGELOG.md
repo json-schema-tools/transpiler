@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/json-schema-tools/transpiler/compare/1.7.6...1.8.0) (2021-06-11)
+
+
+### Features
+
+* rust fixes & general maintenance items ([4b78a06](https://github.com/json-schema-tools/transpiler/commit/4b78a068793f6dc475b224487d4f861ac217ed80))
+
 ## [1.7.6](https://github.com/json-schema-tools/transpiler/compare/1.7.5...1.7.6) (2021-05-27)
 
 
