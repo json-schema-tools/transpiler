@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for @json-schema-tools/transpiler">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>@json-schema-tools/transpiler</h1>
 		</div>
 	</div>
@@ -101,27 +95,27 @@
 					<h2>Getting Started</h2>
 				</a>
 				<p><code>npm install @json-schema-tools/transpiler</code></p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> JsonSchemaTranspiler = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;@json-schema-tools/transpiler&quot;</span>).default;
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">JsonSchemaTranspiler</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;@json-schema-tools/transpiler&quot;</span><span style="color: #000000">).</span><span style="color: #001080">default</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">const</span> mySchema = {
-  <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;PlowAnimals&quot;</span>,
-  <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;an array of animals that are good at pulling things&quot;</span>,
-  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>,
-  <span class="hljs-string">&quot;items&quot;</span>: {
-    <span class="hljs-string">&quot;oneOf&quot;</span>: [
-      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Horse&quot;</span> },
-      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Donkey&quot;</span> },
-      { <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Elephant&quot;</span> },
-    ]
-  }
-};
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mySchema</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;title&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;PlowAnimals&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;description&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;an array of animals that are good at pulling things&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;array&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;items&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;oneOf&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">      { </span><span style="color: #A31515">&quot;title&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Horse&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">      { </span><span style="color: #A31515">&quot;title&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Donkey&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">      { </span><span style="color: #A31515">&quot;title&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Elephant&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">    ]</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">};</span>
 
-<span class="hljs-keyword">const</span> transpiler = <span class="hljs-keyword">new</span> JsonSchemaTranspiler(mySchema);
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">transpiler</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">JsonSchemaTranspiler</span><span style="color: #000000">(</span><span style="color: #001080">mySchema</span><span style="color: #000000">);</span>
 
-<span class="hljs-built_in">console</span>.log(transpiler.toTypescript());
-<span class="hljs-built_in">console</span>.log(transpiler.toRust());
-<span class="hljs-built_in">console</span>.log(transpiler.to(<span class="hljs-string">&quot;go&quot;</span>)); <span class="hljs-comment">// same thing, different form/interface</span>
-<span class="hljs-built_in">console</span>.log(transpiler.to(<span class="hljs-string">&quot;python&quot;</span>)); <span class="hljs-comment">// works with shorthand of the language aswell (py or python)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">transpiler</span><span style="color: #000000">.</span><span style="color: #795E26">toTypescript</span><span style="color: #000000">());</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">transpiler</span><span style="color: #000000">.</span><span style="color: #795E26">toRust</span><span style="color: #000000">());</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">transpiler</span><span style="color: #000000">.</span><span style="color: #795E26">to</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;go&quot;</span><span style="color: #000000">)); </span><span style="color: #008000">// same thing, different form/interface</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">transpiler</span><span style="color: #000000">.</span><span style="color: #795E26">to</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;python&quot;</span><span style="color: #000000">)); </span><span style="color: #008000">// works with shorthand of the language aswell (py or python)</span>
 </code></pre>
 				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
 					<h2>Testing</h2>
@@ -131,17 +125,17 @@
 				</a>
 				<p><code>npm run generateTest</code></p>
 				<p>outputs:</p>
-				<pre><code>&gt; @json-schema-tools/transpiler@<span class="hljs-number">0.0</span>.<span class="hljs-number">0</span>-development generateTest /Users/zb/Code/json-schema-tools/transpiler
-&gt; tsc &amp;&amp; node ./build/integration-tests/generator.js
+				<pre><code><span style="color: #000000">&gt; @</span><span style="color: #001080">json</span><span style="color: #000000">-</span><span style="color: #001080">schema</span><span style="color: #000000">-</span><span style="color: #001080">tools</span><span style="color: #000000">/</span><span style="color: #001080">transpiler</span><span style="color: #000000">@</span><span style="color: #098658">0.0</span><span style="color: #000000">.</span><span style="color: #098658">0</span><span style="color: #000000">-</span><span style="color: #001080">development</span><span style="color: #000000"> </span><span style="color: #001080">generateTest</span><span style="color: #000000"> /</span><span style="color: #001080">Users</span><span style="color: #000000">/</span><span style="color: #001080">zb</span><span style="color: #000000">/</span><span style="color: #001080">Code</span><span style="color: #000000">/</span><span style="color: #001080">json</span><span style="color: #000000">-</span><span style="color: #001080">schema</span><span style="color: #000000">-</span><span style="color: #001080">tools</span><span style="color: #000000">/</span><span style="color: #001080">transpiler</span>
+<span style="color: #000000">&gt; </span><span style="color: #001080">tsc</span><span style="color: #000000"> &amp;&amp; </span><span style="color: #001080">node</span><span style="color: #000000"> ./</span><span style="color: #001080">build</span><span style="color: #000000">/</span><span style="color: #001080">integration</span><span style="color: #000000">-</span><span style="color: #001080">tests</span><span style="color: #000000">/</span><span style="color: #001080">generator</span><span style="color: #000000">.</span><span style="color: #001080">js</span>
 
-? What <span class="hljs-keyword">is</span> the name of the test schema? <span class="hljs-built_in">type</span>-<span class="hljs-keyword">as</span>-array
-? Enter <span class="hljs-keyword">a</span> url <span class="hljs-keyword">to</span> <span class="hljs-keyword">a</span> JSON Schema, <span class="hljs-built_in">or</span> press enter <span class="hljs-keyword">to</span> <span class="hljs-built_in">get</span> <span class="hljs-keyword">an</span> <span class="hljs-built_in">empty</span> one? false
-Detecting languages...
-Found <span class="hljs-number">4</span> <span class="hljs-keyword">language</span><span class="hljs-variable">s:</span> <span class="hljs-keyword">go</span>, <span class="hljs-keyword">py</span>, rs, <span class="hljs-keyword">ts</span>
+<span style="color: #000000">? </span><span style="color: #001080">What</span><span style="color: #000000"> </span><span style="color: #001080">is</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">name</span><span style="color: #000000"> </span><span style="color: #0000FF">of</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000"> </span><span style="color: #001080">schema</span><span style="color: #000000">? </span><span style="color: #001080">type</span><span style="color: #000000">-</span><span style="color: #001080">as</span><span style="color: #000000">-</span><span style="color: #001080">array</span>
+<span style="color: #000000">? </span><span style="color: #001080">Enter</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">url</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #267F99">JSON</span><span style="color: #000000"> </span><span style="color: #001080">Schema</span><span style="color: #000000">, </span><span style="color: #001080">or</span><span style="color: #000000"> </span><span style="color: #001080">press</span><span style="color: #000000"> </span><span style="color: #001080">enter</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">get</span><span style="color: #000000"> </span><span style="color: #001080">an</span><span style="color: #000000"> </span><span style="color: #001080">empty</span><span style="color: #000000"> </span><span style="color: #001080">one</span><span style="color: #000000">? </span><span style="color: #0000FF">false</span>
+<span style="color: #001080">Detecting</span><span style="color: #000000"> </span><span style="color: #001080">languages</span><span style="color: #000000">...</span>
+<span style="color: #001080">Found</span><span style="color: #000000"> </span><span style="color: #098658">4</span><span style="color: #000000"> </span><span style="color: #001080">languages</span><span style="color: #000000">: </span><span style="color: #001080">go</span><span style="color: #000000">, </span><span style="color: #001080">py</span><span style="color: #000000">, </span><span style="color: #001080">rs</span><span style="color: #000000">, </span><span style="color: #001080">ts</span>
 
 
-Writing <span class="hljs-keyword">files</span>...
-All done
+<span style="color: #001080">Writing</span><span style="color: #000000"> </span><span style="color: #001080">files</span><span style="color: #000000">...</span>
+<span style="color: #001080">All</span><span style="color: #000000"> </span><span style="color: #001080">done</span>
 </code></pre>
 				<p>Edit schema if necessary, and run <code>npm test</code>. Update expected results as needed.</p>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
@@ -153,13 +147,16 @@ All done
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/transpiler.html" class="tsd-kind-icon">Transpiler</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
