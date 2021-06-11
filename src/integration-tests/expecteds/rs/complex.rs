@@ -1,7 +1,9 @@
 extern crate serde;
 extern crate serde_json;
+extern crate derive_builder;
 
 use serde::{Serialize, Deserialize};
+use derive_builder::Builder;
 use std::collections::HashMap;
 pub type IsMetal = bool;
 /// FillAmount
@@ -27,7 +29,7 @@ pub type IsMetal = bool;
 pub type FillAmount = i64;
 pub type NumDrains = f64;
 pub type FeelToTouch = String;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub enum Orientation {
     #[serde(rename = "north")]
     North,
@@ -38,7 +40,7 @@ pub enum Orientation {
     #[serde(rename = "east")]
     East,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub enum Version {
     #[serde(rename = "1.1.1")]
     OneOneOne,
@@ -61,69 +63,87 @@ pub type ServiceYear = f64;
 pub type YearsInService = Vec<ServiceYear>;
 pub type WaterLiters = f64;
 pub type SoapBrand = String;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
 pub struct WashEquipment {
-    pub(crate) water: WaterLiters,
-    pub(crate) soap: Option<SoapBrand>,
+    pub water: WaterLiters,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub soap: Option<SoapBrand>,
 }
 pub type SinkUserNumHands = f64;
 pub type SinkUserName = String;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
 pub struct SinkUser {
-    pub(crate) hands: Option<SinkUserNumHands>,
-    pub(crate) name: Option<SinkUserName>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub hands: Option<SinkUserNumHands>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub name: Option<SinkUserName>,
 }
 pub type StreetName = HashMap<String, Option<serde_json::Value>>;
 pub type StreetNumber = f64;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
 pub struct SinkLocation {
-    #[serde(rename="residenceStreet")]
-    pub(crate) residence_street: Option<StreetName>,
-    #[serde(rename="residenceNumber")]
-    pub(crate) residence_number: Option<StreetNumber>,
+    #[serde(rename="residenceStreet", skip_serializing_if("Option::is_none"))]
+    pub residence_street: Option<StreetName>,
+    #[serde(rename="residenceNumber", skip_serializing_if("Option::is_none"))]
+    pub residence_number: Option<StreetNumber>,
 }
 pub type SinkResource = HashMap<String, Option<serde_json::Value>>;
 pub type Whining = bool;
 pub type Burns = i64;
 pub type FeelingOfEmptiness = serde_json::Value;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[serde(untagged)]
 pub enum SinkComplaints {
-    Whining,
-    Burns,
-    FeelingOfEmptiness
+    Whining(Whining),
+    Burns(Burns),
+    FeelingOfEmptiness(FeelingOfEmptiness),
 }
 pub type European = bool;
 pub type DrainPipeInches = i64;
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[serde(untagged)]
 pub enum MeasurementStandard {
-    European,
-    DrainPipeInches
+    European(European),
+    DrainPipeInches(DrainPipeInches),
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
 pub struct KitchenSink {
-    pub(crate) bool: Option<IsMetal>,
-    pub(crate) int: Option<FillAmount>,
-    pub(crate) number: Option<NumDrains>,
-    pub(crate) string: Option<FeelToTouch>,
-    #[serde(rename="stringEnum")]
-    pub(crate) string_enum: Option<Orientation>,
-    #[serde(rename="gotchaStringEnum")]
-    pub(crate) gotcha_string_enum: Option<Version>,
-    #[serde(rename="numbericalEnum")]
-    pub(crate) numberical_enum: Option<UserAvailability>,
-    #[serde(rename="integerEnum")]
-    pub(crate) integer_enum: Option<LightsNearby>,
-    #[serde(rename="untypedArray")]
-    pub(crate) untyped_array: Option<Dishes>,
-    #[serde(rename="orderedArray")]
-    pub(crate) ordered_array: Option<Accessories>,
-    #[serde(rename="unorderedArray")]
-    pub(crate) unordered_array: Option<YearsInService>,
-    pub(crate) object: Option<WashEquipment>,
-    #[serde(rename="allOf")]
-    pub(crate) all_of: Option<SinkResource>,
-    #[serde(rename="anyOf")]
-    pub(crate) any_of: Option<SinkComplaints>,
-    #[serde(rename="oneOf")]
-    pub(crate) one_of: Option<MeasurementStandard>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub bool: Option<IsMetal>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub int: Option<FillAmount>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub number: Option<NumDrains>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub string: Option<FeelToTouch>,
+    #[serde(rename="stringEnum", skip_serializing_if("Option::is_none"))]
+    pub string_enum: Option<Orientation>,
+    #[serde(rename="gotchaStringEnum", skip_serializing_if("Option::is_none"))]
+    pub gotcha_string_enum: Option<Version>,
+    #[serde(rename="numbericalEnum", skip_serializing_if("Option::is_none"))]
+    pub numberical_enum: Option<UserAvailability>,
+    #[serde(rename="integerEnum", skip_serializing_if("Option::is_none"))]
+    pub integer_enum: Option<LightsNearby>,
+    #[serde(rename="untypedArray", skip_serializing_if("Option::is_none"))]
+    pub untyped_array: Option<Dishes>,
+    #[serde(rename="orderedArray", skip_serializing_if("Option::is_none"))]
+    pub ordered_array: Option<Accessories>,
+    #[serde(rename="unorderedArray", skip_serializing_if("Option::is_none"))]
+    pub unordered_array: Option<YearsInService>,
+    #[serde(skip_serializing_if("Option::is_none"))]
+    pub object: Option<WashEquipment>,
+    #[serde(rename="allOf", skip_serializing_if("Option::is_none"))]
+    pub all_of: Option<SinkResource>,
+    #[serde(rename="anyOf", skip_serializing_if("Option::is_none"))]
+    pub any_of: Option<SinkComplaints>,
+    #[serde(rename="oneOf", skip_serializing_if("Option::is_none"))]
+    pub one_of: Option<MeasurementStandard>,
 }
