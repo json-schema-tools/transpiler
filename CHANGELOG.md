@@ -1,3 +1,10 @@
+## [1.8.2](https://github.com/json-schema-tools/transpiler/compare/1.8.1...1.8.2) (2021-06-15)
+
+
+### Bug Fixes
+
+* serialize attrs syntax ([b0dc179](https://github.com/json-schema-tools/transpiler/commit/b0dc179c6a6c9e0bc2688d8310e89d6c7424cdf6)), closes [#381](https://github.com/json-schema-tools/transpiler/issues/381)
+
 ## [1.8.1](https://github.com/json-schema-tools/transpiler/compare/1.8.0...1.8.1) (2021-06-15)
 
 
