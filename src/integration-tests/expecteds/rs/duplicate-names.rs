@@ -17,7 +17,7 @@ pub type SetOfNumbers = (Bar);
 #[builder(setter(strip_option), default)]
 #[serde(default)]
 pub struct ObjectOfBazLEtnUJ56 {
-    #[serde(rename="NotFoo", skip_serializing_if("Option::is_none"))]
+    #[serde(rename = "NotFoo", skip_serializing_if = "Option::is_none")]
     pub not_foo: Option<Baz>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
