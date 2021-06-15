@@ -11,6 +11,6 @@ pub type AbsoluteMadLad = String;
 #[builder(setter(strip_option), default)]
 #[serde(default)]
 pub struct Milkers {
-    #[serde(skip_serializing_if("Option::is_none"))]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub anything: Option<BooleanVyG3AETh>,
 }

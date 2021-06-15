@@ -179,11 +179,11 @@ export default class Rust extends CodeGen {
         if (isRequired) {
           macro = `#[serde(rename="${key}")]`;
         } else {
-          macro = `#[serde(rename="${key}", skip_serializing_if("Option::is_none"))]`;
+          macro = `#[serde(rename = "${key}", skip_serializing_if = "Option::is_none")]`;
         }
       } else {
         if (!isRequired) {
-          macro = `#[serde(skip_serializing_if("Option::is_none"))]`;
+          macro = `#[serde(skip_serializing_if = "Option::is_none")]`;
         }
       }
 

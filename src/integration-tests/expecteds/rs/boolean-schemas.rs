@@ -10,8 +10,8 @@ type AlwaysFalse = serde_json::Value;
 #[builder(setter(strip_option), default)]
 #[serde(default)]
 pub struct ObjectOfCmepExQR {
-    #[serde(rename="boolSchemaT", skip_serializing_if("Option::is_none"))]
+    #[serde(rename = "boolSchemaT", skip_serializing_if = "Option::is_none")]
     pub bool_schema_t: Option<AlwaysTrue>,
-    #[serde(rename="boolSchemaF", skip_serializing_if("Option::is_none"))]
+    #[serde(rename = "boolSchemaF", skip_serializing_if = "Option::is_none")]
     pub bool_schema_f: Option<AlwaysFalse>,
 }

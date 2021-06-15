@@ -8,6 +8,6 @@ use derive_builder::Builder;
 #[builder(setter(strip_option), default)]
 #[serde(default)]
 pub struct MoebiusSchema {
-    #[serde(rename="MoebiusProperty", skip_serializing_if("Option::is_none"))]
+    #[serde(rename = "MoebiusProperty", skip_serializing_if = "Option::is_none")]
     pub moebius_property: Option<Box<MoebiusSchema>>,
 }
