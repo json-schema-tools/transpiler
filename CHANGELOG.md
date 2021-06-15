@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/json-schema-tools/transpiler/compare/1.8.0...1.8.1) (2021-06-15)
+
+
+### Bug Fixes
+
+* non literal enum should not derive eq ([b86f15c](https://github.com/json-schema-tools/transpiler/commit/b86f15ce00e782e667c0ab1196407ca9cf9cfad9)), closes [#384](https://github.com/json-schema-tools/transpiler/issues/384)
+
 # [1.8.0](https://github.com/json-schema-tools/transpiler/compare/1.7.6...1.8.0) (2021-06-11)
 
 
