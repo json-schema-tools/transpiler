@@ -19,7 +19,7 @@ pub enum Donkey {
     #[serde(rename = "Donkey")]
     Donkey,
 }
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum OneOfDonkeyHorseOxP55NQZsj {
     Ox(Ox),
