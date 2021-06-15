@@ -20,13 +20,13 @@ pub struct ObjectOfBazLEtnUJ56 {
     #[serde(rename="NotFoo", skip_serializing_if("Option::is_none"))]
     pub not_foo: Option<Baz>,
 }
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum OneOfStuff {
     UnorderedSetOfFooz1UBFn8B(UnorderedSetOfFooz1UBFn8B),
     SetOfNumbers(SetOfNumbers),
 }
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum AnyOfFooFooObjectOfBazLEtnUJ56OneOfStuffBar {
     Foo(Foo),

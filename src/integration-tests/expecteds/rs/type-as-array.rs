@@ -5,7 +5,7 @@ extern crate derive_builder;
 use serde::{Serialize, Deserialize};
 pub type TypeAsArrayAsString = String;
 pub type TypeAsArrayAsNumber = f64;
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum TypeAsArray {
     TypeAsArrayAsString(TypeAsArrayAsString),

@@ -275,7 +275,7 @@ export default class Rust extends CodeGen {
   private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
     return {
       macros: [
-        "#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]",
+        "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]",
         "#[serde(untagged)]"
       ].join("\n"),
       prefix: "enum",

@@ -4,7 +4,7 @@ extern crate derive_builder;
 
 use serde::{Serialize, Deserialize};
 pub type StringDoaGddGA = String;
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum OneOfStringDoaGddGAStringDoaGddGABERs71N5 {
     StringDoaGddGA(StringDoaGddGA),
@@ -21,7 +21,7 @@ pub type RGBOrHex = Vec<OneOfStringDoaGddGAStringDoaGddGABERs71N5>;
 ///
 pub type StringDBm1TnLT = String;
 pub type ColorAsAnything = serde_json::Value;
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum AnyOfRGBOrHexStringDBm1TnLTColorAsAnything {
     RGBOrHex(RGBOrHex),

@@ -97,7 +97,7 @@ pub type SinkResource = HashMap<String, Option<serde_json::Value>>;
 pub type Whining = bool;
 pub type Burns = i64;
 pub type FeelingOfEmptiness = serde_json::Value;
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum SinkComplaints {
     Whining(Whining),
@@ -106,7 +106,7 @@ pub enum SinkComplaints {
 }
 pub type European = bool;
 pub type DrainPipeInches = i64;
-#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum MeasurementStandard {
     European(European),
