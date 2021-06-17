@@ -144,10 +144,8 @@ export default class Rust extends CodeGen {
         isRequired = s.required.indexOf(key) !== -1;
       }
 
-      const refTitle = this.refToTitle(propSchema);
-      let typeName = this.getSafeTitle(refTitle);
-      const isCycle = refTitle === s.title;
-      if (isCycle) {
+      let typeName = this.getSafeTitle(this.refToTitle(propSchema));
+      if (propSchema !== false && propSchema !== true && propSchema.isCycle) {
         typeName = `Box<${typeName}>`;
       }
 
@@ -215,8 +213,7 @@ export default class Rust extends CodeGen {
 
   protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
     if (s.additionalProperties) {
-      const refTitle = this.refToTitle(s.additionalProperties);
-      const typeName = this.getSafeTitle(refTitle);
+      const typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
       const propertyTypings = [
         "#[serde(flatten)]",
         `pub additional_properties: Option<${typeName}>`
@@ -273,20 +270,25 @@ export default class Rust extends CodeGen {
   }
 
   private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
+    const typeLines = s
+      .map((enumItem) => {
+        const typeName = this.getSafeTitle(this.refToTitle(enumItem));
+        let rhsTypeName = typeName;
+        if (enumItem !== false && enumItem !== true && enumItem.isCycle) {
+          rhsTypeName = `Box<${typeName}>`;
+        }
+        return `${typeName}(${rhsTypeName})`;
+      })
+      .map((l) => `    ${l},`)
+      .join("\n");
+
     return {
       macros: [
         "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]",
         "#[serde(untagged)]"
       ].join("\n"),
       prefix: "enum",
-      typing: [
-        "{",
-        this.getJoinedSafeTitles(s, "\n")
-          .split("\n")
-          .map((l) => `    ${l}(${l}),`)
-          .join("\n"),
-        "}",
-      ].join("\n"),
+      typing: ["{", typeLines, "}"].join("\n"),
       imports: [
         "use serde::{Serialize, Deserialize};",
       ]
