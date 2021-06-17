@@ -2,8 +2,6 @@ import deburr from "lodash.deburr";
 import trim from "lodash.trim";
 import { JSONSchema, Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
-import Dereferencer from "@json-schema-tools/dereferencer";
-import referencer from "@json-schema-tools/referencer";
 
 /**
  * Capitalize the first letter of the string.

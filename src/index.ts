@@ -25,9 +25,9 @@ export class Transpiler {
     const reffed = schemaWithTitles.map(referencer);
     const reffedAndCycleMarked = reffed.map((s) => setIsCycle(s, cycleMap));
     if (useMerge) {
-      this.megaSchema = combineSchemas(reffed);
+      this.megaSchema = combineSchemas(reffedAndCycleMarked);
     } else {
-      [this.megaSchema] = reffed;
+      [this.megaSchema] = reffedAndCycleMarked;
     }
   }
 
