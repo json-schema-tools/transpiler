@@ -10,7 +10,7 @@ import traverse from "@json-schema-tools/traverse";
  *
  * @return capitalized version of the input
  */
-export const capitalize = (s: string) => s[0].toUpperCase() + s.slice(1);
+export const capitalize = (s: string): string => s[0].toUpperCase() + s.slice(1);
 
 const regexes = [
   /(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g,
@@ -22,7 +22,7 @@ const regexes = [
 ];
 
 const digitRegex = /\d/g;
-export const numToWord = (s: string) => {
+export const numToWord = (s: string): string => {
   return s.replace(digitRegex, (match) => {
     switch (match) {
       case "0": return "Zero";
@@ -40,7 +40,7 @@ export const numToWord = (s: string) => {
   });
 };
 
-export const languageSafeName = (title: string) => {
+export const languageSafeName = (title: string): string => {
   return capitalize(
     deburr(title)
       .replace(regexes[0], " ")
@@ -67,7 +67,7 @@ export const getTitle = (s: JSONSchema): string => {
   throw new Error("Could not extract title from schema: " + JSON.stringify(s));
 };
 
-export const schemaToRef = (s: JSONSchema) => {
+export const schemaToRef = (s: JSONSchema): { $ref: string } => {
   const ref = getTitle(s);
   return { $ref: `#/definitions/${ref}` }
 };
@@ -77,7 +77,7 @@ export const joinSchemaTitles = (s: JSONSchema[]): string => {
 };
 
 type SchemEntry = [string, JSONSchema];
-export const sortEntriesByKey = ([key1]: SchemEntry, [key2]: SchemEntry) => key1 > key2 ? -1 : 1;
+export const sortEntriesByKey = ([key1]: SchemEntry, [key2]: SchemEntry): -1 | 1 => key1 > key2 ? -1 : 1;
 
 export function combineSchemas(s: JSONSchema[]): JSONSchemaObject {
   let combinedDefinitions: { [k: string]: JSONSchema } = {};
@@ -193,7 +193,7 @@ const checkCycle = (cycleMap: CycleMap) => (subs: JSONSchema) => {
   return subs;
 };
 
-export function setIsCycle(s: JSONSchema, cycleMap: CycleMap) {
+export function setIsCycle(s: JSONSchema, cycleMap: CycleMap): JSONSchema {
   if (s === true || s === false) { return s; }
   traverse(s, checkCycle(cycleMap), { mutable: true });
 
