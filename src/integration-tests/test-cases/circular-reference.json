@@ -2,6 +2,14 @@
   "title": "moebiusSchema",
   "type": "object",
   "properties": {
-    "MoebiusProperty": { "$ref": "#" }
+    "MoebiusProperty": { "$ref": "#" },
+    "deeperMobiusProperty": {
+      "oneOf": [
+        { "$ref": "#" },
+        {
+          "type": "string"
+        }
+      ]
+    }
   }
 }

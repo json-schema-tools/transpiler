@@ -144,10 +144,8 @@ export default class Rust extends CodeGen {
         isRequired = s.required.indexOf(key) !== -1;
       }
 
-      const refTitle = this.refToTitle(propSchema);
-      let typeName = this.getSafeTitle(refTitle);
-      const isCycle = refTitle === s.title;
-      if (isCycle) {
+      let typeName = this.getSafeTitle(this.refToTitle(propSchema));
+      if (propSchema !== false && propSchema !== true && propSchema.isCycle) {
         typeName = `Box<${typeName}>`;
       }
 
@@ -248,7 +246,7 @@ export default class Rust extends CodeGen {
   }
 
   protected handleAnyOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return this.buildEnum(s.anyOf as JSONSchema[]);
+    return this.buildEnum(s.anyOf as JSONSchema[], s);
   }
 
   /**
@@ -259,7 +257,7 @@ export default class Rust extends CodeGen {
   }
 
   protected handleOneOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    return this.buildEnum(s.oneOf as JSONSchema[]);
+    return this.buildEnum(s.oneOf as JSONSchema[], s);
   }
 
   protected handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation {
@@ -272,21 +270,27 @@ export default class Rust extends CodeGen {
     return { documentationComment: this.buildDocs(s), prefix: "type", typing: "serde_json::Value" };
   }
 
-  private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
+  private buildEnum(s: JSONSchema[], parentSchema: JSONSchemaObject): TypeIntermediateRepresentation {
+    const typeLines = s
+      .map((enumItem) => {
+        const refTitle = this.refToTitle(enumItem);
+        let typeName = this.getSafeTitle(refTitle);
+        let rhsTypeName = typeName;
+        if (enumItem !== false && enumItem !== true && enumItem.isCycle) {
+          rhsTypeName = `Box<${typeName}>`;
+        }
+        return `${typeName}(${rhsTypeName})`;
+      })
+      .map((l) => `    ${l},`)
+      .join("\n");
+
     return {
       macros: [
         "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]",
         "#[serde(untagged)]"
       ].join("\n"),
       prefix: "enum",
-      typing: [
-        "{",
-        this.getJoinedSafeTitles(s, "\n")
-          .split("\n")
-          .map((l) => `    ${l}(${l}),`)
-          .join("\n"),
-        "}",
-      ].join("\n"),
+      typing: ["{", typeLines, "}"].join("\n"),
       imports: [
         "use serde::{Serialize, Deserialize};",
       ]

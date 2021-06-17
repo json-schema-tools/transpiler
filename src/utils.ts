@@ -2,6 +2,8 @@ import deburr from "lodash.deburr";
 import trim from "lodash.trim";
 import { JSONSchema, Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
+import Dereferencer from "@json-schema-tools/dereferencer";
+import referencer from "@json-schema-tools/referencer";
 
 /**
  * Capitalize the first letter of the string.
@@ -168,4 +170,47 @@ export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
 
     return subS;
   }, { mutable: true });
+}
+
+export function getCycleMap(ss: JSONSchema[]): CycleMap {
+  return ss.reduce((m, s) => {
+    traverse(s, (subs, isCycle) => {
+      if (subs === true || subs === false) { return subs; }
+      if (isCycle) {
+        m[schemaToRef(subs).$ref] = true;
+      };
+      return subs;
+    }, { mutable: false });
+
+    return m;
+  }, {} as { [k: string]: true });
+}
+
+interface CycleMap { [k: string]: true };
+
+const checkCycle = (cycleMap: CycleMap) => (subs: JSONSchema) => {
+  if (subs !== true && subs !== false && subs.$ref && cycleMap[subs.$ref]) {
+    subs.isCycle = true;
+  };
+  return subs;
+};
+
+export function setIsCycle(s: JSONSchema, cycleMap: CycleMap) {
+  if (s === true || s === false) { return s; }
+  traverse(s, checkCycle(cycleMap), { mutable: true });
+
+  if (s.definitions !== undefined) {
+    const defs = s.definitions;
+    Object.keys(defs).forEach((subsKey) => {
+      if (cycleMap[`#/definitions/${subsKey}`]) {
+        defs[subsKey].isCycle = true;
+      }
+    });
+    const definitionSchemas = Object.values(defs);
+
+    definitionSchemas.forEach((ds) => {
+      traverse(ds, checkCycle(cycleMap), { mutable: true });
+    });
+  }
+  return s;
 }
