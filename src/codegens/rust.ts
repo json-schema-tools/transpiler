@@ -272,7 +272,7 @@ export default class Rust extends CodeGen {
   private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
     const typeLines = s
       .map((enumItem) => {
-        let typeName = this.getSafeTitle(this.refToTitle(enumItem));
+        const typeName = this.getSafeTitle(this.refToTitle(enumItem));
         let rhsTypeName = typeName;
         if (enumItem !== false && enumItem !== true && enumItem.isCycle) {
           rhsTypeName = `Box<${typeName}>`;

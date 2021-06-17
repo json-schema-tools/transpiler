@@ -176,7 +176,7 @@ export function getCycleMap(ss: JSONSchema[]): CycleMap {
       if (subs === true || subs === false) { return subs; }
       if (isCycle) {
         m[schemaToRef(subs).$ref] = true;
-      };
+      }
       return subs;
     }, { mutable: false });
 
@@ -184,12 +184,12 @@ export function getCycleMap(ss: JSONSchema[]): CycleMap {
   }, {} as { [k: string]: true });
 }
 
-interface CycleMap { [k: string]: true };
+interface CycleMap { [k: string]: true }
 
 const checkCycle = (cycleMap: CycleMap) => (subs: JSONSchema) => {
   if (subs !== true && subs !== false && subs.$ref && cycleMap[subs.$ref]) {
     subs.isCycle = true;
-  };
+  }
   return subs;
 };
 
