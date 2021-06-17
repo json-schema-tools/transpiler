@@ -1,3 +1,18 @@
+# [1.9.0](https://github.com/json-schema-tools/transpiler/compare/1.8.2...1.9.0) (2021-06-17)
+
+
+### Bug Fixes
+
+* add return types to most of the utils ([75b3245](https://github.com/json-schema-tools/transpiler/commit/75b32451381bdee03ff2eadedd8b1456b97ee67c))
+* clean up remenants of bad ideas ([9d0ef32](https://github.com/json-schema-tools/transpiler/commit/9d0ef32150a58632ca96237fb8102af778c3c89d))
+* run lint fix ([9a2d65e](https://github.com/json-schema-tools/transpiler/commit/9a2d65e89dbc68d0f17f7454b31ac6b56052e801))
+* update deps and regen package-lock ([6ea95ee](https://github.com/json-schema-tools/transpiler/commit/6ea95ee2a3c2750fad6048faed616e90e9af31b5))
+
+
+### Features
+
+* augment schemas with isCycle ([07d7015](https://github.com/json-schema-tools/transpiler/commit/07d7015658ba3a47e04a0ce0a10a75097ea6bc4c)), closes [#382](https://github.com/json-schema-tools/transpiler/issues/382)
+
 ## [1.8.2](https://github.com/json-schema-tools/transpiler/compare/1.8.1...1.8.2) (2021-06-15)
 
 
