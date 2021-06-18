@@ -19,9 +19,9 @@ export class Transpiler {
   constructor(s: JSONSchema | JSONSchema[]) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
+    const cycleMap = getCycleMap(inputSchema);
     const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
     const schemaWithTitles = noTypeArrays.map(titleizer);
-    const cycleMap = getCycleMap(schemaWithTitles);
     const reffed = schemaWithTitles.map(referencer);
     const reffedAndCycleMarked = reffed.map((s) => setIsCycle(s, cycleMap));
     if (useMerge) {

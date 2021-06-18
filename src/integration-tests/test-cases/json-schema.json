@@ -1,0 +1,12 @@
+{
+  "title": "a",
+  "oneOf": [
+    {
+      "title": "b",
+      "type": "object",
+      "properties": {
+        "a": { "$ref": "#" }
+      }
+    }
+  ]
+}

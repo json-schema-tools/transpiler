@@ -175,7 +175,7 @@ export default class Rust extends CodeGen {
       let macro = "";
       if (serdeRename) {
         if (isRequired) {
-          macro = `#[serde(rename="${key}")]`;
+          macro = `#[serde(rename = "${key}")]`;
         } else {
           macro = `#[serde(rename = "${key}", skip_serializing_if = "Option::is_none")]`;
         }
@@ -195,6 +195,20 @@ export default class Rust extends CodeGen {
       ];
     }, []);
 
+    if (s.additionalProperties) {
+      const addPropS = s.additionalProperties;
+      let typeName = this.getSafeTitle(this.refToTitle(addPropS));
+
+      if (addPropS !== true && addPropS.isCycle) {
+        typeName = `Box<${typeName}>`;
+      }
+
+      propertyTypings.push([
+        "#[serde(flatten)]\n",
+        `pub additional_properties: ${typeName},`
+      ].map((s) => `    ${s}`).join(""));
+    }
+
     return {
       prefix: "struct",
       typing: [`{`, ...propertyTypings, "}"].join("\n"),
@@ -212,36 +226,37 @@ export default class Rust extends CodeGen {
   }
 
   protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
+    let typeName = "serde_json::Value";
     if (s.additionalProperties) {
-      const typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
-      const propertyTypings = [
-        "#[serde(flatten)]",
-        `pub additional_properties: Option<${typeName}>`
-      ].map((s) => `    ${s}`);
-      return {
-        prefix: "struct",
-        typing: ["{", ...propertyTypings, "}"].join("\n"),
-        macros: [
-          "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]",
-          "#[builder(setter(strip_option), default)]",
-          "#[serde(default)]"
-        ].join("\n"),
-        documentationComment: this.buildDocs(s),
-        imports: [
-          "use serde::{Serialize, Deserialize};",
-          "use derive_builder::Builder;",
-        ]
-      };
-    } else {
-      return {
-        prefix: "type",
-        typing: "HashMap<String, Option<serde_json::Value>>",
-        documentationComment: this.buildDocs(s),
-        imports: [
-          "use std::collections::HashMap;",
-        ]
-      };
+      // const typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
+      // const propertyTypings = [
+      //   "#[serde(flatten)]",
+      //   `pub additional_properties: Option<${typeName}>`
+      // ].map((s) => `    ${s}`);
+      // return {
+      //   prefix: "struct",
+      //   typing: ["{", ...propertyTypings, "}"].join("\n"),
+      //   macros: [
+      //     "#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]",
+      //     "#[builder(setter(strip_option), default)]",
+      //     "#[serde(default)]"
+      //   ].join("\n"),
+      //   documentationComment: this.buildDocs(s),
+      //   imports: [
+      //     "use serde::{Serialize, Deserialize};",
+      //     "use derive_builder::Builder;",
+      //   ]
+      // };
+      typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
     }
+    return {
+      prefix: "type",
+      typing: `HashMap<String, ${typeName}>`,
+      documentationComment: this.buildDocs(s),
+      imports: [
+        "use std::collections::HashMap;",
+      ]
+    };
   }
 
   protected handleAnyOf(s: JSONSchemaObject): TypeIntermediateRepresentation {

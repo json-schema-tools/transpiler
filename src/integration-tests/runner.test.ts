@@ -40,7 +40,7 @@ const getTestCaseBase = async (names: string[], languages: string[]): Promise<Te
     // if (language !== "rs") { return; }
 
     names.forEach((name) => {
-      // if (name !== "circular-reference") { return; }
+      // if (name !== "json-schema") { return; }
 
       promises.push(readFile(`${testCaseDir}/${name}.json`, "utf8")
         .then((fileContents) => {

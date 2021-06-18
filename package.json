@@ -50,7 +50,7 @@
   "dependencies": {
     "@json-schema-tools/referencer": "^1.0.4",
     "@json-schema-tools/titleizer": "^1.0.5",
-    "@json-schema-tools/traverse": "^1.7.8",
+    "@json-schema-tools/traverse": "^1.8.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.deburr": "^4.1.0",
     "lodash.snakecase": "^4.1.1",
