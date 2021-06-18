@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/json-schema-tools/transpiler/compare/1.9.0...1.10.0) (2021-06-18)
+
+
+### Features
+
+* rust boxing properly now ([d1b2981](https://github.com/json-schema-tools/transpiler/commit/d1b2981c099ad34f0825de21950d31ca764a0557))
+
 # [1.9.0](https://github.com/json-schema-tools/transpiler/compare/1.8.2...1.9.0) (2021-06-17)
 
 
