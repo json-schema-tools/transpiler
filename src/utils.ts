@@ -178,10 +178,10 @@ export function getCycleMap(ss: JSONSchema[]): CycleMap {
         m[schemaToRef(subs).$ref] = true;
       }
       return subs;
-    }, { mutable: false });
+    });
 
     return m;
-  }, {} as { [k: string]: true });
+  }, {} as CycleMap);
 }
 
 interface CycleMap { [k: string]: true }
@@ -210,5 +210,10 @@ export function setIsCycle(s: JSONSchema, cycleMap: CycleMap): JSONSchema {
       traverse(ds, checkCycle(cycleMap), { mutable: true });
     });
   }
+
+  if (cycleMap[`#/definitions/${s.title}`]) {
+    s.isCycle = true;
+  }
+
   return s;
 }

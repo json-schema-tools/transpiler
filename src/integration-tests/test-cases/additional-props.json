@@ -1,8 +1,21 @@
-{
-  "title":"additional-props",
-  "type": "object",
-  "additionalProperties": {
-    "title": "theProps",
-    "type": "string"
+[
+  {
+    "title":"a",
+    "type": "object",
+    "additionalProperties": {
+      "title": "d",
+      "type": "string"
+    }
+  },
+  {
+    "title":"b",
+    "type": "object",
+    "properties": {
+      "c": { "type": "string", "title": "c" }
+    },
+    "additionalProperties": {
+      "title": "d",
+      "type": "string"
+    }
   }
-}
+]

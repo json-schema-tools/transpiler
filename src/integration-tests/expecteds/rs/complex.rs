@@ -82,7 +82,7 @@ pub struct SinkUser {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<SinkUserName>,
 }
-pub type StreetName = HashMap<String, Option<serde_json::Value>>;
+pub type StreetName = HashMap<String, serde_json::Value>;
 pub type StreetNumber = f64;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
 #[builder(setter(strip_option), default)]
@@ -93,7 +93,7 @@ pub struct SinkLocation {
     #[serde(rename = "residenceNumber", skip_serializing_if = "Option::is_none")]
     pub residence_number: Option<StreetNumber>,
 }
-pub type SinkResource = HashMap<String, Option<serde_json::Value>>;
+pub type SinkResource = HashMap<String, serde_json::Value>;
 pub type Whining = bool;
 pub type Burns = i64;
 pub type FeelingOfEmptiness = serde_json::Value;
