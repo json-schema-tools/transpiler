@@ -1,5 +1,5 @@
 import Transpiler from "./index";
-import { Definitions, Properties, JSONSchemaObject, SchemaArray } from "@json-schema-tools/meta-schema";
+import { Definitions, Properties, JSONSchemaObject, SchemaArray, JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("Transpiler", () => {
   it("can be instantiated with a schema with subschemas", () => {
@@ -54,7 +54,7 @@ describe("Transpiler", () => {
 
     testSchema.properties.fooBar = testSchema;
 
-    const transpiler = new Transpiler(testSchema);
+    const transpiler = new Transpiler(testSchema as JSONSchema);
     const props = ((transpiler.megaSchema as JSONSchemaObject).properties as Properties);
     const defs = ((transpiler.megaSchema as JSONSchemaObject).definitions as Definitions);
     expect(props.foo.$ref).toBe("#/definitions/string_doaGddGA");
