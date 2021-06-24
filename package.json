@@ -45,7 +45,7 @@
     "node-fetch": "^2.6.1",
     "ts-jest": "^26.4.3",
     "typedoc": "^0.21.0",
-    "typescript": "4.2.4"
+    "typescript": "4.3.4"
   },
   "dependencies": {
     "@json-schema-tools/referencer": "^1.0.4",
