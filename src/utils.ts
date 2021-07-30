@@ -2,6 +2,7 @@ import deburr from "lodash.deburr";
 import trim from "lodash.trim";
 import { JSONSchema, Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
+import titleizer from "@json-schema-tools/titleizer";
 
 /**
  * Capitalize the first letter of the string.
@@ -146,6 +147,7 @@ export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
 
 export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
   return traverse(schema, (subS) => {
+    const subSchema = titleizer(subS) as JSONSchemaObject;
     if (subS !== true && subS !== false && subS.type instanceof Array) {
       console.warn([
         "One of the provided schemas is using an array for the field type. This is not",
@@ -158,7 +160,7 @@ export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
       } else {
         const newSubSchemas = subS.type.map((subType) => ({
           ...subS,
-          title: `${subS.title}As${capitalize(subType)}`,
+          title: `${subSchema.title}As${capitalize(subType)}`,
           type: subType,
         }));
         subS.oneOf = newSubSchemas;
