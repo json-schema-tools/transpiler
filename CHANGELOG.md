@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/json-schema-tools/transpiler/compare/1.10.1...1.10.2) (2021-07-30)
+
+
+### Bug Fixes
+
+* replaceTypeAsArray should use titleizer ([951d511](https://github.com/json-schema-tools/transpiler/commit/951d51182005d15d2ba2a0424980627b6f41d0ed))
+
 ## [1.10.1](https://github.com/json-schema-tools/transpiler/compare/1.10.0...1.10.1) (2021-06-24)
 
 
