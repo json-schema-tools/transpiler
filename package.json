@@ -29,7 +29,7 @@
   "devDependencies": {
     "@json-schema-tools/dereferencer": "^1.5.2",
     "@json-schema-tools/meta-schema": "^1.6.18",
-    "@types/inquirer": "^7.3.1",
+    "@types/inquirer": "^9.0.0",
     "@types/jest": "^26.0.15",
     "@types/lodash.camelcase": "^4.3.6",
     "@types/lodash.deburr": "^4.1.6",
