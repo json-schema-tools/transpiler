@@ -11,8 +11,5 @@
     "build",
     "jest.config.js",
     "src/*.test.ts"
-  ],
-  "toc": [
-    "Transpiler"
   ]
 }
