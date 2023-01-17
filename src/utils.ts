@@ -13,16 +13,7 @@ import titleizer from "@json-schema-tools/titleizer";
  */
 export const capitalize = (s: string): string => s[0].toUpperCase() + s.slice(1);
 
-const regexes = [
-  /(^\s*[^a-zA-Z_$])|([^a-zA-Z_$\d])/g,
-  /^_[a-z]/g,
-  /_[a-z]/g,
-  /([\d$]+[a-zA-Z])/g,
-  /\s+([a-zA-Z])/g,
-  /\s|_/g,
-];
 
-const digitRegex = /\d/g;
 export const numToWord = (s: string): string => {
   return s.replace(digitRegex, (match) => {
     switch (match) {
@@ -41,6 +32,25 @@ export const numToWord = (s: string): string => {
   });
 };
 
+const regexes = [
+  // 1. remove all leading characters that are not letters, digits, or underscore
+  /(^\s*[^a-zA-Z_\d$])|([^a-zA-Z_$\d])/g,
+  // 2. remove leading underscores and uppercase the first letter
+  /^_[a-z]/g,
+  // 3. remove underscores and uppercase the following letter
+  /_[a-z]/g,
+  // 4. uppercase letters preceeded by digits
+  /([\d$]+[a-zA-Z])/g,
+  // 5. uppercase letters preceeded by whitespace
+  /\s+([a-zA-Z])/g,
+  // 6. remove all whitespace and underscores
+  /\s|_/g,
+  // 7. replace leading digits with words
+  /^\d+/g,
+];
+
+
+const digitRegex = /\d/g;
 export const languageSafeName = (title: string): string => {
   return capitalize(
     deburr(title)
@@ -49,7 +59,8 @@ export const languageSafeName = (title: string): string => {
       .replace(regexes[2], (match) => match.substr(1, match.length).toUpperCase())
       .replace(regexes[3], (match) => match.toUpperCase())
       .replace(regexes[4], (match) => trim(match.toUpperCase()))
-      .replace(regexes[5], ""));
+      .replace(regexes[5], ""))
+      .replace(regexes[6], (match) => numToWord(match));
 };
 
 export const getTitle = (s: JSONSchema): string => {
