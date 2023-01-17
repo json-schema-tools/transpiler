@@ -1,3 +1,13 @@
+## [1.10.3](https://github.com/json-schema-tools/transpiler/compare/1.10.2...1.10.3) (2023-01-17)
+
+
+### Bug Fixes
+
+* add circle ci context and update node version ([70a4044](https://github.com/json-schema-tools/transpiler/commit/70a4044b52d2a1cda9dba039ab0de42f87408f04))
+* languageSafeName leading digits to words ([d7b23a4](https://github.com/json-schema-tools/transpiler/commit/d7b23a43525d8ee8e4942b79a8877e53f0804ca5))
+* tests and typedoc ([a91c694](https://github.com/json-schema-tools/transpiler/commit/a91c694e83c2927e4a642069a627fed063b981e6))
+* update deps ([26572d9](https://github.com/json-schema-tools/transpiler/commit/26572d949f2c2454d2a603abea61358ac0dca2ca))
+
 ## [1.10.2](https://github.com/json-schema-tools/transpiler/compare/1.10.1...1.10.2) (2021-07-30)
 
 
