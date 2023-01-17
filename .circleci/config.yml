@@ -25,7 +25,7 @@ aliases:
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: cimg/node:16.17.0
+    - image: cimg/node:18.13.0
 
 jobs:
   test:
@@ -77,6 +77,7 @@ workflows:
           filters: *filter-only-master
       - release:
           filters: *filter-only-master
+          context: sem-rel-json-schema-tools
           requires:
             - test
             - build
