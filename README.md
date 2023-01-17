@@ -4,7 +4,6 @@
   <span>
     <img alt="CircleCI branch" src="https://img.shields.io/circleci/project/github/json-schema-tools/transpiler/master.svg">
     <img src="https://codecov.io/gh/json-schema-tools/transpiler/branch/master/graph/badge.svg" />
-    <img alt="Dependabot status" src="https://api.dependabot.com/badges/status?host=github&repo=json-schema-tools/transpiler" />
     <img alt="npm" src="https://img.shields.io/npm/dt/@json-schema-tools/transpiler.svg" />
     <img alt="GitHub release" src="https://img.shields.io/github/release/json-schema-tools/transpiler.svg" />
     <img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/json-schema-tools/transpiler/latest.svg" />
