@@ -5,6 +5,9 @@ import { promisify } from "util";
 import { getAvailableLanguages } from "./helpers";
 import fetch from "node-fetch";
 
+import Derefferencer from "@json-schema-tools/dereferencer";
+import Transpiler from "../";
+
 const [writeFile] = [promisify(fs.writeFile)];
 
 inquirer.prompt([
@@ -46,12 +49,22 @@ inquirer.prompt([
 
   console.log("\n");//tslint:disable-line
 
+  console.log("dereffing schema");//tslint:disable-line
+
   console.log("Writing files...");//tslint:disable-line
   await writeFile(tcfname, schemaToWrite);
+
   await Promise.all(
     languages.map(async (language: string) => {
+      const s = JSON.parse(schemaToWrite);
+      const dereffer = new Derefferencer(s);
+      const d = await dereffer.resolve();
+      console.log(`Writing starting output for ${language}`);//tslint:disable-line
       const fn = `${rfname}/${language}/${schemaName}.${language}`;
-      return writeFile(fn, "");
+      const t = new Transpiler(d);
+      const transpileMethodName = `to${language[0].toUpperCase() + language.substring(1)}`
+      console.log('generating: ', transpileMethodName);
+      return writeFile(fn, t[transpileMethodName]());
     }));
   console.log("All done");//tslint:disable-line
 });
