@@ -24,7 +24,8 @@
   "license": "Apache-2.0",
   "files": [
     "build",
-    "!build/**/*.test.*"
+    "!build/**/*.test.*",
+    "!build/integration-tests"
   ],
   "devDependencies": {
     "@json-schema-tools/dereferencer": "^1.5.7",
