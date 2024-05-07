@@ -1,32 +1,18 @@
 // integration test generator cli
-import inquirer from "inquirer";
 import * as fs from "fs";
 import { promisify } from "util";
 import { getAvailableLanguages } from "./helpers";
-import fetch from "node-fetch";
-
+import Derefferencer from "@json-schema-tools/dereferencer";
+import Transpiler from "../";
 const [writeFile] = [promisify(fs.writeFile)];
 
-inquirer.prompt([
-  {
-    type: "input",
-    name: "schemaName",
-    message: "What is the name of the test schema?",
-  },
-  {
-    type: "input",
-    name: "usingUrl",
-    message: "Enter a url to a JSON Schema, or press enter to get an empty one?",
-    default: () => false,
-  },
-]).then(async ({ schemaName, usingUrl }) => {
-  let schemaToWrite = JSON.stringify({ title: schemaName });
-
+const go = async (schemaName: any, usingUrl: any) => {
+let schemaToWrite = JSON.stringify({ title: schemaName });
   if (usingUrl !== false) {
     try {
       schemaToWrite = await fetch(usingUrl)
-        .then((res) => res.json())
-        .then((json) => JSON.stringify(json, undefined, "  "));
+        .then((res: any) => res.json())
+        .then((json: any) => JSON.stringify(json, undefined, "  "));
     } catch (e) {
       console.error(`There was an error while fetching the JSON Schema you specified at the url: ${usingUrl}`);
       console.error(e);
@@ -50,8 +36,21 @@ inquirer.prompt([
   await writeFile(tcfname, schemaToWrite);
   await Promise.all(
     languages.map(async (language: string) => {
+      const s = JSON.parse(schemaToWrite);
+      const dereffer = new Derefferencer(s);
+      const d = await dereffer.resolve();
       const fn = `${rfname}/${language}/${schemaName}.${language}`;
-      return writeFile(fn, "");
+      const t = new Transpiler(d);
+      const transpileMethodName = `to${language[0].toUpperCase() + language.substring(1)}`
+      console.log('generating: ', transpileMethodName);
+      return writeFile(fn, t[transpileMethodName]());
     }));
   console.log("All done");//tslint:disable-line
-});
+}
+
+console.log(process.argv);
+const schemaName = process.argv[2]
+console.log(schemaName);
+const usingUrl = process.argv[3] as any;
+
+go(schemaName, usingUrl).then(() => console.log('done!'));

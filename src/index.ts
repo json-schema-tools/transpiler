@@ -22,7 +22,7 @@ export class Transpiler {
     const cycleMap = getCycleMap(inputSchema);
     const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
     const schemaWithTitles = noTypeArrays.map(titleizer);
-    const reffed = schemaWithTitles.map(referencer);
+    const reffed = schemaWithTitles.map((_s) => referencer(_s));
     const reffedAndCycleMarked = reffed.map((s) => setIsCycle(s, cycleMap));
     if (useMerge) {
       this.megaSchema = combineSchemas(reffedAndCycleMarked);
