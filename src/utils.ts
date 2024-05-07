@@ -92,6 +92,7 @@ type SchemEntry = [string, JSONSchema];
 export const sortEntriesByKey = ([key1]: SchemEntry, [key2]: SchemEntry): -1 | 1 => key1 > key2 ? -1 : 1;
 
 export function combineSchemas(s: JSONSchema[]): JSONSchemaObject {
+  console.log('COMBINING SCHEMAS');
   let combinedDefinitions: { [k: string]: JSONSchema } = {};
 
   s.forEach((schema) => {

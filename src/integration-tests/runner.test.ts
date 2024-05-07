@@ -40,7 +40,7 @@ const getTestCaseBase = async (names: string[], languages: string[]): Promise<Te
     // if (language !== "ts") { return; }
 
     names.forEach((name) => {
-      // if (name !== "json-schema") { return; }
+      // if (name !== "boolean-schemas") { return; }
 
       promises.push(readFile(`${testCaseDir}/${name}.json`, "utf8")
         .then((fileContents) => {
@@ -69,14 +69,21 @@ const addExpectedTypings = async (tcs: TestCase[]): Promise<TestCase[]> => {
 };
 
 const derefTestCases = async (tcs: TestCase[]): Promise<TestCase[]> => {
-  const derefPromises: any[] = [];
+  for (const tc of tcs) {
+    let s = tc.schema as JSONSchema[];
+    const wasArray = tc.schema instanceof Array;
+    if (wasArray === false) {
+      s = [s];
+    }
+    tc.schema = await Promise.all(s.map((_s) => {
+      const dereffer = new Dereferencer(_s);
+      return dereffer.resolve();
+    }));
 
-  tcs.forEach((tc) => {
-    const dereffer = new Dereferencer(tc.schema);
-    derefPromises.push(dereffer.resolve().then((s) => tc.schema = s));
-  });
-
-  await Promise.all(derefPromises);
+    if (wasArray === false) {
+      tc.schema = tc.schema[0];
+    }
+  }
 
   return tcs;
 };
