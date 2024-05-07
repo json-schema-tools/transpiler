@@ -37,10 +37,10 @@ const getTestCaseBase = async (names: string[], languages: string[]): Promise<Te
   const testCases: TestCase[] = [];
 
   languages.forEach((language) => {
-    if (language !== "ts") { return; }
+    // if (language !== "ts") { return; }
 
     names.forEach((name) => {
-      if (name !== "json-schema") { return; }
+      // if (name !== "json-schema") { return; }
 
       promises.push(readFile(`${testCaseDir}/${name}.json`, "utf8")
         .then((fileContents) => {
