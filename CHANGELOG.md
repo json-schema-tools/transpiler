@@ -1,3 +1,12 @@
+## [1.10.4](https://github.com/json-schema-tools/transpiler/compare/1.10.3...1.10.4) (2024-05-07)
+
+
+### Bug Fixes
+
+* bump node 20 ([e9c3031](https://github.com/json-schema-tools/transpiler/commit/e9c303160187c284abf75134d08af708ba2d8059))
+* remove inquirer dep ([24a512f](https://github.com/json-schema-tools/transpiler/commit/24a512fead509b8096f9d82c331ca8d4270f9872))
+* test generator working and update referencer ([9e6db32](https://github.com/json-schema-tools/transpiler/commit/9e6db326aefd9fd372d20483014587a8e3bb072d))
+
 ## [1.10.3](https://github.com/json-schema-tools/transpiler/compare/1.10.2...1.10.3) (2023-01-17)
 
 
