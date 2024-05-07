@@ -7,7 +7,7 @@ import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
 import GolangGenerator from "./codegens/golang";
 import PythonGenerator from "./codegens/python";
-
+import { inspect } from 'util'
 export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "golang" | "python" | "py";
 /**
  * Provides a high-level interface for getting typings given a schema.
@@ -22,13 +22,18 @@ export class Transpiler {
     const cycleMap = getCycleMap(inputSchema);
     const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
     const schemaWithTitles = noTypeArrays.map(titleizer);
-    const reffed = schemaWithTitles.map(referencer);
+    console.log(inspect(schemaWithTitles, { depth: 10}))
+    // console.log('POST TITLEIZER', (schemaWithTitles[0] as any).properties.methods.items.oneOf[0].properties.result.oneOf[0].properties.schema.title);
+    const reffed = schemaWithTitles.map((s) => referencer(s, { mutate: true }));
+    console.log(inspect(reffed, { depth: 10}))
+    // console.log(JSON.stringify(reffed, null, '\t'));
     const reffedAndCycleMarked = reffed.map((s) => setIsCycle(s, cycleMap));
     if (useMerge) {
       this.megaSchema = combineSchemas(reffedAndCycleMarked);
     } else {
       [this.megaSchema] = reffedAndCycleMarked;
     }
+    // console.log(JSON.stringify(this.megaSchema, null, '\t'));
   }
 
   /**

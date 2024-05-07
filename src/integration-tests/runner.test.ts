@@ -72,8 +72,13 @@ const derefTestCases = async (tcs: TestCase[]): Promise<TestCase[]> => {
   const derefPromises: any[] = [];
 
   tcs.forEach((tc) => {
-    const dereffer = new Dereferencer(tc.schema);
-    derefPromises.push(dereffer.resolve().then((s) => tc.schema = s));
+    if (tc.name !== "openrpcDocument" || tc.language !== 'ts') { return; }
+                const dereffer = new Dereferencer(tc.schema);
+    derefPromises.push(dereffer.resolve().then((s) => {
+      tc.schema = s;
+      console.log(s)
+      console.log((s as any).properties.methods.items.oneOf[0].properties.result.oneOf[0].properties.schema);
+    }));
   });
 
   await Promise.all(derefPromises);
@@ -108,8 +113,10 @@ describe("Integration tests", () => {
     expect.assertions(testCases.length);
 
     const proms = testCases.map(async (testCase: TestCase, index: number) => {
+      if (testCase.name !== "openrpcDocument" || testCase.language !== 'ts') { return; }
       let transpiler;
       try {
+        console.log((testCase as any).schema.properties.methods.items.oneOf[0].properties.result.oneOf[0].properties.schema);
         transpiler = new Transpiler(testCase.schema);
       } catch (e) {
         console.error(`Hit an error while constructing the transpiler with the test case: ${testCase.name}, index in array of testCases: ${index}`); //tslint:disable-line
