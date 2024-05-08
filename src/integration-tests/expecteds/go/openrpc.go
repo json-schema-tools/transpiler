@@ -255,7 +255,16 @@ func (o DependenciesSet) MarshalJSON() ([]byte, error) {
 }
 type Dependencies map[string]interface{}
 type Enum []AlwaysTrue
-type SimpleTypes interface{}
+type SimpleTypes string
+const (
+	SimpleTypesEnum0 SimpleTypes = "array"
+	SimpleTypesEnum1 SimpleTypes = "boolean"
+	SimpleTypesEnum2 SimpleTypes = "integer"
+	SimpleTypesEnum3 SimpleTypes = "null"
+	SimpleTypesEnum4 SimpleTypes = "number"
+	SimpleTypesEnum5 SimpleTypes = "object"
+	SimpleTypesEnum6 SimpleTypes = "string"
+)
 type ArrayOfSimpleTypes []SimpleTypes
 type Type struct {
 	SimpleTypes        *SimpleTypes

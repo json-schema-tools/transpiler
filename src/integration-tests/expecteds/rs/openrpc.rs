@@ -278,7 +278,23 @@ pub enum DependenciesSet {
 }
 pub type Dependencies = HashMap<String, DependenciesSet>;
 pub type Enum = Vec<AlwaysTrue>;
-pub type SimpleTypes = serde_json::Value;
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
+pub enum SimpleTypes {
+    #[serde(rename = "array")]
+    Array,
+    #[serde(rename = "boolean")]
+    Boolean,
+    #[serde(rename = "integer")]
+    Integer,
+    #[serde(rename = "null")]
+    Null,
+    #[serde(rename = "number")]
+    Number,
+    #[serde(rename = "object")]
+    Object,
+    #[serde(rename = "string")]
+    String,
+}
 pub type ArrayOfSimpleTypes = Vec<SimpleTypes>;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]

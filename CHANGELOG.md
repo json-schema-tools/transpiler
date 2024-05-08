@@ -1,3 +1,13 @@
+## [1.10.5](https://github.com/json-schema-tools/transpiler/compare/1.10.4...1.10.5) (2024-05-07)
+
+
+### Bug Fixes
+
+* all tests passing wonderfully now ([b461654](https://github.com/json-schema-tools/transpiler/commit/b461654f0c3f0dd56418561df6ae75f6a861424d))
+* bump more dep ([212069a](https://github.com/json-schema-tools/transpiler/commit/212069a38ee121442b1bbb73e96e195b6692471f))
+* remove console log ([327f46d](https://github.com/json-schema-tools/transpiler/commit/327f46d720ba3ff9a329346f835c16c89d92f342))
+* tests were commented out rip ([68f793d](https://github.com/json-schema-tools/transpiler/commit/68f793da4d815882d23615f98ae6b53492cb18e7))
+
 ## [1.10.4](https://github.com/json-schema-tools/transpiler/compare/1.10.3...1.10.4) (2024-05-07)
 
 
