@@ -53,3 +53,7 @@ release-please release, its release history supplies the baseline automatically.
 
 The release pipeline is adapted from
 [open-rpc-flow](https://github.com/BelfordZ/open-rpc-flow/tree/master/.github/workflows).
+
+## Shared workflows
+
+CI and release execution is maintained in [foundation](https://github.com/json-schema-tools/foundation). Entry points pin a reviewed foundation commit; update both workflow pins together to adopt changes. Package scripts, coverage baselines and release-please metadata stay here. Trusted publishing continues to use this repository’s `release.yml` and `release` environment.

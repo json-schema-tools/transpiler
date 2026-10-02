@@ -1,47 +1,23 @@
 name: CI
-
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
-  workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20.x, 22.x]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint
-        run: npm run lint -- --no-fix
-      - name: Build
-        run: npm run build
-      - name: Test
-        run: npm test -- --runInBand
-
+    uses: json-schema-tools/foundation/.github/workflows/node-ci.yml@66e2ac8fb6a5f53bbd4f1a34468e14ea7c9333a8
+    with:
+      lint-command: npm run lint -- --no-fix
+      build-command: npm run build
+      test-command: npm test -- --runInBand
   commitlint:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    uses: json-schema-tools/foundation/.github/workflows/commitlint.yml@66e2ac8fb6a5f53bbd4f1a34468e14ea7c9333a8
     permissions:
       contents: read
       pull-requests: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check commit messages
-        uses: wagoid/commitlint-github-action@v6
+'on':
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+  workflow_dispatch: null
