@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "97703b96559da808c1c40d541c33ca381b0b183c",
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "@json-schema-tools/transpiler",
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": false,
+      "include-v-in-tag": false
+    }
+  }
+}
