@@ -8,7 +8,7 @@ jobs:
   release:
     if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name
       == github.repository
-    uses: json-schema-tools/foundation/.github/workflows/release.yml@66e2ac8fb6a5f53bbd4f1a34468e14ea7c9333a8
+    uses: json-schema-tools/foundation/.github/workflows/release.yml@b9a036e0b64a3fd9982d0eab904f5cb1227625df # v1.0.0
     permissions:
       contents: write
       pull-requests: write
