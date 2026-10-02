@@ -1,74 +1,55 @@
 # Releasing
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [BCP 14](https://tools.ietf.org/html/bcp14) [RFC2119](https://tools.ietf.org/html/rfc2119) [RFC8174](https://tools.ietf.org/html/rfc8174) when, and only when, they appear in all capitals, as shown here.
+GitHub Actions runs lint, builds, API docs, tests, and coverage thresholds on pushes to
+`master` and pull requests targeting `master`. Pull request commits are checked
+against Conventional Commits. This package has no formatting check script.
 
-This document is licensed under [The Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+After push CI succeeds, the Release workflow runs release-please. Conventional
+Commits determine the next version and changelog. Release-please opens or updates
+a release PR containing `package.json`, `package-lock.json`, `CHANGELOG.md`, and
+`.release-please-manifest.json` changes. Merge that PR to create the GitHub release
+and tag, publish the package to npm, and deploy TypeDoc docs to GitHub Pages.
+Publishing builds and tests the released tag rather than the latest branch tip.
 
-When using the name 'version' we mean the versioning scheme described in [VERSIONING.md](VERSIONING.md)
+## Repository setup
 
-## Introduction
+This pipeline requires no manually created GitHub or npm tokens or secrets.
+GitHub supplies a short-lived `GITHUB_TOKEN` for each run, and npm authenticates
+publishes through OpenID Connect (OIDC).
 
-This document is to describe the release pipeline, which is taking the result of the artifacts created according to [BUILDING.md](BUILDING.md) and publish a release to the various release targets for the project.
+Configure the repository as follows:
 
-We propose:
- - a set of release targets that are allowable
- - a pipeline for handling the release folder's artifacts
+- Create a GitHub Actions environment named `release`, restricted to `master`.
+- In Settings > Actions > General, enable "Allow GitHub Actions to create and
+  approve pull requests". Keep default workflow permissions read-only; the release
+  job requests the permissions it needs explicitly.
+- In npm's settings for `@json-schema-tools/transpiler`, add a GitHub Actions trusted
+  publisher: owner `json-schema-tools`, repository `transpiler`, workflow `release.yml`,
+  environment `release`, with direct `npm publish` allowed.
+- Set GitHub Pages' publishing source to GitHub Actions.
 
-It is NOT the purpose of this document to describe how a project might create a build, NOR is it describing a strcture in which projects MUST write build artifacts to. It is describing the structure of the releases themselves.
+The release job uses Node 22 and npm 11 for trusted publishing. It explicitly
+starts CI on release-please PR branches because PR events created with the built-in
+workflow token do not trigger workflows automatically. Normal PRs also run commitlint.
 
-## Release Pipeline
+Jest enforces global coverage thresholds directly in CI; no external coverage
+service or coverage secret is required. After adding tests, run `npm test`, then
+`npm run coverage:bump` to raise the thresholds to the latest measured coverage.
+Commit any resulting `jest.config.js` changes with the tests. The bump command
+uses `coverage/coverage-summary.json` from the preceding test run and never lowers
+thresholds.
 
-Each Pristine project MUST provide a `bin/release.sh` script which will make a release to the various targets.
+Update branch protection to require the GitHub Actions test matrix checks in
+place of the old CircleCI and `lint` checks. Commitlint runs on normal pull requests,
+while release-please PRs receive the explicitly dispatched test matrix. Disable the
+project in CircleCI after the migration is merged to stop its external integration.
 
-Each target may be scripted directly into the `bin/release.sh` shell script, or it may be broken down into files following the pattern:`./bin/release.{target}.sh`.
+## Migration baseline
 
-While the `.sh` extension is mandatory, the scripts may be written with one of the following headers:
- - `#!bin/sh`
- - `#!bin/node`
- - `#!/usr/bin/env node`
+The manifest starts at the existing release `1.10.5`. `bootstrap-sha` points to
+that release's commit so the first release PR only includes subsequent changes.
+Tags retain the existing bare version format, such as `1.12.0`. After the first
+release-please release, its release history supplies the baseline automatically.
 
-### Create a build from current branch
-
-Process is outlined in [BUILDING.md](BUILDING.md)
-
-1. Clean the build directory
-2. run: `bin/build.{target}.{ext}`
-
-### Bump the version of the project
-
-Projects SHOULD automate the version bump following [CONVENTIONAL_COMMITS.md](CONVENTIONAL_COMMITS.md).
-
-### Generate Changelog
-
-Projects SHOULD use generated changelogs from following [CONVENTIONAL_COMMITS.md](CONVENTIONAL_COMMITS.md).
-
-### Commit the bump + changelog update
-
-A project MUST generate a commit with the changes.
-
-### Tag the commit with the bumped version
-
-A project MUST be tagged with the semantic versioning scheme from [VERSIONING.md](VERSIONING.md).
-
-### Sign the releases.
-
- - MUST be a pgp signature
- - MUST be the same pgp key as is registered with Github
- - MUST be a detached ascii-armored (.asc) signature 
- - All files in the build folder MUST have an associated signature file
-
-### Push changelog & version bump
-
-### Run Release Targets
-
-For each of the desired release targets, prepare and push the release.
-
-#### Example Release Targets
-
-1. Github
-2. Docker Hub
-
-## Resources
-
-- [semantic-release](https://github.com/semantic-release/semantic-release)
-- [Conventional Commits](https://conventionalcommits.org/)
+The release pipeline is adapted from
+[open-rpc-flow](https://github.com/BelfordZ/open-rpc-flow/tree/master/.github/workflows).
