@@ -40,8 +40,8 @@ export class Transpiler {
    * Generic transpile method.
    */
   public to(lang: SupportedLanguages): string {
-    const method = this[`to${capitalize(lang)}` as ToMethodName];
-    return method();
+    const methodName = `to${capitalize(lang)}` as ToMethodName;
+    return this[methodName]();
   }
 
   /**
