@@ -43,11 +43,11 @@ export abstract class CodeGen {
     if (this.schema.definitions !== undefined) {
       Object
         .entries(this.schema.definitions)
-        .filter(([n]: [string, any]) => n !== (this.schema as JSONSchemaObject).title)
-        .forEach(([n, schema]: [string, any]) => {
+        .filter(([n]: [string, JSONSchema]) => n !== (this.schema as JSONSchemaObject).title)
+        .forEach(([, schema]: [string, JSONSchema]) => {
           const ir = this.toIR(schema);
           if (ir.imports) { ir.imports.forEach((imp) => imports.add(imp)); }
-          if ((schema as any) === true || (schema as any) === false) {
+          if (schema === true || schema === false) {
             defsSchemaTypes.push(ir.typing);
             return;
           }
@@ -111,7 +111,7 @@ export abstract class CodeGen {
       let stringed = "";
       try {
         stringed = JSON.stringify(schema);
-      } catch (e) {
+      } catch {
         stringed = `title: ${schema.title} - type: ${schema.type}`;
       }
       throw new Error(

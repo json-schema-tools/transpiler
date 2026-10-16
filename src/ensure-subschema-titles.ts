@@ -1,8 +1,8 @@
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 import traverse from "@json-schema-tools/traverse";
 
-export const stringifyCircular = (obj: any) => {
-  const cache: any[] = [];
+export const stringifyCircular = (obj: unknown) => {
+  const cache: unknown[] = [];
   return JSON.stringify(obj, (key, value) => {
     if (typeof value === "object" && value !== null) {
       if (cache.indexOf(value) !== -1) {
@@ -27,13 +27,13 @@ export class NoTitleError implements Error {
 
     try {
       schemaStr = JSON.stringify(schema);
-    } catch (e) {
+    } catch {
       schemaStr = stringifyCircular(schema);
     }
 
     try {
       parentSchemaStr = JSON.stringify(parentSchema);
-    } catch (e) {
+    } catch {
       parentSchemaStr = stringifyCircular(parentSchema);
     }
 

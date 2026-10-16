@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
-import Transpiler from "../index";
+import Transpiler, { ToMethodName } from "../index";
 import { capitalize } from "../utils";
 import Dereferencer from "@json-schema-tools/dereferencer";
 import { promisify } from "util";
@@ -126,7 +126,7 @@ describe("Integration tests", () => {
 
       let typings;
       try {
-        typings = transpiler[`to${capitalize(testCase.language)}`]();
+        typings = transpiler[`to${capitalize(testCase.language)}` as ToMethodName]();
       } catch (e) {
         console.error(`Hit an error while running: ${testCase.name} in ${testCase.language}, index in array of testCases: ${index}`); //tslint:disable-line
         console.error(e); //tslint:disable-line

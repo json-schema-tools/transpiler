@@ -15,7 +15,7 @@ export const capitalize = (s: string): string => s[0].toUpperCase() + s.slice(1)
 
 
 export const numToWord = (s: string): string => {
-  return s.replace(digitRegex, (match) => {
+  return s.replace(digitRegex, (match: string) => {
     switch (match) {
       case "0": return "Zero";
       case "1": return "One";
@@ -55,12 +55,12 @@ export const languageSafeName = (title: string): string => {
   return capitalize(
     deburr(title)
       .replace(regexes[0], " ")
-      .replace(regexes[1], (match) => match.toUpperCase())
-      .replace(regexes[2], (match) => match.substr(1, match.length).toUpperCase())
-      .replace(regexes[3], (match) => match.toUpperCase())
-      .replace(regexes[4], (match) => trim(match.toUpperCase()))
+      .replace(regexes[1], (match: string) => match.toUpperCase())
+      .replace(regexes[2], (match: string) => match.substr(1, match.length).toUpperCase())
+      .replace(regexes[3], (match: string) => match.toUpperCase())
+      .replace(regexes[4], (match: string) => trim(match.toUpperCase()))
       .replace(regexes[5], ""))
-      .replace(regexes[6], (match) => numToWord(match));
+      .replace(regexes[6], (match: string) => numToWord(match));
 };
 
 export const getTitle = (s: JSONSchema): string => {

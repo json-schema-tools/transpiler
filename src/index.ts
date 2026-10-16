@@ -9,11 +9,16 @@ import GolangGenerator from "./codegens/golang";
 import PythonGenerator from "./codegens/python";
 
 export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "golang" | "python" | "py";
+
+/**
+ * The method names on Transpiler that {@link Transpiler.to} can dispatch to,
+ * derived from the supported language names (e.g. "rust" -> "toRust").
+ */
+export type ToMethodName = `to${Capitalize<SupportedLanguages>}`;
 /**
  * Provides a high-level interface for getting typings given a schema.
  */
 export class Transpiler {
-  [toLang: string]: any;
   public megaSchema: JSONSchema;
 
   constructor(s: JSONSchema | JSONSchema[]) {
@@ -35,7 +40,8 @@ export class Transpiler {
    * Generic transpile method.
    */
   public to(lang: SupportedLanguages): string {
-    return this[`to${capitalize(lang)}`]();
+    const methodName = `to${capitalize(lang)}` as ToMethodName;
+    return this[methodName]();
   }
 
   /**

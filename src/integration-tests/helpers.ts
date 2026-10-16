@@ -7,7 +7,7 @@ const cwd = `${process.cwd()}/src/integration-tests`;
 const expectedsDir = `${cwd}/expecteds`;
 const testCaseDir = `${cwd}/test-cases`;
 
-export const getAvailableLanguages = (): Promise<any> => {
+export const getAvailableLanguages = (): Promise<string[]> => {
   return readDir(expectedsDir);
 };
 
