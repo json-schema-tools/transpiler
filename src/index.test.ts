@@ -124,3 +124,24 @@ describe("Transpiler", () => {
     expect(megaDefs.foo.properties.crazyCrossRefs).toEqual({ $ref: "#/definitions/crazyCrossRefs" });
   });
 });
+
+describe("supportedLanguages (#139)", () => {
+  it("exports the languages Transpiler.to accepts", async () => {
+    const { supportedLanguages } = await import("./index");
+    expect(supportedLanguages).toEqual([
+      "rust",
+      "rs",
+      "typescript",
+      "ts",
+      "go",
+      "golang",
+      "python",
+      "py",
+    ]);
+    // every entry is dispatchable via to()
+    const t = new Transpiler({ title: "x", type: "string" });
+    for (const lang of supportedLanguages) {
+      expect(() => t.to(lang)).not.toThrow();
+    }
+  });
+});

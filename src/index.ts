@@ -8,7 +8,22 @@ import RustGenerator from "./codegens/rust";
 import GolangGenerator from "./codegens/golang";
 import PythonGenerator from "./codegens/python";
 
-export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "golang" | "python" | "py";
+/**
+ * The languages {@link Transpiler.to} can target, as an array of strings.
+ * Useful when presenting the options, e.g. in a UI.
+ */
+export const supportedLanguages = [
+  "rust",
+  "rs",
+  "typescript",
+  "ts",
+  "go",
+  "golang",
+  "python",
+  "py",
+] as const;
+
+export type SupportedLanguages = typeof supportedLanguages[number];
 
 /**
  * The method names on Transpiler that {@link Transpiler.to} can dispatch to,
