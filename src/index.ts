@@ -31,6 +31,31 @@ export type SupportedLanguages = typeof supportedLanguages[number];
  */
 export type ToMethodName = `to${Capitalize<SupportedLanguages>}`;
 /**
+ * Error thrown when the Transpiler is constructed with something that is not
+ * a JSON Schema (an object or boolean) or an array of them. Most commonly this
+ * happens when a JSON document string is passed instead of the parsed object.
+ */
+export class InvalidSchemaInputError implements Error {
+  public name = "InvalidSchemaInputError";
+  public message: string;
+
+  constructor(received: unknown) {
+    const receivedType = received === null ? "null" : typeof received;
+    this.message = [
+      "InvalidSchemaInputError",
+      `Transpiler expects a JSON Schema object (or an array of them), but received: ${receivedType}.`,
+      typeof received === "string"
+        ? "Did you forget to JSON.parse() your schema?"
+        : "See https://json-schema.org/understanding-json-schema/ for what a JSON Schema looks like.",
+    ].join("\n");
+  }
+}
+
+const isValidSchemaInput = (s: unknown): s is JSONSchema => {
+  return typeof s === "boolean" || (typeof s === "object" && s !== null && !(s instanceof Array));
+};
+
+/**
  * Provides a high-level interface for getting typings given a schema.
  */
 export class Transpiler {
@@ -39,6 +64,11 @@ export class Transpiler {
   constructor(s: JSONSchema | JSONSchema[]) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
+    for (const schema of inputSchema) {
+      if (!isValidSchemaInput(schema)) {
+        throw new InvalidSchemaInputError(schema);
+      }
+    }
     const cycleMap = getCycleMap(inputSchema);
     const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
     const schemaWithTitles = noTypeArrays.map(titleizer);

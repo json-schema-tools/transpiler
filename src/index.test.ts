@@ -1,4 +1,4 @@
-import Transpiler from "./index";
+import Transpiler, { InvalidSchemaInputError } from "./index";
 import { Definitions, Properties, JSONSchemaObject, SchemaArray, JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("Transpiler", () => {
@@ -143,5 +143,28 @@ describe("supportedLanguages (#139)", () => {
     for (const lang of supportedLanguages) {
       expect(() => t.to(lang)).not.toThrow();
     }
+  });
+});
+
+describe("Transpiler input validation (#725)", () => {
+  it("throws a clear error when passed a JSON string instead of a parsed schema", () => {
+    expect(() => new Transpiler('{\n  "type": "object"\n}' as any)).toThrow(
+      InvalidSchemaInputError
+    );
+    expect(() => new Transpiler("{not json}" as any)).toThrow(
+      "Did you forget to JSON.parse() your schema?"
+    );
+  });
+
+  it("throws a clear error for other non-schema inputs", () => {
+    expect(() => new Transpiler(42 as any)).toThrow(InvalidSchemaInputError);
+    expect(() => new Transpiler(null as any)).toThrow(InvalidSchemaInputError);
+    expect(() => new Transpiler([42] as any)).toThrow(InvalidSchemaInputError);
+  });
+
+  it("still accepts objects, booleans, and arrays of schemas", () => {
+    expect(() => new Transpiler({ type: "string" })).not.toThrow();
+    expect(() => new Transpiler(true)).not.toThrow();
+    expect(() => new Transpiler([{ type: "string" }])).not.toThrow();
   });
 });
