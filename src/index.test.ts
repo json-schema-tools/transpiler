@@ -124,3 +124,36 @@ describe("Transpiler", () => {
     expect(megaDefs.foo.properties.crazyCrossRefs).toEqual({ $ref: "#/definitions/crazyCrossRefs" });
   });
 });
+
+describe("missing type warning (#169)", () => {
+  let warnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
+  it("warns when a schema has properties but no type", () => {
+    new Transpiler({ title: "W", properties: { a: { type: "string" } } });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch("without a `type` field");
+  });
+
+  it("warns when a schema has items but no type", () => {
+    new Transpiler({ title: "W", items: { type: "string" } });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not warn when type is present", () => {
+    new Transpiler({ title: "W", type: "object", properties: { a: { type: "string" } } });
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn for schemas without type-implying keywords", () => {
+    new Transpiler({ title: "W", oneOf: [{ type: "string" }, { type: "number" }] });
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+});

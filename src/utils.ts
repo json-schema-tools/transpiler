@@ -156,6 +156,39 @@ export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
   return merged;
 }
 
+/**
+ * Warn when a (sub)schema uses type-implying keywords (`properties`, `items`)
+ * without declaring `type`. Without `type`, the transpiled output degrades
+ * (often to `any`), so this is almost always a mistake worth surfacing.
+ * Warns once per construction, listing the offending paths.
+ */
+export function warnOnMissingType(schemas: JSONSchema[]): void {
+  const offenders: string[] = [];
+  for (const schema of schemas) {
+    traverse(schema, (subSchema, _isCycle, path) => {
+      if (
+        subSchema !== true &&
+        subSchema !== false &&
+        subSchema.type === undefined &&
+        (subSchema.properties !== undefined || subSchema.items !== undefined)
+      ) {
+        offenders.push(path || "(root schema)");
+      }
+      return subSchema;
+    });
+  }
+  if (offenders.length > 0) {
+    console.warn(
+      [
+        "Transpiler: some schemas use `properties`/`items` without a `type` field.",
+        "`type` is effectively required for good output; without it the transpiled",
+        "types may degrade to `any`.",
+        `Offending schema paths: ${offenders.join(", ")}`,
+      ].join("\n")
+    );
+  }
+}
+
 export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
   return traverse(schema, (subS) => {
     const subSchema = titleizer(subS) as JSONSchemaObject;
