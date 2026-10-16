@@ -178,8 +178,8 @@ export default class Typescript extends CodeGen {
     const typeOf = schema.type === "string" ? "string" : "number";
     const sEnum = schema.enum as Enum;
     return sEnum
-      .filter((s: any) => typeof s === typeOf)
-      .map((s: string) => typeOf === "string" ? `"${s}"` : s)
+      .filter((s: unknown): s is string | number => typeof s === typeOf)
+      .map((s) => typeOf === "string" ? `"${s}"` : `${s}`)
       .join(" | ");
   }
 

@@ -3,16 +3,16 @@ import * as fs from "fs";
 import { promisify } from "util";
 import { getAvailableLanguages } from "./helpers";
 import Derefferencer from "@json-schema-tools/dereferencer";
-import Transpiler from "../";
+import Transpiler, { ToMethodName } from "../";
 const [writeFile] = [promisify(fs.writeFile)];
 
-const go = async (schemaName: any, usingUrl: any) => {
+const go = async (schemaName: string, usingUrl?: string) => {
 let schemaToWrite = JSON.stringify({ title: schemaName });
-  if (usingUrl !== false) {
+  if (usingUrl) {
     try {
       schemaToWrite = await fetch(usingUrl)
-        .then((res: any) => res.json())
-        .then((json: any) => JSON.stringify(json, undefined, "  "));
+        .then((res: Response) => res.json())
+        .then((json: unknown) => JSON.stringify(json, undefined, "  "));
     } catch (e) {
       console.error(`There was an error while fetching the JSON Schema you specified at the url: ${usingUrl}`);
       console.error(e);
@@ -41,7 +41,7 @@ let schemaToWrite = JSON.stringify({ title: schemaName });
       const d = await dereffer.resolve();
       const fn = `${rfname}/${language}/${schemaName}.${language}`;
       const t = new Transpiler(d);
-      const transpileMethodName = `to${language[0].toUpperCase() + language.substring(1)}`
+      const transpileMethodName = `to${language[0].toUpperCase() + language.substring(1)}` as ToMethodName;
       console.log('generating: ', transpileMethodName);
       return writeFile(fn, t[transpileMethodName]());
     }));
@@ -51,6 +51,6 @@ let schemaToWrite = JSON.stringify({ title: schemaName });
 console.log(process.argv);
 const schemaName = process.argv[2]
 console.log(schemaName);
-const usingUrl = process.argv[3] as any;
+const usingUrl = process.argv[3];
 
 go(schemaName, usingUrl).then(() => console.log('done!'));
