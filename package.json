@@ -10,7 +10,8 @@
     "build": "tsc && typedoc --out docs &&  touch docs/.nojekyll",
     "lint": "eslint . --ext .ts",
     "test": "jest --coverage",
-    "generateTest": "tsc && node ./build/integration-tests/generator.js"
+    "generateTest": "tsc && node ./build/integration-tests/generator.js",
+    "coverage:bump": "jest-it-up"
   },
   "homepage": "https://json-schema.tools",
   "bugs": {
@@ -43,7 +44,8 @@
     "node-fetch": "^3.2.10",
     "ts-jest": "^29.0.3",
     "typedoc": "^0.25.13",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "jest-it-up": "^4.0.1"
   },
   "dependencies": {
     "@json-schema-tools/referencer": "^1.1.3",

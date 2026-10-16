@@ -1,0 +1,23 @@
+name: CI
+permissions:
+  contents: read
+jobs:
+  test:
+    uses: json-schema-tools/foundation/.github/workflows/node-ci.yml@b9a036e0b64a3fd9982d0eab904f5cb1227625df # v1.0.0
+    with:
+      lint-command: npm run lint -- --no-fix
+      build-command: npm run build
+      test-command: npm test -- --runInBand
+  commitlint:
+    uses: json-schema-tools/foundation/.github/workflows/commitlint.yml@b9a036e0b64a3fd9982d0eab904f5cb1227625df # v1.0.0
+    permissions:
+      contents: read
+      pull-requests: read
+'on':
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+  workflow_dispatch: null
