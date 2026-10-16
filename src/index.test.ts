@@ -20,6 +20,12 @@ describe("Transpiler", () => {
     expect(transpiler.toTypescript()).toEqual("export type AnyL9Fw4VUO = any;");
   });
 
+  it("dispatches to the language method via to()", () => {
+    const transpiler = new Transpiler({});
+    expect(transpiler.to("typescript")).toEqual(transpiler.toTypescript());
+    expect(transpiler.to("ts")).toEqual(transpiler.toTypescript());
+  });
+
   it("can deal with boolean schema at the root", () => {
     const t = new Transpiler(true);
     expect(t).toBeDefined();

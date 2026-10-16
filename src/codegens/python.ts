@@ -75,7 +75,7 @@ export default class Python extends CodeGen {
   protected handleStringEnum(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const sEnum = s.enum as Enum;
     const typeLines = sEnum
-      .filter((enumString: any) => typeof enumString === "string")
+      .filter((enumString: unknown): enumString is string => typeof enumString === "string")
       .map((enumString: string, i: number) => `    ${enumIdentifierFromTitle(enumString)} = ${i}`);
 
     const title = this.getSafeTitle(s.title as string);
@@ -220,7 +220,7 @@ export default class Python extends CodeGen {
   }
 
   protected handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation {
-    const t = `Always${(s as any) === true ? "True" : "False"}`;
+    const t = `Always${s === true ? "True" : "False"}`;
     return {
       typing: `${t} = NewType("${t}", Any)`,
       imports: [

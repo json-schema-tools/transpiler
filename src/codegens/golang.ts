@@ -43,8 +43,8 @@ export default class Golang extends CodeGen {
     const safeTitle = this.getSafeTitle(s.title as string);
     const sEnum = s.enum as Enum;
     const enumFields = sEnum
-      .filter((enumField: any) => typeof enumField === "number")
-      .map((enumField: string, i: number) => `\t${safeTitle}Enum${i} ${safeTitle} = ${enumField}`)
+      .filter((enumField: unknown): enumField is number => typeof enumField === "number")
+      .map((enumField: number, i: number) => `\t${safeTitle}Enum${i} ${safeTitle} = ${enumField}`)
       .join("\n");
 
     const ir = s.type === "number" ? this.handleNumber(s) : this.handleInteger(s);
@@ -60,7 +60,7 @@ export default class Golang extends CodeGen {
     const safeTitle = this.getSafeTitle(s.title as string);
     const sEnum = s.enum as Enum;
     const enumFields = sEnum
-      .filter((enumField: any) => typeof enumField === "string")
+      .filter((enumField: unknown): enumField is string => typeof enumField === "string")
       .map((enumField: string, i: number) => `\t${safeTitle}Enum${i} ${safeTitle} = "${enumField}"`)
       .join("\n");
 
@@ -126,7 +126,7 @@ export default class Golang extends CodeGen {
     return ir;
   }
 
-  protected unmarshalAnyOfMacro(typeTitle: string, items: string[]): any {
+  protected unmarshalAnyOfMacro(typeTitle: string, items: string[]): string {
     const components = items.map((itemTitle) => {
       return [
         `var my${itemTitle} ${itemTitle}`,
@@ -149,7 +149,7 @@ export default class Golang extends CodeGen {
     ].join("\n");
   }
 
-  protected marshalAnyOfMacro(typeTitle: string, items: string[]): any {
+  protected marshalAnyOfMacro(typeTitle: string, items: string[]): string {
     const components = items.map((itemTitle: string) => {
       return [
         `if o.${itemTitle} != nil {`,
@@ -167,7 +167,7 @@ export default class Golang extends CodeGen {
     ].join("\n");
   }
 
-  protected unmarshalOneOfMacro(typeTitle: string, items: string[]): any {
+  protected unmarshalOneOfMacro(typeTitle: string, items: string[]): string {
     const components = items.map((itemTitle) => {
       return [
         `var my${itemTitle} ${itemTitle}`,
@@ -193,7 +193,7 @@ export default class Golang extends CodeGen {
     ].join("\n");
   }
 
-  protected marshalOneOfMacro(typeTitle: string, items: string[]): any {
+  protected marshalOneOfMacro(typeTitle: string, items: string[]): string {
     const components = items.map((itemTitle: string) => {
       return [
         `if o.${itemTitle} != nil {`,
@@ -275,7 +275,7 @@ export default class Golang extends CodeGen {
 
   protected handleConstantBool(s: JSONSchemaBoolean): TypeIntermediateRepresentation {
     return {
-      typing: `type Always${(s as any) === true ? "True" : "False"} interface{}`,
+      typing: `type Always${s === true ? "True" : "False"} interface{}`,
     };
   }
 
@@ -303,7 +303,7 @@ export default class Golang extends CodeGen {
     }
 
     if (s.examples) {
-      s.examples.forEach((example: any) => {
+      s.examples.forEach((example: unknown) => {
         docStringLines.push("//");
         docStringLines.push("// --- Example ---");
         docStringLines.push("//");

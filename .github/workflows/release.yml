@@ -1,0 +1,30 @@
+name: Release
+permissions:
+  contents: read
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name
+      == github.repository
+    uses: json-schema-tools/foundation/.github/workflows/release.yml@b9a036e0b64a3fd9982d0eab904f5cb1227625df # v1.0.0
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      pages: write
+      id-token: write
+    with:
+      build-command: npm run build
+      test-command: npm test -- --runInBand
+      pages-path: ./docs
+'on':
+  workflow_run:
+    workflows:
+    - CI
+    types:
+    - completed
+    branches:
+    - master

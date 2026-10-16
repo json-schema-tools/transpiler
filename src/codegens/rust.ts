@@ -1,12 +1,9 @@
 import { JSONSchemaObject, Enum, JSONSchema, JSONSchemaBoolean } from "@json-schema-tools/meta-schema";
 import { CodeGen, TypeIntermediateRepresentation } from "./codegen";
-import { capitalize, getTitle, languageSafeName, numToWord } from "../utils";
+import { capitalize, getTitle, numToWord } from "../utils";
 import deburr from "lodash.deburr";
 import camelCase from "lodash.camelcase";
 import snakeCase from "lodash.snakecase";
-
-const startsWithDigitRegex = /^\d/;
-const periodRegex = /\./g;
 
 export const enumIdentifierFromTitle = (t: string) => {
   let nt = deburr(t);
@@ -91,7 +88,7 @@ export default class Rust extends CodeGen {
   protected handleStringEnum(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const sEnum = s.enum as Enum;
     const enumFields = sEnum
-      .filter((enumField: any) => typeof enumField === "string")
+      .filter((enumField: unknown): enumField is string => typeof enumField === "string")
       .map((enumField: string) => {
         return [
           `    #[serde(rename = "${enumField}")]`,
