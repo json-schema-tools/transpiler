@@ -1,6 +1,6 @@
 {
   "name": "@json-schema-tools/transpiler",
-  "version": "0.0.0-development",
+  "version": "1.11.0",
   "description": "Turn your json schema into typings for various languages. Achieve master class dev tooling.",
   "main": "build/index.js",
   "publishConfig": {

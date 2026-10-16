@@ -8,6 +8,18 @@
 * remove console log ([327f46d](https://github.com/json-schema-tools/transpiler/commit/327f46d720ba3ff9a329346f835c16c89d92f342))
 * tests were commented out rip ([68f793d](https://github.com/json-schema-tools/transpiler/commit/68f793da4d815882d23615f98ae6b53492cb18e7))
 
+## [1.11.0](https://github.com/json-schema-tools/transpiler/compare/1.10.5...1.11.0) (2026-10-16)
+
+
+### Features
+
+* export supportedLanguages array ([#139](https://github.com/json-schema-tools/transpiler/issues/139)) ([#871](https://github.com/json-schema-tools/transpiler/issues/871)) ([9baf39a](https://github.com/json-schema-tools/transpiler/commit/9baf39abc1f15bb86f8e9fe9d66c4198f25b0f43))
+
+
+### Bug Fixes
+
+* dont publish test files ([#757](https://github.com/json-schema-tools/transpiler/issues/757)) ([c00a2a8](https://github.com/json-schema-tools/transpiler/commit/c00a2a832cfbb1c3cf203f0ed19f2f61f5bd0c1e))
+
 ## [1.10.4](https://github.com/json-schema-tools/transpiler/compare/1.10.3...1.10.4) (2024-05-07)
 
 
