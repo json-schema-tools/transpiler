@@ -124,3 +124,24 @@ describe("Transpiler", () => {
     expect(megaDefs.foo.properties.crazyCrossRefs).toEqual({ $ref: "#/definitions/crazyCrossRefs" });
   });
 });
+
+describe("bare $schema titles (#385)", () => {
+  it("titles a bare meta-schema reference MetaSchema", () => {
+    const t = new Transpiler({ $schema: "http://json-schema.org/draft-07/schema#" });
+    expect(t.toTypescript()).toEqual("export type MetaSchema = any;");
+  });
+
+  it("does not rename schemas that have a title already", () => {
+    const t = new Transpiler({ $schema: "http://json-schema.org/draft-07/schema#", title: "Mine" });
+    expect(t.toTypescript()).toEqual("export type Mine = any;");
+  });
+
+  it("does not rename schemas with structural keywords", () => {
+    const t = new Transpiler({
+      $schema: "http://json-schema.org/draft-07/schema#",
+      type: "object",
+      properties: { a: { type: "string" } },
+    });
+    expect(t.toTypescript()).not.toContain("MetaSchema");
+  });
+});

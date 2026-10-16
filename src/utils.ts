@@ -156,6 +156,32 @@ export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
   return merged;
 }
 
+/**
+ * Keywords that carry no structural meaning on their own. A schema whose keys
+ * are all in this list (plus `$schema`) is just a reference to a meta-schema,
+ * e.g. `{ $schema: "http://json-schema.org/draft-07/schema#" }`.
+ */
+const META_SCHEMA_ONLY_KEYS = ["$schema", "$id", "$comment", "description"];
+
+/**
+ * Give bare meta-schema references (schemas that only carry `$schema`) a
+ * readable title instead of a generated hash, e.g. `MetaSchema`.
+ */
+export function titleBareMetaSchemaRefs(schema: JSONSchema): JSONSchema {
+  return traverse(schema, (subSchema) => {
+    if (
+      subSchema !== true &&
+      subSchema !== false &&
+      subSchema.title === undefined &&
+      subSchema.$schema !== undefined &&
+      Object.keys(subSchema).every((key) => META_SCHEMA_ONLY_KEYS.indexOf(key) !== -1)
+    ) {
+      return { ...subSchema, title: "MetaSchema" };
+    }
+    return subSchema;
+  }, { mutable: true });
+}
+
 export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
   return traverse(schema, (subS) => {
     const subSchema = titleizer(subS) as JSONSchemaObject;
