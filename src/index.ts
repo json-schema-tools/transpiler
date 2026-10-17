@@ -7,8 +7,9 @@ import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
 import GolangGenerator from "./codegens/golang";
 import PythonGenerator from "./codegens/python";
+import JavaGenerator from "./codegens/java";
 
-export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "golang" | "python" | "py";
+export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "golang" | "python" | "py" | "java";
 
 /**
  * The method names on Transpiler that {@link Transpiler.to} can dispatch to,
@@ -149,6 +150,19 @@ export class Transpiler {
    */
   public toPy(): string {
     return this.toPython();
+  }
+
+  /**
+   * Returns the types in Java
+   *
+   * @returns The types present in the megaSchema, seperated by newlines.
+   *
+   * @category Java
+   * @category TargetCodeGenerator
+   *
+   */
+  public toJava(): string {
+    return this.transpile(new JavaGenerator(this.megaSchema, this.options));
   }
 
   private transpile(gen: CodeGen): string {

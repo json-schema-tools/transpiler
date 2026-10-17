@@ -24,6 +24,12 @@ export interface CodeGenOptions {
 export abstract class CodeGen {
   constructor(protected schema: JSONSchema, protected options: CodeGenOptions = {}) { }
 
+  private collectedImports = new Set<string>();
+
+  protected addImport(imp: string): void {
+    this.collectedImports.add(imp);
+  }
+
   /**
    * Given a schema, it will generate code for both the schema and the schemas in its definitions section
    */
@@ -34,7 +40,8 @@ export abstract class CodeGen {
       return ir.typing.trim();
     }
 
-    const imports = new Set();
+    this.collectedImports = new Set<string>();
+    const imports = this.collectedImports;
     let rootSchemaTypes = "";
     if (this.schema.$ref === undefined) {
       this.schema.$ref = `#/definitions/${this.schema.title}`; // hack, i think dont need anymore
@@ -53,9 +60,7 @@ export abstract class CodeGen {
       Object
         .entries(this.schema.definitions)
         .filter(([n]: [string, JSONSchema]) => n !== (this.schema as JSONSchemaObject).title)
-        .filter(([, s]: [string, JSONSchema]) => {
-          return this.options.inlinePrimitiveTypes !== true || !isTrivialPrimitive(s);
-        })
+        .filter(([, s]: [string, JSONSchema]) => this.shouldEmit(s))
         .forEach(([, schema]: [string, JSONSchema]) => {
           const ir = this.toIR(schema);
           if (ir.imports) { ir.imports.forEach((imp) => imports.add(imp)); }
@@ -155,7 +160,11 @@ export abstract class CodeGen {
         | undefined;
       const def = definitions === undefined ? undefined : definitions[title];
       if (def !== undefined && isTrivialPrimitive(def)) {
-        return this.toIR(def).typing;
+        const ir = this.toIR(def);
+        if (ir.imports) {
+          ir.imports.forEach((imp) => this.collectedImports.add(imp));
+        }
+        return ir.typing;
       }
     }
     return this.getSafeTitle(this.refToTitle(schema));
@@ -165,6 +174,15 @@ export abstract class CodeGen {
     return schemas
       .map(this.refToTypeName.bind(this))
       .join(seperator);
+  }
+
+  /**
+   * Whether a definition should be emitted as a named declaration. The
+   * default skips trivial primitives when `inlinePrimitiveTypes` is set
+   * (they are inlined at use sites instead).
+   */
+  protected shouldEmit(s: JSONSchema): boolean {
+    return this.options.inlinePrimitiveTypes !== true || !isTrivialPrimitive(s);
   }
 
   protected toIR(s: JSONSchema): TypeIntermediateRepresentation {
