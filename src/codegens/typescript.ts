@@ -120,7 +120,27 @@ export default class Typescript extends CodeGen {
       });
       propertyTypings.push(`  [regex: string]: ${subTypes.join(" | ")} | any;`);
     } else if (s.additionalProperties !== false) {
-      propertyTypings.push("  [k: string]: any;");
+      const subTypes: string[] = [];
+      if (s.additionalProperties !== undefined && typeof s.additionalProperties === "object") {
+        const additionalProperties = s.additionalProperties as JSONSchemaObject;
+        const variants = additionalProperties.anyOf !== undefined
+          ? additionalProperties.anyOf as JSONSchema[]
+          : [additionalProperties];
+        variants.forEach((prop: JSONSchema) => {
+          const title = this.getSafeTitle(this.refToTitle(prop));
+          if (subTypes.includes(title) === false) {
+            subTypes.push(title);
+          }
+        });
+      }
+      // Optional properties are `T | undefined`, which must be assignable to
+      // the index signature or the interface will not compile under strict.
+      const hasOptionalProps = Object.keys(sProps).some((key) => {
+        return s.required === undefined || s.required.indexOf(key) === -1;
+      });
+      const indexType = subTypes.join(" | ") || "any";
+      const suffix = hasOptionalProps && indexType !== "any" ? " | undefined" : "";
+      propertyTypings.push(`  [k: string]: ${indexType}${suffix};`);
     }
 
     ir.prefix = "interface";

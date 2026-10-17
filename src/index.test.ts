@@ -145,3 +145,37 @@ describe("supportedLanguages (#139)", () => {
     }
   });
 });
+
+describe("TypeScript additionalProperties specificity (#512)", () => {
+  it("uses the additionalProperties schema type instead of any", () => {
+    const out = new Transpiler({
+      title: "A",
+      type: "object",
+      properties: { x: { type: "string" } },
+      additionalProperties: { type: "string" },
+    } as any).toTypescript();
+    expect(out).toMatch("[k: string]: StringDoaGddGA | undefined;");
+    expect(out).not.toMatch("[k: string]: any;");
+  });
+
+  it("keeps [k: string]: any when additionalProperties is unspecified", () => {
+    const out = new Transpiler({
+      title: "B",
+      type: "object",
+      properties: { x: { type: "string" } },
+    } as any).toTypescript();
+    expect(out).toMatch("[k: string]: any;");
+  });
+
+  it("unions multiple additionalProperties variant types", () => {
+    const out = new Transpiler({
+      title: "C",
+      type: "object",
+      properties: { x: { type: "string" } },
+      additionalProperties: { anyOf: [{ type: "string" }, { type: "integer" }] },
+    } as any).toTypescript();
+    expect(out).toMatch(/\[k: string\]: AnyOf.*;/);
+    expect(out).toMatch("StringDoaGddGA | Integer2AHOqbcQ");
+    expect(out).not.toMatch("[k: string]: any;");
+  });
+});

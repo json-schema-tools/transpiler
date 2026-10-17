@@ -3,7 +3,7 @@ export type C = string;
 export interface A { [key: string]: any; }
 export interface B {
   c?: C;
-  [k: string]: any;
+  [k: string]: D | undefined;
 }
 /**
  *
