@@ -124,3 +124,25 @@ describe("Transpiler", () => {
     expect(megaDefs.foo.properties.crazyCrossRefs).toEqual({ $ref: "#/definitions/crazyCrossRefs" });
   });
 });
+
+describe("$id stripping (#68)", () => {
+  it("removes $id from the megaSchema", () => {
+    const t = new Transpiler({
+      $id: "https://example.com/root",
+      title: "R",
+      type: "object",
+      properties: {
+        child: { $id: "https://example.com/child", type: "string" },
+      },
+    } as any);
+    const mega = JSON.stringify(t.megaSchema);
+    expect(mega).not.toMatch("$id");
+    expect(t.toTypescript()).toMatch("export interface R");
+  });
+
+  it("does not mutate the caller's $id fields", () => {
+    const input: any = { $id: "https://example.com/root", title: "R", type: "string" };
+    new Transpiler(input);
+    expect(input.$id).toBe("https://example.com/root");
+  });
+});

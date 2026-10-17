@@ -156,6 +156,35 @@ export function mergeObjectProperties(schemas: JSONSchema[]): JSONSchema {
   return merged;
 }
 
+/**
+ * Remove all `$id` fields. After referencing, everything is flattened into a
+ * single schema with local `$ref`s, so `$id`s (which only affect URI
+ * resolution) are dead weight.
+ */
+export function stripIds(schema: JSONSchema): JSONSchema {
+  const strip = (s: JSONSchema): JSONSchema => {
+    const stripped = traverse(s, (subSchema) => {
+      if (subSchema !== true && subSchema !== false && subSchema.$id !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { $id, ...rest } = subSchema;
+        return rest as JSONSchema;
+      }
+      return subSchema;
+    }, { mutable: true });
+    // traverse does not descend into `definitions`; handle them directly.
+    if (stripped !== true && stripped !== false) {
+      const definitions = stripped.definitions as Record<string, JSONSchema> | undefined;
+      if (definitions !== undefined) {
+        for (const key of Object.keys(definitions)) {
+          definitions[key] = strip(definitions[key]);
+        }
+      }
+    }
+    return stripped;
+  };
+  return strip(schema);
+}
+
 export function replaceTypeAsArrayWithOneOf(schema: JSONSchema): JSONSchema {
   return traverse(schema, (subS) => {
     const subSchema = titleizer(subS) as JSONSchemaObject;
