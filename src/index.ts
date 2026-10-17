@@ -2,7 +2,7 @@ import { JSONSchema } from "@json-schema-tools/meta-schema";
 import { capitalize, combineSchemas, replaceTypeAsArrayWithOneOf, getCycleMap, setIsCycle } from "./utils";
 import titleizer from "@json-schema-tools/titleizer";
 import referencer from "@json-schema-tools/referencer";
-import { CodeGen } from "./codegens/codegen";
+import { CodeGen, CodeGenOptions } from "./codegens/codegen";
 import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
 import GolangGenerator from "./codegens/golang";
@@ -16,12 +16,17 @@ export type SupportedLanguages = "rust" | "rs" | "typescript" | "ts" | "go" | "g
  */
 export type ToMethodName = `to${Capitalize<SupportedLanguages>}`;
 /**
+ * Options for {@link Transpiler}. Currently just the code generator options.
+ */
+export type TranspilerOptions = CodeGenOptions;
+
+/**
  * Provides a high-level interface for getting typings given a schema.
  */
 export class Transpiler {
   public megaSchema: JSONSchema;
 
-  constructor(s: JSONSchema | JSONSchema[]) {
+  constructor(s: JSONSchema | JSONSchema[], private options: TranspilerOptions = {}) {
     const useMerge = s instanceof Array;
     const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
     const cycleMap = getCycleMap(inputSchema);
@@ -54,7 +59,7 @@ export class Transpiler {
    *
    */
   public toTypescript(): string {
-    return this.transpile(new TypescriptGenerator(this.megaSchema));
+    return this.transpile(new TypescriptGenerator(this.megaSchema, this.options));
   }
 
   /**
@@ -78,7 +83,7 @@ export class Transpiler {
    *
    */
   public toRust(): string {
-    return this.transpile(new RustGenerator(this.megaSchema));
+    return this.transpile(new RustGenerator(this.megaSchema, this.options));
   }
 
   /**
@@ -104,7 +109,7 @@ export class Transpiler {
    *
    */
   public toGolang(): string {
-    return this.transpile(new GolangGenerator(this.megaSchema));
+    return this.transpile(new GolangGenerator(this.megaSchema, this.options));
   }
 
   /**
@@ -130,7 +135,7 @@ export class Transpiler {
    *
    */
   public toPython(): string {
-    return this.transpile(new PythonGenerator(this.megaSchema));
+    return this.transpile(new PythonGenerator(this.megaSchema, this.options));
   }
 
   /**

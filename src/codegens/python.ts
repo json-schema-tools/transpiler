@@ -92,7 +92,7 @@ export default class Python extends CodeGen {
   protected handleOrderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const title = this.getSafeTitle(s.title as string);
     const sItems = s.items as JSONSchema[];
-    const itemTitles = sItems.map((item: JSONSchema) => this.getSafeTitle(this.refToTitle(item)));
+    const itemTitles = sItems.map((item: JSONSchema) => this.refToTypeName(item));
     return {
       documentationComment: this.buildDocs(s),
       typing: `${title} = NewType("${title}", Tuple[${itemTitles.join(", ")}])`,
@@ -105,7 +105,7 @@ export default class Python extends CodeGen {
 
   protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const title = this.getSafeTitle(s.title as string);
-    const itemsTitle = this.getSafeTitle(this.refToTitle(s.items as JSONSchema));
+    const itemsTitle = this.refToTypeName(s.items as JSONSchema);
     return {
       documentationComment: this.buildDocs(s),
       typing: `${title} = NewType("${title}", List[${itemsTitle}])`,
@@ -138,7 +138,7 @@ export default class Python extends CodeGen {
       if (s.required) {
         isRequired = s.required.indexOf(propTitle) !== -1;
       }
-      const safeTitle = this.getSafeTitle(propTitle);
+      const safeTitle = this.refToTypeName(propSchema);
       // first expression of right hand side
       const rhs = isRequired ? title : `Optional[${safeTitle}]`;
       return [...typings, `    ${key}: ${rhs}`];
