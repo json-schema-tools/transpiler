@@ -137,6 +137,7 @@ describe("supportedLanguages (#139)", () => {
       "golang",
       "python",
       "py",
+      "java",
     ]);
     // every entry is dispatchable via to()
     const t = new Transpiler({ title: "x", type: "string" });
@@ -193,5 +194,181 @@ describe("inlinePrimitiveTypes option (#726)", () => {
     // enum is not a trivial primitive: alias is still generated
     expect(out).toMatch(/type String\w+ string/);
     expect(out).toMatch("Color *String");
+  });
+});
+
+describe("Java codegen (#319)", () => {
+  it("generates a POJO with Jackson annotations", () => {
+    const out = new Transpiler({
+      title: "Person",
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        age: { type: "integer" },
+      },
+    } as any).toJava();
+    expect(out).toMatch("public class Person");
+    expect(out).toMatch('@JsonProperty("name")');
+    expect(out).toMatch("private String name;");
+    expect(out).toMatch("private Long age;");
+    expect(out).toMatch("public String getName()");
+    expect(out).toMatch("import com.fasterxml.jackson.annotation.JsonProperty;");
+  });
+
+  it("inlines arrays as List", () => {
+    const out = new Transpiler({
+      title: "Team",
+      type: "object",
+      properties: {
+        members: { type: "array", items: { type: "string" } },
+      },
+    } as any).toJava();
+    expect(out).toMatch("private List<String> members;");
+    expect(out).toMatch("import java.util.List;");
+    expect(out).not.toMatch("class String");
+  });
+
+  it("generates enums", () => {
+    const out = new Transpiler({
+      title: "Order",
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["pending", "shipped"] },
+      },
+    } as any).toJava();
+    expect(out).toMatch("public enum");
+    expect(out).toMatch("PENDING");
+    expect(out).toMatch("private StringGg8YvbkL status;");
+  });
+
+  it("is dispatchable via to()", () => {
+    const t = new Transpiler({ title: "X", type: "string" } as any);
+    expect(t.to("java")).toEqual(t.toJava());
+  });
+});
+
+describe("Java codegen coverage (#319)", () => {
+  it("handles primitive types", () => {
+    const out = new Transpiler({
+      title: "P", type: "object",
+      properties: {
+        b: { type: "boolean" },
+        n: { type: "number" },
+        i: { type: "integer" },
+        s: { type: "string" },
+        nu: { type: "null" },
+      },
+    } as any).toJava();
+    expect(out).toMatch("private Boolean b;");
+    expect(out).toMatch("private Double n;");
+    expect(out).toMatch("private Long i;");
+    expect(out).toMatch("private String s;");
+    expect(out).toMatch("private Object nu;");
+  });
+
+  it("handles untyped schemas", () => {
+    const out = new Transpiler({ title: "U" } as any).toJava();
+    expect(out).toMatch("Object");
+  });
+
+  it("handles boolean schemas", () => {
+    const out = new Transpiler({
+      title: "B", type: "object",
+      properties: { t: true as any, f: false as any },
+    } as any).toJava();
+    expect(out).toBeDefined();
+  });
+
+  it("handles anyOf/oneOf/allOf with fallback", () => {
+    const out = new Transpiler({
+      title: "W", type: "object",
+      properties: {
+        a: { anyOf: [{ type: "string" }, { type: "integer" }] },
+        o: { oneOf: [{ type: "string" }, { type: "integer" }] },
+        al: { allOf: [{ type: "object", properties: { x: { type: "string" } } }] },
+      },
+    } as any).toJava();
+    expect(out).toMatch("private Object a;");
+    expect(out).toMatch("private Object o;");
+  });
+
+  it("handles numerical enums with fallback", () => {
+    const out = new Transpiler({
+      title: "N", type: "object",
+      properties: { e: { type: "integer", enum: [1, 2] } },
+    } as any).toJava();
+    expect(out).toBeDefined();
+  });
+
+  it("handles untyped objects as maps", () => {
+    const out = new Transpiler({
+      title: "M", type: "object",
+      properties: {
+        map: { type: "object", additionalProperties: { type: "string" } },
+      },
+    } as any).toJava();
+    expect(out).toMatch("Map<String, Object>");
+  });
+
+  it("includes descriptions as javadoc", () => {
+    const out = new Transpiler({
+      title: "D",
+      description: "A documented class",
+      type: "object",
+      properties: { x: { type: "string", description: "A field" } },
+    } as any).toJava();
+    expect(out).toMatch("A documented class");
+  });
+});
+
+describe("Java codegen edge cases (#319)", () => {
+  it("handles ordered arrays with fallback", () => {
+    const out = new Transpiler({
+      title: "T", type: "object",
+      properties: {
+        tup: { type: "array", items: [{ type: "string" }, { type: "integer" }] },
+      },
+    } as any).toJava();
+    expect(out).toMatch("List<Object>");
+  });
+
+  it("handles root-level enum", () => {
+    const out = new Transpiler({
+      title: "Status",
+      type: "string",
+      enum: ["a", "b"],
+    } as any).toJava();
+    expect(out).toMatch("public enum Status");
+  });
+
+  it("handles nested objects in arrays", () => {
+    const out = new Transpiler({
+      title: "Team", type: "object",
+      properties: {
+        members: {
+          type: "array",
+          items: {
+            title: "Member", type: "object",
+            properties: { name: { type: "string" } },
+          },
+        },
+      },
+    } as any).toJava();
+    expect(out).toMatch("public class Member");
+    expect(out).toMatch("private List<Member> members;");
+  });
+});
+
+describe("Java additionalProperties (#319)", () => {
+  it("warns on objects with additionalProperties", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    const out = new Transpiler({
+      title: "W", type: "object",
+      properties: { x: { type: "string" } },
+      additionalProperties: { type: "string" },
+    } as any).toJava();
+    expect(warnSpy).toHaveBeenCalled();
+    expect(out).toMatch("public class W");
+    warnSpy.mockRestore();
   });
 });

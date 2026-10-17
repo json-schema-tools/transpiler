@@ -7,6 +7,7 @@ import TypescriptGenerator from "./codegens/typescript";
 import RustGenerator from "./codegens/rust";
 import GolangGenerator from "./codegens/golang";
 import PythonGenerator from "./codegens/python";
+import JavaGenerator from "./codegens/java";
 
 /**
  * The languages {@link Transpiler.to} can target, as an array of strings.
@@ -21,6 +22,7 @@ export const supportedLanguages = [
   "golang",
   "python",
   "py",
+  "java",
 ] as const;
 
 export type SupportedLanguages = typeof supportedLanguages[number];
@@ -164,6 +166,19 @@ export class Transpiler {
    */
   public toPy(): string {
     return this.toPython();
+  }
+
+  /**
+   * Returns the types in Java
+   *
+   * @returns The types present in the megaSchema, seperated by newlines.
+   *
+   * @category Java
+   * @category TargetCodeGenerator
+   *
+   */
+  public toJava(): string {
+    return this.transpile(new JavaGenerator(this.megaSchema, this.options));
   }
 
   private transpile(gen: CodeGen): string {
