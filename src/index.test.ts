@@ -145,3 +145,53 @@ describe("supportedLanguages (#139)", () => {
     }
   });
 });
+
+describe("inlinePrimitiveTypes option (#726)", () => {
+  const schema = {
+    title: "Person",
+    type: "object",
+    properties: {
+      name: { type: "string" },
+      age: { type: "integer" },
+    },
+  } as any;
+
+  it("is off by default (aliases generated)", () => {
+    const out = new Transpiler(schema).toGolang();
+    expect(out).toMatch("type StringDoaGddGA string");
+    expect(out).toMatch("Name *StringDoaGddGA");
+  });
+
+  it("inlines primitives in Go", () => {
+    const out = new Transpiler(schema, { inlinePrimitiveTypes: true }).toGolang();
+    expect(out).not.toMatch("type StringDoaGddGA string");
+    expect(out).toMatch("Name *string");
+    expect(out).toMatch("Age  *int64");
+  });
+
+  it("inlines primitives in TypeScript", () => {
+    const out = new Transpiler(schema, { inlinePrimitiveTypes: true }).toTypescript();
+    expect(out).not.toMatch("StringDoaGddGA");
+    expect(out).toMatch("name?: string;");
+    expect(out).toMatch("age?: number;");
+  });
+
+  it("inlines primitives in Rust", () => {
+    const out = new Transpiler(schema, { inlinePrimitiveTypes: true }).toRust();
+    expect(out).not.toMatch("pub type String");
+    expect(out).toMatch("pub name: Option<String>");
+  });
+
+  it("does not inline non-trivial schemas (enums, constrained)", () => {
+    const out = new Transpiler({
+      title: "E",
+      type: "object",
+      properties: {
+        color: { type: "string", enum: ["r", "g"] },
+      },
+    } as any, { inlinePrimitiveTypes: true }).toGolang();
+    // enum is not a trivial primitive: alias is still generated
+    expect(out).toMatch(/type String\w+ string/);
+    expect(out).toMatch("Color *String");
+  });
+});

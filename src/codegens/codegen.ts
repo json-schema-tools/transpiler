@@ -1,5 +1,5 @@
 import { JSONSchema, JSONSchemaObject, JSONSchemaBoolean } from "@json-schema-tools/meta-schema";
-import { languageSafeName } from "../utils";
+import { languageSafeName, isTrivialPrimitive } from "../utils";
 
 export interface TypeIntermediateRepresentation {
   macros?: string;
@@ -9,11 +9,20 @@ export interface TypeIntermediateRepresentation {
   imports?: string[]
 }
 
+export interface CodeGenOptions {
+  /**
+   * When true, subschemas that only specify a primitive type (e.g.
+   * `{ type: "string" }`) are inlined as the builtin language type instead
+   * of generating a named alias for them.
+   */
+  inlinePrimitiveTypes?: boolean;
+}
+
 /**
  * Base class for all code generators.
  */
 export abstract class CodeGen {
-  constructor(protected schema: JSONSchema) { }
+  constructor(protected schema: JSONSchema, protected options: CodeGenOptions = {}) { }
 
   /**
    * Given a schema, it will generate code for both the schema and the schemas in its definitions section
@@ -44,6 +53,9 @@ export abstract class CodeGen {
       Object
         .entries(this.schema.definitions)
         .filter(([n]: [string, JSONSchema]) => n !== (this.schema as JSONSchemaObject).title)
+        .filter(([, s]: [string, JSONSchema]) => {
+          return this.options.inlinePrimitiveTypes !== true || !isTrivialPrimitive(s);
+        })
         .forEach(([, schema]: [string, JSONSchema]) => {
           const ir = this.toIR(schema);
           if (ir.imports) { ir.imports.forEach((imp) => imports.add(imp)); }
@@ -125,14 +137,37 @@ export abstract class CodeGen {
     return schema.$ref.replace("#/definitions/", "");
   }
 
+  /**
+   * The usable type name for a subschema: when `inlinePrimitiveTypes` is set
+   * and the subschema references a trivial primitive (e.g. `{ type: "string" }`),
+   * returns the builtin language type; otherwise the safe title, as before.
+   */
+  protected refToTypeName(schema: JSONSchema): string {
+    if (
+      this.options.inlinePrimitiveTypes === true &&
+      schema !== true &&
+      schema !== false &&
+      schema.$ref !== undefined
+    ) {
+      const title = schema.$ref.replace("#/definitions/", "");
+      const definitions = (this.schema as JSONSchemaObject).definitions as
+        | { [key: string]: JSONSchema }
+        | undefined;
+      const def = definitions === undefined ? undefined : definitions[title];
+      if (def !== undefined && isTrivialPrimitive(def)) {
+        return this.toIR(def).typing;
+      }
+    }
+    return this.getSafeTitle(this.refToTitle(schema));
+  }
+
   protected getJoinedSafeTitles(schemas: JSONSchema[], seperator = ", ") {
     return schemas
-      .map(this.refToTitle)
-      .map(this.getSafeTitle.bind(this))
+      .map(this.refToTypeName.bind(this))
       .join(seperator);
   }
 
-  private toIR(s: JSONSchema): TypeIntermediateRepresentation {
+  protected toIR(s: JSONSchema): TypeIntermediateRepresentation {
     if (s === true || s === false) {
       return this.handleConstantBool(s);
     }

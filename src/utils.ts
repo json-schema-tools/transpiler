@@ -13,6 +13,24 @@ import titleizer from "@json-schema-tools/titleizer";
  */
 export const capitalize = (s: string): string => s[0].toUpperCase() + s.slice(1);
 
+const PRIMITIVE_TYPES = ["string", "integer", "number", "boolean"];
+const PRIMITIVE_METADATA_KEYS = ["title", "description", "$comment", "default", "examples", "$id"];
+
+/**
+ * Whether the schema only specifies a primitive type (plus metadata like
+ * `title`/`description`). Such schemas map directly onto a builtin language
+ * type and do not need a named alias.
+ */
+export function isTrivialPrimitive(s: JSONSchema): boolean {
+  if (s === true || s === false) {
+    return false;
+  }
+  return (
+    PRIMITIVE_TYPES.indexOf(s.type as string) !== -1 &&
+    Object.keys(s).every((key) => key === "type" || PRIMITIVE_METADATA_KEYS.indexOf(key) !== -1)
+  );
+}
+
 
 export const numToWord = (s: string): string => {
   return s.replace(digitRegex, (match: string) => {
