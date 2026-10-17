@@ -8,6 +8,13 @@
 * remove console log ([327f46d](https://github.com/json-schema-tools/transpiler/commit/327f46d720ba3ff9a329346f835c16c89d92f342))
 * tests were commented out rip ([68f793d](https://github.com/json-schema-tools/transpiler/commit/68f793da4d815882d23615f98ae6b53492cb18e7))
 
+## [1.11.1](https://github.com/json-schema-tools/transpiler/compare/1.11.0...1.11.1) (2026-10-17)
+
+
+### Bug Fixes
+
+* add missing fsevents entry to package-lock.json ([#880](https://github.com/json-schema-tools/transpiler/issues/880)) ([3b312a1](https://github.com/json-schema-tools/transpiler/commit/3b312a19b0908c8d5a4570152f85c161ed5323e4))
+
 ## [1.11.0](https://github.com/json-schema-tools/transpiler/compare/1.10.5...1.11.0) (2026-10-16)
 
 
