@@ -1,5 +1,5 @@
 import { JSONSchema } from "@json-schema-tools/meta-schema";
-import { capitalize, combineSchemas, replaceTypeAsArrayWithOneOf, getCycleMap, setIsCycle } from "./utils";
+import { capitalize, combineSchemas, replaceTypeAsArrayWithOneOf, getCycleMap, setIsCycle, stripIds } from "./utils";
 import titleizer from "@json-schema-tools/titleizer";
 import referencer from "@json-schema-tools/referencer";
 import { CodeGen } from "./codegens/codegen";
@@ -49,6 +49,8 @@ export class Transpiler {
     } else {
       [this.megaSchema] = reffedAndCycleMarked;
     }
+    // $ids only matter for URI resolution; everything is flat now.
+    this.megaSchema = stripIds(this.megaSchema);
   }
 
   /**
