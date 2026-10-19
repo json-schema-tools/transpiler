@@ -46,7 +46,7 @@
     "node-fetch": "^3.2.10",
     "ts-jest": "^29.2.5",
     "typedoc": "^0.27.6",
-    "typescript": "^5.7.2",
+    "typescript": "^7.0.2",
     "jest-it-up": "^4.0.1"
   },
   "dependencies": {
