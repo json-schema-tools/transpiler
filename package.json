@@ -29,7 +29,7 @@
     "!build/integration-tests"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "@eslint/js": "^10.0.1",
     "@json-schema-tools/dereferencer": "^1.6.3",
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@types/jest": "^29.5.14",
