@@ -119,7 +119,7 @@ export default class Rust extends CodeGen {
   protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return {
       prefix: "type",
-      typing: `Vec<${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}>`,
+      typing: `Vec<${this.refToTypeName(s.items as JSONSchema)}>`,
       documentationComment: this.buildDocs(s),
     };
   }
@@ -141,7 +141,7 @@ export default class Rust extends CodeGen {
         isRequired = s.required.indexOf(key) !== -1;
       }
 
-      let typeName = this.getSafeTitle(this.refToTitle(propSchema));
+      let typeName = this.refToTypeName(propSchema);
       if (propSchema !== false && propSchema !== true && propSchema.isCycle) {
         typeName = `Box<${typeName}>`;
       }
@@ -194,7 +194,7 @@ export default class Rust extends CodeGen {
 
     if (s.additionalProperties) {
       const addPropS = s.additionalProperties;
-      let typeName = this.getSafeTitle(this.refToTitle(addPropS));
+      let typeName = this.refToTypeName(addPropS);
 
       if (addPropS !== true && addPropS.isCycle) {
         typeName = `Box<${typeName}>`;
@@ -225,7 +225,7 @@ export default class Rust extends CodeGen {
   protected handleUntypedObject(s: JSONSchemaObject): TypeIntermediateRepresentation {
     let typeName = "serde_json::Value";
     if (s.additionalProperties) {
-      // const typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
+      // const typeName = this.refToTypeName(s.additionalProperties);
       // const propertyTypings = [
       //   "#[serde(flatten)]",
       //   `pub additional_properties: Option<${typeName}>`
@@ -244,7 +244,7 @@ export default class Rust extends CodeGen {
       //     "use derive_builder::Builder;",
       //   ]
       // };
-      typeName = this.getSafeTitle(this.refToTitle(s.additionalProperties));
+      typeName = this.refToTypeName(s.additionalProperties);
     }
     return {
       prefix: "type",
@@ -284,7 +284,7 @@ export default class Rust extends CodeGen {
   private buildEnum(s: JSONSchema[]): TypeIntermediateRepresentation {
     const typeLines = s
       .map((enumItem) => {
-        const typeName = this.getSafeTitle(this.refToTitle(enumItem));
+        const typeName = this.refToTypeName(enumItem);
         let rhsTypeName = typeName;
         if (enumItem !== false && enumItem !== true && enumItem.isCycle) {
           rhsTypeName = `Box<${typeName}>`;
