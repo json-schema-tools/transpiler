@@ -145,3 +145,33 @@ describe("supportedLanguages (#139)", () => {
     }
   });
 });
+
+describe("Rust additionalProperties handling (#383)", () => {
+  it("uses a struct for properties-only objects", () => {
+    const out = new Transpiler({
+      title: "A", type: "object", properties: { x: { type: "string" } },
+    }).toRust();
+    expect(out).toMatch("pub struct A");
+    expect(out).not.toMatch("HashMap");
+  });
+
+  it("uses a HashMap for additionalProperties-only objects", () => {
+    const out = new Transpiler({
+      title: "B", type: "object", additionalProperties: { type: "string" },
+    }).toRust();
+    expect(out).toMatch("pub type B = HashMap<String,");
+  });
+
+  it("uses a struct with a flattened HashMap when both are used", () => {
+    const out = new Transpiler({
+      title: "C",
+      type: "object",
+      properties: { x: { type: "string" } },
+      additionalProperties: { type: "string" },
+    }).toRust();
+    expect(out).toMatch("pub struct C");
+    expect(out).toMatch("#[serde(flatten)]");
+    expect(out).toMatch("pub additional_properties: HashMap<String,");
+    expect(out).toMatch("use std::collections::HashMap;");
+  });
+});
