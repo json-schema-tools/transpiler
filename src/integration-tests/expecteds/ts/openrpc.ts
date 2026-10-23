@@ -116,6 +116,7 @@ export type Title = string;
 export type Description = string;
 type AlwaysTrue = any;
 export type ReadOnly = boolean;
+export type WriteOnly = boolean;
 export type Examples = AlwaysTrue[];
 export type MultipleOf = number;
 export type Maximum = number;
@@ -176,6 +177,7 @@ export interface JSONSchemaObject {
   description?: Description;
   default?: AlwaysTrue;
   readOnly?: ReadOnly;
+  writeOnly?: WriteOnly;
   examples?: Examples;
   multipleOf?: MultipleOf;
   maximum?: Maximum;

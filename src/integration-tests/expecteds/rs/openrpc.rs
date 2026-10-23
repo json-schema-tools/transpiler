@@ -224,6 +224,7 @@ pub type Title = String;
 pub type Description = String;
 type AlwaysTrue = serde_json::Value;
 pub type ReadOnly = bool;
+pub type WriteOnly = bool;
 pub type Examples = Vec<AlwaysTrue>;
 pub type MultipleOf = f64;
 pub type Maximum = f64;
@@ -325,6 +326,8 @@ pub struct JSONSchemaObject {
     pub _default: Option<AlwaysTrue>,
     #[serde(rename = "readOnly", skip_serializing_if = "Option::is_none")]
     pub read_only: Option<ReadOnly>,
+    #[serde(rename = "writeOnly", skip_serializing_if = "Option::is_none")]
+    pub write_only: Option<WriteOnly>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub examples: Option<Examples>,
     #[serde(rename = "multipleOf", skip_serializing_if = "Option::is_none")]
