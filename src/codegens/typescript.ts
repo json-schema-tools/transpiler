@@ -74,7 +74,7 @@ export default class Typescript extends CodeGen {
   }
 
   protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
-    let typing = `${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}[]`;
+    let typing = `${this.refToTypeName(s.items as JSONSchema)}[]`;
     if (s.const) {
       typing = s.const;
     }
@@ -106,14 +106,14 @@ export default class Typescript extends CodeGen {
       if (s.required) {
         isRequired = s.required.indexOf(key) !== -1;
       }
-      const title = this.getSafeTitle(this.refToTitle(propSchema));
+      const title = this.refToTypeName(propSchema);
       return [...typings, `  ${key}${isRequired ? "" : "?"}: ${title};`];
     }, []);
 
     if (s.patternProperties !== undefined) {
       const subTypes: string[] = [];
       Object.values(s.patternProperties).forEach((prop: JSONSchema) => {
-        const title = this.getSafeTitle(this.refToTitle(prop));
+        const title = this.refToTypeName(prop);
         if (subTypes.includes(title) === false) {
           subTypes.push(title);
         }

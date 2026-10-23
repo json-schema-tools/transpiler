@@ -78,7 +78,7 @@ export default class Golang extends CodeGen {
 
   protected handleUnorderedArray(s: JSONSchemaObject): TypeIntermediateRepresentation {
     return {
-      typing: `[]${this.getSafeTitle(this.refToTitle(s.items as JSONSchema))}`,
+      typing: `[]${this.refToTypeName(s.items as JSONSchema)}`,
       documentationComment: this.buildDocs(s),
     };
   }
@@ -93,7 +93,7 @@ export default class Golang extends CodeGen {
     const sProps = s.properties as { [k: string]: JSONSchema };
     const propKeys = Object.keys(sProps);
     const safeTitles = propKeys.map((k) => this.getSafeTitle(k));
-    const propSchemaTitles = propKeys.map((k) => this.getSafeTitle(this.refToTitle(sProps[k])));
+    const propSchemaTitles = propKeys.map((k) => this.refToTypeName(sProps[k]));
 
     const titleMaxLength = Math.max(...safeTitles.map((t) => t.length));
     const propTitleMaxLength = Math.max(...propSchemaTitles.map((t) => t.length));
@@ -212,7 +212,7 @@ export default class Golang extends CodeGen {
 
   protected handleAnyOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const sAny = s.anyOf as JSONSchema[];
-    const titles = sAny.map((ss: JSONSchema) => this.getSafeTitle(this.refToTitle(ss)));
+    const titles = sAny.map((ss: JSONSchema) => this.refToTypeName(ss));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
     const anyOfType = titles.reduce((typings: string[], anyOfTitle: string) => {
       return [...typings, `\t${anyOfTitle.padEnd(titleMaxLength)} *${anyOfTitle}`]; // Here, the pointer is added.
@@ -244,7 +244,7 @@ export default class Golang extends CodeGen {
 
   protected handleOneOf(s: JSONSchemaObject): TypeIntermediateRepresentation {
     const sOne = s.oneOf as JSONSchema[];
-    const titles = sOne.map((ss: JSONSchema) => this.getSafeTitle(this.refToTitle(ss)));
+    const titles = sOne.map((ss: JSONSchema) => this.refToTypeName(ss));
     const titleMaxLength = Math.max(...titles.map((t: string) => t.length));
     const oneOfType = sOne.reduce((typings: string[], oneOfSchema: JSONSchema, i: number) => {
       const oneOfTitle = titles[i];
