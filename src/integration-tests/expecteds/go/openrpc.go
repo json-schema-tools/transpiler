@@ -155,6 +155,7 @@ type Title string
 type Description string
 type AlwaysTrue interface{}
 type ReadOnly bool
+type WriteOnly bool
 type Examples []AlwaysTrue
 type MultipleOf float64
 type Maximum float64
@@ -309,6 +310,7 @@ type JSONSchemaObject struct {
 	Description          *Description                   `json:"description,omitempty"`
 	Default              *AlwaysTrue                    `json:"default,omitempty"`
 	ReadOnly             *ReadOnly                      `json:"readOnly,omitempty"`
+	WriteOnly            *WriteOnly                     `json:"writeOnly,omitempty"`
 	Examples             *Examples                      `json:"examples,omitempty"`
 	MultipleOf           *MultipleOf                    `json:"multipleOf,omitempty"`
 	Maximum              *Maximum                       `json:"maximum,omitempty"`
