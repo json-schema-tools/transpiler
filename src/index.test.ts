@@ -145,3 +145,52 @@ describe("supportedLanguages (#139)", () => {
     }
   });
 });
+
+describe("Transpiler input immutability (#83)", () => {
+  it("does not mutate the input schema", () => {
+    const input = {
+      title: "M",
+      type: "object",
+      properties: {
+        a: { type: "string" },
+      },
+    } as JSONSchema;
+    const before = JSON.stringify(input);
+    const t = new Transpiler(input);
+    t.toTypescript();
+    expect(JSON.stringify(input)).toEqual(before);
+  });
+
+  it("does not mutate schemas passed as an array", () => {
+    const inputs = [{ title: "A", type: "string" }, { title: "B", type: "integer" }] as JSONSchema[];
+    const before = JSON.stringify(inputs);
+    const t = new Transpiler(inputs);
+    t.toTypescript();
+    expect(JSON.stringify(inputs)).toEqual(before);
+  });
+
+  it("does not mutate boolean schemas", () => {
+    const t = new Transpiler(true);
+    expect(t.toTypescript()).toBeDefined();
+  });
+});
+
+describe("Transpiler input immutability with cycles (#83)", () => {
+  it("does not mutate cyclic input schemas", () => {
+    const input: any = {
+      title: "foo bar",
+      type: "object",
+      properties: {
+        foo: { type: "string" },
+        fooBar: {},
+      },
+    };
+    input.properties.fooBar = input;
+    const t = new Transpiler(input as JSONSchema);
+    t.toTypescript();
+    // no titles added anywhere, cycle intact
+    expect(input.properties.foo.title).toBeUndefined();
+    expect(input.properties.fooBar).toBe(input);
+    expect(input.title).toBe("foo bar");
+  });
+});

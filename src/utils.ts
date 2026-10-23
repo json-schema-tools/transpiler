@@ -13,6 +13,27 @@ import titleizer from "@json-schema-tools/titleizer";
  */
 export const capitalize = (s: string): string => s[0].toUpperCase() + s.slice(1);
 
+/**
+ * Deep-clones a JSON Schema, preserving circular references. JSON Schemas may
+ * legally contain cycles (via object identity), so JSON.parse(JSON.stringify())
+ * is not a safe clone here.
+ */
+export function deepClone<T>(value: T, seen: Map<unknown, unknown> = new Map()): T {
+  if (value === null || typeof value !== "object") {
+    return value;
+  }
+  const existing = seen.get(value);
+  if (existing !== undefined) {
+    return existing as T;
+  }
+  const clone: Record<string, unknown> | unknown[] = Array.isArray(value) ? [] : {};
+  seen.set(value, clone);
+  for (const key of Object.keys(value)) {
+    (clone as Record<string, unknown>)[key] = deepClone((value as Record<string, unknown>)[key], seen);
+  }
+  return clone as T;
+}
+
 
 export const numToWord = (s: string): string => {
   return s.replace(digitRegex, (match: string) => {

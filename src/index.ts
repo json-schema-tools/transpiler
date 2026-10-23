@@ -1,5 +1,5 @@
 import { JSONSchema } from "@json-schema-tools/meta-schema";
-import { capitalize, combineSchemas, replaceTypeAsArrayWithOneOf, getCycleMap, setIsCycle } from "./utils";
+import { capitalize, combineSchemas, deepClone, replaceTypeAsArrayWithOneOf, getCycleMap, setIsCycle } from "./utils";
 import titleizer from "@json-schema-tools/titleizer";
 import referencer from "@json-schema-tools/referencer";
 import { CodeGen } from "./codegens/codegen";
@@ -38,7 +38,10 @@ export class Transpiler {
 
   constructor(s: JSONSchema | JSONSchema[]) {
     const useMerge = s instanceof Array;
-    const inputSchema: JSONSchema[] = useMerge ? s as JSONSchema[] : [s];
+    // Deep-clone the input: the pipeline below (titleizer, referencer, etc.)
+    // mutates schemas in place, and the caller's objects must be left alone.
+    const inputSchema: JSONSchema[] = (useMerge ? s as JSONSchema[] : [s])
+      .map((schema) => deepClone(schema));
     const cycleMap = getCycleMap(inputSchema);
     const noTypeArrays = inputSchema.map(replaceTypeAsArrayWithOneOf);
     const schemaWithTitles = noTypeArrays.map(titleizer);
