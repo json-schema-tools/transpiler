@@ -15,7 +15,7 @@ pub struct B {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub c: Option<C>,
     #[serde(flatten)]
-    pub additional_properties: D,
+    pub additional_properties: HashMap<String, D>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]

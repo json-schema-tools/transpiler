@@ -192,6 +192,11 @@ export default class Rust extends CodeGen {
       ];
     }, []);
 
+    const imports = [
+      "use serde::{Serialize, Deserialize};",
+      "use derive_builder::Builder;",
+    ];
+
     if (s.additionalProperties) {
       const addPropS = s.additionalProperties;
       let typeName = this.getSafeTitle(this.refToTitle(addPropS));
@@ -202,8 +207,9 @@ export default class Rust extends CodeGen {
 
       propertyTypings.push([
         "#[serde(flatten)]\n",
-        `pub additional_properties: ${typeName},`
+        `pub additional_properties: HashMap<String, ${typeName}>,`
       ].map((s) => `    ${s}`).join(""));
+      imports.push("use std::collections::HashMap;");
     }
 
     return {
@@ -215,10 +221,7 @@ export default class Rust extends CodeGen {
         "#[serde(default)]"
       ].join("\n"),
       documentationComment: this.buildDocs(s),
-      imports: [
-        "use serde::{Serialize, Deserialize};",
-        "use derive_builder::Builder;",
-      ]
+      imports
     };
   }
 
